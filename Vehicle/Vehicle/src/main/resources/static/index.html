@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="K.D. Auto Traders - premium vehicle sales and rentals with a cleaner, smarter browsing experience." />
+    <title>K.D. Auto Traders | Find Your Perfect Ride</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/premium-home.css" />
+</head>
+<body>
+
+<nav id="mainNav" class="main-nav">
+    <div class="container">
+        <div class="nav-shell">
+            <a class="nav-brand" href="index.html">
+                <div class="nav-mark"><i class="bi bi-car-front-fill"></i></div>
+                <div>
+                    <div class="nav-title">K.D.<span>Auto Traders</span></div>
+                    <div class="nav-sub">Premium Vehicle Marketplace</div>
+                </div>
+            </a>
+
+            <div class="nav-links">
+                <a class="active" href="index.html">Home</a>
+                <a href="guest-vehicle-inventory.html">Inventory</a>
+                <a href="about-us.html">About Us</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="login.html" class="nav-login">Login</a>
+                <a href="register.html" class="nav-signup" id="authBtn"><i class="bi bi-stars"></i> Sign Up</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section id="home" class="hero-section">
+    <div class="page-container">
+        <div class="hero-slides" id="heroSlides">
+            <div class="hero-slide active" style="background-image:url('images/campbell-3ZUsNJhi_Ik-unsplash.jpg')">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-copy">
+                        <span class="slide-badge"><i class="bi bi-stars"></i> Premium Vehicle Discovery</span>
+                        <h1 class="slide-heading">Find the right <span class="text-gradient">vehicle faster</span> with a cleaner premium marketplace.</h1>
+                        <p class="slide-sub">Browse sales and rentals with clearer pricing, sharper promotions, and a smoother customer journey from first look to final decision.</p>
+                        <div class="slide-actions">
+                            <a href="guest-vehicle-inventory.html" class="btn-hero-primary"><i class="bi bi-grid-fill"></i> Explore Vehicles</a>
+                            <a href="about-us.html" class="btn-hero-outline"><i class="bi bi-buildings-fill"></i> Learn About Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-slide" style="background-image:url('images/dhiva-krishna-X16zXcbxU4U-unsplash.jpg')">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-copy">
+                        <span class="slide-badge"><i class="bi bi-megaphone-fill"></i> Promotion-Aware Browsing</span>
+                        <h1 class="slide-heading">See vehicle-specific <span class="text-gradient">offers clearly</span> instead of generic clutter.</h1>
+                        <p class="slide-sub">Brand and model promotions are surfaced directly where customers browse, helping high-value offers stand out without overwhelming the inventory.</p>
+                        <div class="slide-actions">
+                            <a href="guest-vehicle-inventory.html" class="btn-hero-primary"><i class="bi bi-tags-fill"></i> View Current Offers</a>
+                            <a href="guest-vehicle-inventory.html" class="btn-hero-outline"><i class="bi bi-car-front-fill"></i> Browse Inventory</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-slide" style="background-image:url('images/olav-tvedt-6lSBynPRaAQ-unsplash.jpg')">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-copy">
+                        <span class="slide-badge"><i class="bi bi-key-fill"></i> Rental Experience</span>
+                        <h1 class="slide-heading">Review premium rental options with <span class="text-gradient">clear daily pricing</span>.</h1>
+                        <p class="slide-sub">Customers can compare availability, campaigns, and vehicle details before moving into a booking flow that feels more polished and trustworthy.</p>
+                        <div class="slide-actions">
+                            <a href="guest-vehicle-inventory.html" class="btn-hero-primary"><i class="bi bi-calendar-check-fill"></i> Explore Rentals</a>
+                            <a href="register.html" class="btn-hero-outline"><i class="bi bi-person-plus-fill"></i> Create Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-slide" style="background-image:url('images/tyler-clemmensen-d1Jum1vVLew-unsplash.jpg')">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <div class="slide-copy">
+                        <span class="slide-badge"><i class="bi bi-gem"></i> Dealership Quality</span>
+                        <h1 class="slide-heading">A more refined digital experience for <span class="text-gradient">sales and rentals</span>.</h1>
+                        <p class="slide-sub">K.D. Auto Traders is designed to feel more like a trusted premium dealership and less like a noisy listing site, across guest and account journeys.</p>
+                        <div class="slide-actions">
+                            <a href="about-us.html" class="btn-hero-primary"><i class="bi bi-info-circle-fill"></i> Our Story</a>
+                            <a href="login.html" class="btn-hero-outline"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="slider-btn slider-prev" id="sliderPrev" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+        <button class="slider-btn slider-next" id="sliderNext" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+
+        <div class="slider-indicators">
+            <button class="indicator active" data-index="0"></button>
+            <button class="indicator" data-index="1"></button>
+            <button class="indicator" data-index="2"></button>
+            <button class="indicator" data-index="3"></button>
+        </div>
+
+        <a href="#trust" class="scroll-down-hint"><i class="bi bi-chevron-down"></i></a>
+    </div>
+</section>
+
+<section id="featured" class="home-section featured-vehicles-section">
+    <div class="page-container">
+        <div class="section-header reveal">
+            <div>
+                <span class="section-kicker"><i class="bi bi-car-front-fill"></i> Featured Vehicles</span>
+                <h2>Fresh inventory from the live marketplace.</h2>
+                <p>We surface real vehicles from the current listing feed so the home page always reflects what customers can actually browse today.</p>
+            </div>
+            <div class="section-metrics">
+                <div class="metric-pill">
+                    <strong id="homeVehicleCount">0</strong>
+                    <span>live listings</span>
+                </div>
+                <div class="metric-pill">
+                    <strong id="homeSaleCount">0</strong>
+                    <span>for sale</span>
+                </div>
+                <div class="metric-pill">
+                    <strong id="homeRentCount">0</strong>
+                    <span>for rent</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="featured-vehicle-grid" id="featuredVehiclesGrid">
+            <article class="featured-vehicle-card vehicle-card reveal">
+                <div class="featured-card-loading">Loading featured vehicles...</div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="campaigns" class="home-section home-promotions-section">
+    <div class="page-container">
+        <div class="section-header reveal">
+            <div>
+                <span class="section-kicker"><i class="bi bi-stars"></i> Live Campaigns</span>
+                <h2>Current promotions pulled from active dealership campaigns.</h2>
+                <p>These spotlight banners are populated from the same promotion system used across inventory, so the home page stays aligned with live offers.</p>
+            </div>
+            <div class="section-metrics">
+                <div class="metric-pill metric-pill-accent">
+                    <strong id="homePromoCount">0</strong>
+                    <span>campaigns</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-promo-grid" id="homePromotionsGrid">
+            <article class="home-promo-card promo-card reveal">
+                <div class="featured-card-loading">Loading live promotions...</div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<footer class="site-mini-footer">
+    <div class="page-container">
+        <div class="site-mini-footer-shell">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-mark"><i class="bi bi-car-front-fill"></i></span>
+                <div>
+                    <div class="nav-title">K.D.<span>Auto Traders</span></div>
+                    <div class="nav-sub">Premium Vehicle Marketplace</div>
+                </div>
+            </a>
+            <div class="site-mini-footer-copy">&copy; 2026 K.D. Auto Traders. Designed for a cleaner sales and rental experience.</div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/script.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const authBtn = document.getElementById("authBtn");
+
+        const token = sessionStorage.getItem("jwtToken");
+        const role = sessionStorage.getItem("userRole");
+
+        if (token && role && authBtn) {
+            authBtn.innerHTML = '<i class="bi bi-person-circle"></i> My Dashboard';
+
+            if (role === "MAIN_ADMIN") {
+                authBtn.href = "admin-dashboard.html";
+            } else if (role === "MARKETING_MANAGER") {
+                authBtn.href = "marketing-dashboard.html";
+            } else {
+                authBtn.href = "customer-dashboard.html";
+            }
+        }
+    });
+</script>
+</body>
+</html>
