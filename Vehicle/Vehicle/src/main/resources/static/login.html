@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K.D. Auto Traders | Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/premium-auth.css">
+</head>
+<body class="auth-body">
+<div class="auth-shell">
+    <section class="auth-panel auth-panel--brand">
+        <div class="auth-topbar">
+            <div class="auth-brand-stack">
+                <a href="index.html" class="brand-mark">
+                    <span class="brand-mark__icon"><i class="bi bi-car-front-fill"></i></span>
+                    <span class="brand-mark__text">
+                        <span class="brand-mark__title">K.D. Auto <span>Traders</span></span>
+                        <span class="brand-mark__sub">Premium Vehicle Marketplace</span>
+                    </span>
+                </a>
+                <a href="index.html" class="auth-back-link">
+                    <i class="bi bi-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+
+        <div class="auth-hero">
+            <h1 class="auth-heading">Welcome back to a smarter way to shop vehicles.</h1>
+            <p class="auth-description">
+                Continue your search with real-time promotions, premium inventory visibility, faster booking access, and a cleaner dealership experience across sales and rentals.
+            </p>
+
+            <div class="auth-feature-grid">
+                <article class="auth-feature-card">
+                    <i class="bi bi-tags-fill"></i>
+                    <h3>Live Campaign Pricing</h3>
+                    <p>See active promotions, targeted hybrid and EV offers, and highlighted inventory without missing limited-time deals.</p>
+                </article>
+                <article class="auth-feature-card">
+                    <i class="bi bi-speedometer2"></i>
+                    <h3>Faster Decisions</h3>
+                    <p>Jump back into saved vehicles, inquiries, reviews, rentals, and premium pricing from one clean dashboard.</p>
+                </article>
+                <article class="auth-feature-card">
+                    <i class="bi bi-shield-check"></i>
+                    <h3>Trusted Experience</h3>
+                    <p>Secure authentication, verified customer workflows, and polished dealership interactions built for confidence.</p>
+                </article>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="auth-panel auth-panel--form">
+        <div class="auth-form-shell">
+            <div class="auth-form-card">
+                <div class="auth-card-top">
+                    <div>
+                        <span class="auth-eyebrow"><i class="bi bi-box-arrow-in-right"></i> Sign In</span>
+                        <h1 class="auth-form-title">Access your dealership account</h1>
+                        <p class="auth-form-subtitle">Sign in to continue browsing vehicles, manage your profile, and view your personalized pricing and activity.</p>
+                    </div>
+                    <div class="auth-status-pill">
+                        <i class="bi bi-lightning-charge-fill"></i> Fast secure access
+                    </div>
+                </div>
+
+                <div class="auth-trust">
+                    <div class="auth-trust-item">
+                        <i class="bi bi-car-front-fill"></i>
+                        <strong>Inventory Access</strong>
+                        <span>Continue buying or booking with the latest pricing and offers.</span>
+                    </div>
+                    <div class="auth-trust-item">
+                        <i class="bi bi-heart-fill"></i>
+                        <strong>Wishlist Sync</strong>
+                        <span>Pick up where you left off on saved vehicles and active deals.</span>
+                    </div>
+                    <div class="auth-trust-item">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        <strong>Protected Account</strong>
+                        <span>Secure role-based login for customers, marketing, and admin users.</span>
+                    </div>
+                </div>
+
+                <form id="loginForm" class="auth-form">
+                    <div class="auth-field auth-field--full">
+                        <label for="email">Email Address</label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-envelope-fill auth-input-icon"></i>
+                            <input type="email" id="email" class="auth-input" placeholder="you@example.com" required autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div class="auth-field auth-field--full">
+                        <label for="password">Password</label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-lock-fill auth-input-icon"></i>
+                            <input type="password" id="password" class="auth-input" placeholder="Enter your password" required autocomplete="current-password">
+                            <button type="button" class="auth-eye-btn" id="togglePw" aria-label="Toggle password">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="auth-alert auth-alert--error" id="errorMsg">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>Invalid credentials. Please try again.</span>
+                    </div>
+
+                    <button type="submit" id="loginBtn" class="auth-primary-btn">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In to Dashboard
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>Need an account?</span></div>
+
+                <div class="auth-switch">
+                    New to K.D. Auto Traders? <a href="register.html">Create your account</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.getElementById("togglePw").addEventListener("click", function () {
+        const pw = document.getElementById("password");
+        const icon = document.getElementById("eyeIcon");
+
+        if (pw.type === "password") {
+            pw.type = "text";
+            icon.className = "bi bi-eye-slash";
+        } else {
+            pw.type = "password";
+            icon.className = "bi bi-eye";
+        }
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const loginBtn = document.getElementById("loginBtn");
+        const errorMsg = document.getElementById("errorMsg");
+
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+        loginBtn.disabled = true;
+        errorMsg.classList.remove("show");
+
+        fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Invalid credentials");
+                }
+                return response.json();
+            })
+            .then(data => {
+                ["jwtToken", "userName", "userRole"].forEach((key) => {
+                    sessionStorage.removeItem(key);
+                    localStorage.removeItem(key);
+                });
+                sessionStorage.setItem("jwtToken", data.token);
+                sessionStorage.setItem("userName", data.fullName);
+                sessionStorage.setItem("userRole", data.role);
+
+                loginBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Signed In';
+                loginBtn.style.background = "linear-gradient(135deg, #16a34a, #22c55e)";
+
+                setTimeout(() => {
+                    if (data.role === "MAIN_ADMIN") {
+                        window.location.href = "admin-dashboard.html";
+                    } else if (data.role === "MARKETING_MANAGER") {
+                        window.location.href = "marketing-dashboard.html";
+                    } else if (data.role === "CUSTOMER") {
+                        window.location.href = "vehicle-inventory.html";
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                }, 700);
+            })
+            .catch(() => {
+                loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In to Dashboard';
+                loginBtn.disabled = false;
+                errorMsg.classList.add("show");
+            });
+    });
+</script>
+</body>
+</html>
