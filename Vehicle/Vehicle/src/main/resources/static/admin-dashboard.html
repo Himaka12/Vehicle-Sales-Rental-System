@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center | K.D. Auto Traders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/premium-admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+
+<div class="admin-mobile-bar">
+    <div class="admin-mobile-bar__inner">
+        <button class="mobile-menu-btn" type="button" onclick="toggleAdminSidebar()" aria-label="Open admin menu">
+            <i class="bi bi-list"></i>
+        </button>
+        <a href="admin-dashboard.html" class="mobile-brand">
+            <span class="mobile-brand__icon"><i class="bi bi-car-front-fill"></i></span>
+            <span class="mobile-brand__text">
+                <span class="mobile-brand__title">K.D. Auto <span>Traders</span></span>
+                <span class="mobile-brand__sub">Admin workspace</span>
+            </span>
+        </a>
+        <span></span>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeAdminSidebar()"></div>
+
+<div class="admin-layout">
+    <aside class="sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <a href="admin-dashboard.html" class="sidebar-brand">
+                <div class="sidebar-brand-icon"><i class="bi bi-car-front-fill"></i></div>
+                <div class="sidebar-brand-name">K.D. Auto <span>Traders</span></div>
+            </a>
+
+            <span class="sidebar-role">
+                <i class="fas fa-shield-alt"></i>
+                Main Admin
+            </span>
+        </div>
+
+        <div class="sidebar-panel">
+            <h2>Admin control center</h2>
+            <p>Track core platform activity, monitor pending actions, and jump directly into the operational areas that need attention.</p>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+            <a href="admin-dashboard.html" class="sidebar-link active">
+                <i class="fas fa-chart-pie"></i>
+                <span class="sidebar-link-label">Dashboard overview</span>
+                <span class="sidebar-notify" id="adminOverviewBadge" hidden>0</span>
+            </a>
+            <a href="manage-vehicles.html" class="sidebar-link" data-admin-section="vehicles">
+                <i class="fas fa-car"></i>
+                <span class="sidebar-link-label">Manage vehicles</span>
+                <span class="sidebar-notify" id="adminVehiclesBadge" hidden>0</span>
+            </a>
+            <a href="manage-inquiries.html" class="sidebar-link" data-admin-section="inquiries">
+                <i class="fas fa-envelope-open-text"></i>
+                <span class="sidebar-link-label">Customer inquiries</span>
+                <span class="sidebar-notify" id="adminInquiriesBadge" hidden>0</span>
+            </a>
+            <a href="manage-rentals.html" class="sidebar-link" data-admin-section="rentals">
+                <i class="fas fa-calendar-check"></i>
+                <span class="sidebar-link-label">Rental bookings</span>
+                <span class="sidebar-notify" id="adminRentalsBadge" hidden>0</span>
+            </a>
+            <a href="manage-users.html" class="sidebar-link" data-admin-section="users">
+                <i class="fas fa-users"></i>
+                <span class="sidebar-link-label">Manage users</span>
+                <span class="sidebar-notify" id="adminUsersBadge" hidden>0</span>
+            </a>
+            <a href="manage-reviews.html" class="sidebar-link" data-admin-section="reviews">
+                <i class="fas fa-star"></i>
+                <span class="sidebar-link-label">Manage reviews</span>
+                <span class="sidebar-notify" id="adminReviewsBadge" hidden>0</span>
+            </a>
+            <a href="marketing-dashboard.html" class="sidebar-link">
+                <i class="fas fa-tags"></i>
+                <span class="sidebar-link-label">Manage promotions</span>
+            </a>
+            <a href="manage-refunds.html" class="sidebar-link" data-admin-section="refunds">
+                <i class="fas fa-rotate-left"></i>
+                <span class="sidebar-link-label">Manage refunds</span>
+                <span class="sidebar-notify" id="adminRefundsBadge" hidden>0</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero">
+            <div class="admin-hero-top">
+                <div>
+                    <span class="admin-eyebrow">
+                        <i class="fas fa-satellite-dish"></i>
+                        Command Center
+                    </span>
+                    <h1 class="admin-hero-title">Monitor the platform with a clearer, faster admin workspace.</h1>
+                    <p class="admin-hero-subtitle">Track users, vehicles, pending rentals, and inquiries from one premium dashboard, then move directly into the management views that need action.</p>
+                </div>
+
+                <div class="admin-hero-actions">
+                    <a href="manage-rentals.html" class="admin-btn primary" data-admin-section="rentals">
+                        <i class="fas fa-calendar-check"></i>
+                        Review rentals
+                    </a>
+                    <a href="manage-inquiries.html" class="admin-btn secondary" data-admin-section="inquiries">
+                        <i class="fas fa-envelope-open-text"></i>
+                        Open inquiries
+                    </a>
+                    <a href="marketing-dashboard.html" class="admin-btn secondary">
+                        <i class="fas fa-tags"></i>
+                        Manage promotions
+                    </a>
+                </div>
+            </div>
+
+            <div class="admin-hero-metrics">
+                <article class="hero-metric">
+                    <span>Platform users</span>
+                    <strong id="heroUsers">0</strong>
+                </article>
+                <article class="hero-metric">
+                    <span>Vehicles listed</span>
+                    <strong id="heroVehicles">0</strong>
+                </article>
+                <article class="hero-metric">
+                    <span>Pending rentals</span>
+                    <strong id="heroRentals">0</strong>
+                </article>
+                <article class="hero-metric">
+                    <span>Pending inquiries</span>
+                    <strong id="heroInquiries">0</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="stats-grid">
+                <div class="stat-card card-blue">
+                    <div class="stat-copy">
+                        <div class="stat-num" id="statUsers">0</div>
+                        <div class="stat-label">Total users</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stat-card card-green">
+                    <div class="stat-copy">
+                        <div class="stat-num" id="statVehicles">0</div>
+                        <div class="stat-label">Listed vehicles</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-car"></i></div>
+                </div>
+                <div class="stat-card card-warning clickable" onclick="window.location.href='manage-rentals.html'">
+                    <div class="stat-copy">
+                        <div class="stat-num" id="statRentals">0</div>
+                        <div class="stat-label">Pending rentals</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                </div>
+                <div class="stat-card card-danger clickable" onclick="window.location.href='manage-inquiries.html'">
+                    <div class="stat-copy">
+                        <div class="stat-num" id="statInquiries">0</div>
+                        <div class="stat-label">Pending inquiries</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="admin-grid admin-grid-2">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <h2>Platform workload overview</h2>
+                            <p>Compare the main operational metrics across users, vehicle listings, rentals, and inquiries in one quick admin snapshot.</p>
+                        </div>
+                        <span class="admin-pill">
+                            <i class="fas fa-chart-column"></i>
+                            Live metrics
+                        </span>
+                    </div>
+
+                    <div class="admin-chart-shell">
+                        <div class="chart-wrap">
+                            <canvas id="mainBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div>
+                            <h2>Pending action focus</h2>
+                            <p>See where operational follow-up is currently concentrated and move into the next admin task quickly.</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-chart-shell" style="margin-bottom: 18px;">
+                        <div class="chart-wrap" style="height: 250px;">
+                            <canvas id="actionDoughnutChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="quick-links">
+                        <a href="manage-rentals.html" class="quick-link" data-admin-section="rentals">
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <strong>Review rental queue</strong>
+                                <span>Open current rental requests and pending approvals.</span>
+                            </div>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="manage-inquiries.html" class="quick-link" data-admin-section="inquiries">
+                            <i class="fas fa-envelope-open-text"></i>
+                            <div>
+                                <strong>Handle customer inquiries</strong>
+                                <span>Respond faster to active purchase questions and lead flow.</span>
+                            </div>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="manage-users.html" class="quick-link" data-admin-section="users">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <strong>Manage platform users</strong>
+                                <span>Review account growth, access roles, and customer activity.</span>
+                            </div>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="marketing-dashboard.html" class="quick-link">
+                            <i class="fas fa-tags"></i>
+                            <div>
+                                <strong>Control live promotions</strong>
+                                <span>Open campaign management, update offers, and cover marketing handovers.</span>
+                            </div>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/js/premium-feedback.js"></script>
+<script>
+    const token = sessionStorage.getItem("jwtToken");
+    const role  = sessionStorage.getItem("userRole");
+    const userName = sessionStorage.getItem("userName") || "main-admin";
+    const ADMIN_BADGE_STATE_KEY = `admin-dashboard-badges:${userName}`;
+    let adminCurrentBadgeCounts = {
+        vehicles: 0,
+        inquiries: 0,
+        rentals: 0,
+        users: 0,
+        reviews: 0,
+        refunds: 0
+    };
+
+    window.onload = function() {
+        if (!token || role !== "MAIN_ADMIN") {
+            alert("Unauthorized access! Redirecting to login.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        bindAdminNotificationTracking();
+        fetchAdminStats();
+    };
+
+    function getAdminBadgeState() {
+        try {
+            return JSON.parse(sessionStorage.getItem(ADMIN_BADGE_STATE_KEY)) || {};
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function saveAdminBadgeState(state) {
+        sessionStorage.setItem(ADMIN_BADGE_STATE_KEY, JSON.stringify(state));
+    }
+
+    function ensureAdminBadgeStateInitialized() {
+        const state = getAdminBadgeState();
+        if (state.__initialized) {
+            return;
+        }
+
+        state.__initialized = true;
+        state.vehicles = adminCurrentBadgeCounts.vehicles;
+        state.inquiries = adminCurrentBadgeCounts.inquiries;
+        state.rentals = adminCurrentBadgeCounts.rentals;
+        state.users = adminCurrentBadgeCounts.users;
+        state.reviews = adminCurrentBadgeCounts.reviews;
+        state.refunds = adminCurrentBadgeCounts.refunds;
+        saveAdminBadgeState(state);
+    }
+
+    function markAdminSectionSeen(section) {
+        if (!section || !Object.prototype.hasOwnProperty.call(adminCurrentBadgeCounts, section)) {
+            return;
+        }
+
+        const state = getAdminBadgeState();
+        state.__initialized = true;
+        state[section] = adminCurrentBadgeCounts[section];
+        saveAdminBadgeState(state);
+    }
+
+    function countUnreadAdminItems(section) {
+        const state = getAdminBadgeState();
+        const seenCount = Math.max(0, Number(state[section]) || 0);
+        const currentCount = Math.max(0, Number(adminCurrentBadgeCounts[section]) || 0);
+        return Math.max(currentCount - seenCount, 0);
+    }
+
+    function bindAdminNotificationTracking() {
+        document.querySelectorAll("[data-admin-section]").forEach(link => {
+            link.addEventListener("click", () => {
+                markAdminSectionSeen(link.dataset.adminSection);
+            });
+        });
+    }
+
+    async function fetchAdminStats() {
+        try {
+            const res = await fetch("/api/admin/stats", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            if (res.ok) {
+                const stats = await res.json();
+
+                document.getElementById("statUsers").innerText     = stats.totalUsers;
+                document.getElementById("statVehicles").innerText  = stats.totalVehicles;
+                document.getElementById("statRentals").innerText   = stats.pendingRentals;
+                document.getElementById("statInquiries").innerText = stats.pendingInquiries;
+
+                document.getElementById("heroUsers").innerText     = stats.totalUsers;
+                document.getElementById("heroVehicles").innerText  = stats.totalVehicles;
+                document.getElementById("heroRentals").innerText   = stats.pendingRentals;
+                document.getElementById("heroInquiries").innerText = stats.pendingInquiries;
+
+                drawCharts(stats);
+                await fetchAdminSidebarBadges(stats);
+            }
+        } catch (e) {
+            console.error("Failed to load admin stats", e);
+        }
+    }
+
+    async function fetchAdminSidebarBadges(stats) {
+        try {
+            const [reviewsRes, refundsRes] = await Promise.all([
+                fetch("/api/reviews/all", {
+                    headers: { "Authorization": "Bearer " + token }
+                }),
+                fetch("/api/refunds/all", {
+                    headers: { "Authorization": "Bearer " + token }
+                })
+            ]);
+
+            const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
+            const refunds = refundsRes.ok ? await refundsRes.json() : [];
+            const processingRefunds = refunds.filter(refund => refund.status === "Processing").length;
+            const criticalReviewCount = reviews.filter(review =>
+                review.reviewStatus !== "RemovedByAdmin" &&
+                review.requiresAdminAttention === true &&
+                review.adminAttentionStatus !== "Resolved"
+            ).length;
+
+            adminCurrentBadgeCounts = {
+                vehicles: Number(stats.totalVehicles || 0),
+                inquiries: Number(stats.pendingInquiries || 0),
+                rentals: Number(stats.pendingRentals || 0),
+                users: Number(stats.totalUsers || 0),
+                reviews: criticalReviewCount,
+                refunds: processingRefunds
+            };
+
+            ensureAdminBadgeStateInitialized();
+
+            const overviewCount = countUnreadAdminItems("inquiries")
+                + countUnreadAdminItems("rentals")
+                + countUnreadAdminItems("reviews")
+                + countUnreadAdminItems("refunds")
+                + countUnreadAdminItems("vehicles")
+                + countUnreadAdminItems("users");
+
+            setSidebarBadge("adminOverviewBadge", overviewCount);
+            setSidebarBadge("adminVehiclesBadge", countUnreadAdminItems("vehicles"));
+            setSidebarBadge("adminInquiriesBadge", countUnreadAdminItems("inquiries"));
+            setSidebarBadge("adminRentalsBadge", countUnreadAdminItems("rentals"));
+            setSidebarBadge("adminUsersBadge", countUnreadAdminItems("users"));
+            setSidebarBadge("adminReviewsBadge", countUnreadAdminItems("reviews"));
+            setSidebarBadge("adminRefundsBadge", countUnreadAdminItems("refunds"));
+        } catch (error) {
+            console.error("Failed to load admin sidebar badges", error);
+        }
+    }
+
+    function setSidebarBadge(id, count) {
+        const badge = document.getElementById(id);
+        if (!badge) {
+            return;
+        }
+
+        const safeCount = Math.max(0, Number(count) || 0);
+        badge.textContent = safeCount > 99 ? "99+" : String(safeCount);
+        badge.hidden = safeCount === 0;
+    }
+
+    function drawCharts(stats) {
+        const ctxBar = document.getElementById('mainBarChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Total Users', 'Total Vehicles', 'Pending Rentals', 'Pending Inquiries'],
+                datasets: [{
+                    label: 'System Metrics',
+                    data: [stats.totalUsers, stats.totalVehicles, stats.pendingRentals, stats.pendingInquiries],
+                    backgroundColor: ['#3b82f6', '#16a34a', '#f59e0b', '#ef4444'],
+                    borderRadius: 12
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(203, 213, 225, 0.5)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        const ctxDoughnut = document.getElementById('actionDoughnutChart').getContext('2d');
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending Rentals', 'Pending Inquiries'],
+                datasets: [{
+                    data: [stats.pendingRentals, stats.pendingInquiries],
+                    backgroundColor: ['#f59e0b', '#ef4444'],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+
+    function toggleAdminSidebar() {
+        const sidebar = document.getElementById("adminSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+    }
+
+    function closeAdminSidebar() {
+        document.getElementById("adminSidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+    }
+
+    function logout() {
+        ["jwtToken", "userName", "userRole"].forEach((key) => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
