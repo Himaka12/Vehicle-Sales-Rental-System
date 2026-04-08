@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vehicle | K.D. Auto Traders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+
+    <style>
+        :root {
+            --primary:       #3b82f6;
+            --primary-dark:  #2563eb;
+            --primary-light: #eff6ff;
+            --primary-mid:   #dbeafe;
+            --success:       #16a34a;
+            --success-light: #f0fdf4;
+            --warning:       #f59e0b;
+            --warning-light: #fffbeb;
+            --danger:        #ef4444;
+            --danger-light:  #fef2f2;
+            --text:          #1e293b;
+            --muted:         #64748b;
+            --border:        #e2e8f0;
+            --white:         #ffffff;
+            --bg:            #f5f8ff;
+            --card-shadow:   0 2px 12px rgba(59,130,246,0.08);
+            --sidebar-width: 260px;
+        }
+
+        *,
+        *::before,
+        *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            height: 100%;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 16px rgba(59,130,246,0.07);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 26px 22px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .sidebar-brand-name span { color: var(--primary); }
+
+        .sidebar-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 4px 11px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, var(--primary-dark), #1d4ed8);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 13px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            margin: 2px 0;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary-mid);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i { width: 16px; text-align: center; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout-sidebar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: 1px solid rgba(239, 68, 68, 0.36);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout-sidebar:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); border-color: rgba(239, 68, 68, 0.48); }
+
+        .main-content {
+            flex: 1;
+            padding: 36px 40px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .page-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-sub {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--white);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-mid);
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .form-card-header {
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-card-title i { color: var(--primary); }
+
+        .form-card-body { padding: 28px 28px 32px; }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 14px;
+            margin-top: 24px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-label:first-of-type { margin-top: 0; }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 0;
+        }
+
+        .form-row > .form-group { flex: 1; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            background: var(--white);
+            transition: all 0.18s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: #fafcff;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-upload-area i {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .file-upload-area p {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+        }
+
+        .file-note {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.775rem;
+            color: var(--muted);
+        }
+
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.45);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { padding: 24px 16px; }
+            .form-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/premium-admin-pages.css">
+</head>
+<body class="admin-shell-page admin-shell-form-page">
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="bi bi-car-front-fill"></i></div>
+            <div class="sidebar-brand-name">K.D. Auto <span>Traders</span></div>
+        </a>
+        <span class="sidebar-role"><i class="fas fa-shield-alt"></i> Main Admin</span>
+    </div>
+    <div class="sidebar-panel">
+        <h2>Admin control center</h2>
+        <p>Track core platform activity, monitor pending actions, and jump directly into the operational areas that need attention.</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard overview</a>
+        <a href="manage-vehicles.html" class="active"><i class="fas fa-car"></i> Manage vehicles</a>
+        <a href="manage-inquiries.html"><i class="fas fa-envelope-open-text"></i> Customer inquiries</a>
+        <a href="manage-rentals.html"><i class="fas fa-calendar-check"></i> Rental bookings</a>
+        <a href="manage-users.html"><i class="fas fa-users"></i> Manage users</a>
+        <a href="manage-reviews.html"><i class="fas fa-star"></i> Manage reviews</a>
+        <a href="manage-refunds.html"><i class="fas fa-rotate-left"></i> Manage refunds</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="top-bar">
+        <div>
+            <p class="page-eyebrow">K.D. Auto Traders</p>
+            <h2 class="page-title">
+                <i class="fas fa-plus-circle" style="color:var(--primary); font-size:1.3rem;"></i>
+                Add New Vehicle
+            </h2>
+            <p class="page-sub">Create a clean new listing with all core details, pricing, stock, and media in one place.</p>
+        </div>
+        <a href="manage-vehicles.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-title">
+                <i class="fas fa-sliders-h"></i> Vehicle Listing Details
+            </div>
+        </div>
+
+        <div class="form-card-body">
+            <form id="addVehicleForm">
+                <div class="section-label"><i class="fas fa-clipboard-list" style="font-size:0.7rem;"></i> Core Vehicle Details</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Listing Type</label>
+                        <select id="vListingType" class="form-control" required>
+                            <option value="" disabled selected>Select Purpose...</option>
+                            <option value="Sale">For Sale</option>
+                            <option value="Rent">For Rent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select id="vCondition" class="form-control" required>
+                            <option value="Used">Used</option>
+                            <option value="BrandNew">Brand New</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Availability Status</label>
+                        <select id="vStatus" class="form-control" required>
+                            <option value="Available">Available</option>
+                            <option value="Coming Soon">Coming Soon</option>
+                            <option value="Sold">Sold</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input type="text" id="vBrand" class="form-control" placeholder="e.g. Toyota" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input type="text" id="vModel" class="form-control" placeholder="e.g. Prius" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Category</label>
+                        <select id="vCategory" class="form-control" required>
+                            <option value="" disabled selected>Select Category...</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="Van">Van</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Coupe">Coupe</option>
+                            <option value="Convertible">Convertible</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Bike">Bike</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Manufactured Year</label>
+                        <input type="number" id="vYear" class="form-control" placeholder="e.g. 2020" min="1886" step="1" inputmode="numeric" required>
+                    </div>
+                </div>
+
+                <div class="section-label"><i class="fas fa-pen-ruler" style="font-size:0.7rem;"></i> Appearance, Specs & Stock</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vehicle Color</label>
+                        <input type="text" id="vColor" class="form-control" placeholder="e.g. Pearl White" required>
+                    </div>
+                    <div class="form-group">
+                        <label>In Stock / Quantity</label>
+                        <input type="number" id="vQuantity" class="form-control" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mileage (km)</label>
+                        <input type="text" id="vMileage" class="form-control" placeholder="e.g. 45,000" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Engine Capacity / Cc</label>
+                        <input type="number" id="vEngine" class="form-control" placeholder="e.g. 1500" min="1" step="1" inputmode="numeric" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fuel Type</label>
+                        <select id="vFuel" class="form-control">
+                            <option value="Petrol">Petrol</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="Electric">Electric</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Transmission</label>
+                        <select id="vTrans" class="form-control">
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-label"><i class="fas fa-coins" style="font-size:0.7rem;"></i> Pricing, Description & Images</div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Description</label>
+                        <textarea id="vDesc" class="form-control" placeholder="Enter detailed vehicle features and description..." required></textarea>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label id="priceLabel">Total Price (LKR)</label>
+                        <input type="text" id="vPrice" class="form-control" placeholder="e.g. 5,000,000" style="font-weight: bold; color: var(--primary-dark);" required>
+
+                        <label style="margin-top: 15px;">Upload Images</label>
+                        <div class="file-upload-wrapper">
+                            <div class="file-upload-area">
+                                <input type="file" id="vImages" accept="image/*" multiple required>
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p><strong>Click to upload</strong> or drag & drop images here</p>
+                                <p style="margin-top:4px; font-size:0.73rem;">Maximum 5 images · JPG, PNG, WEBP</p>
+                            </div>
+                        </div>
+                        <span class="file-note">First uploaded image will be used as the cover photo.</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit">
+                    <i class="fas fa-cloud-upload-alt"></i> List Vehicle to Inventory
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/js/premium-feedback.js"></script>
+<script>
+    const token = sessionStorage.getItem("jwtToken");
+
+    window.onload = function() {
+        if (!token || sessionStorage.getItem("userRole") !== "MAIN_ADMIN") {
+            window.location.href = "login.html";
+        }
+    };
+
+    function formatNumberInput(e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value !== "") e.target.value = parseInt(value, 10).toLocaleString('en-US');
+        else e.target.value = "";
+    }
+
+    document.getElementById("vPrice").addEventListener("input", formatNumberInput);
+    document.getElementById("vMileage").addEventListener("input", formatNumberInput);
+
+    function getNormalizedEngineCapacity() {
+        return document.getElementById("vEngine").value.trim();
+    }
+
+    function isPositiveInteger(value) {
+        return /^[1-9]\d*$/.test(value);
+    }
+
+    function isNonNegativeNumber(value) {
+        return /^\d+(\.\d+)?$/.test(value);
+    }
+
+    document.getElementById("vListingType").addEventListener("change", function() {
+        document.getElementById("priceLabel").innerText = this.value === "Rent" ? "Price Per Day (LKR)" : "Total Price (LKR)";
+    });
+
+    document.getElementById("vCondition").addEventListener("change", function() {
+        const mileageInput = document.getElementById("vMileage");
+        if (this.value === "BrandNew") {
+            mileageInput.value = "0";
+            mileageInput.readOnly = true;
+        } else {
+            mileageInput.value = "";
+            mileageInput.readOnly = false;
+        }
+    });
+
+    document.getElementById("addVehicleForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const rawPrice = document.getElementById("vPrice").value.replace(/,/g, "");
+        const rawMileage = document.getElementById("vMileage").value.replace(/,/g, "");
+        const rawQuantity = document.getElementById("vQuantity").value.trim();
+        const rawYear = document.getElementById("vYear").value.trim();
+        const engineCapacity = getNormalizedEngineCapacity();
+
+        if (!isPositiveInteger(rawYear) || Number(rawYear) < 1886) {
+            alert("Please enter a valid manufacture year.");
+            document.getElementById("vYear").focus();
+            return;
+        }
+
+        if (!isNonNegativeNumber(rawMileage)) {
+            alert("Mileage cannot be a negative value.");
+            document.getElementById("vMileage").focus();
+            return;
+        }
+
+        if (!isNonNegativeNumber(rawQuantity)) {
+            alert("Quantity cannot be a negative value.");
+            document.getElementById("vQuantity").focus();
+            return;
+        }
+
+        if (!isNonNegativeNumber(rawPrice) || parseFloat(rawPrice) <= 0) {
+            alert("Price must be greater than 0.");
+            document.getElementById("vPrice").focus();
+            return;
+        }
+
+        if (!/^[1-9]\d*$/.test(engineCapacity)) {
+            alert("Engine capacity must be greater than 0.");
+            document.getElementById("vEngine").focus();
+            return;
+        }
+
+        const submitBtn = document.getElementById("submitBtn");
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving... Please wait`;
+        submitBtn.disabled = true;
+
+        try {
+            const vehicleData = {
+                listingType: document.getElementById("vListingType").value,
+                vehicleCondition: document.getElementById("vCondition").value,
+                brand: document.getElementById("vBrand").value,
+                model: document.getElementById("vModel").value,
+                category: document.getElementById("vCategory").value,
+                manufactureYear: document.getElementById("vYear").value,
+                color: document.getElementById("vColor").value,
+                quantity: parseInt(rawQuantity),
+                status: document.getElementById("vStatus").value,
+                mileage: parseInt(rawMileage),
+                price: parseFloat(rawPrice),
+                engineCapacity: engineCapacity,
+                fuelType: document.getElementById("vFuel").value,
+                transmission: document.getElementById("vTrans").value,
+                description: document.getElementById("vDesc").value
+            };
+
+            const formData = new FormData();
+            formData.append("vehicleData", JSON.stringify(vehicleData));
+
+            const files = document.getElementById("vImages").files;
+            for (let i = 0; i < Math.min(files.length, 5); i++) {
+                formData.append("images", files[i]);
+            }
+
+            const response = await fetch("/api/vehicles/add", {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + token },
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Vehicle listed successfully!");
+                window.location.href = "manage-vehicles.html";
+            } else {
+                const errorText = await response.text();
+                alert("Validation Error: " + errorText);
+            }
+        } catch (error) {
+            alert("Network Error: Could not connect to the server.");
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    function logout() {
+        ["jwtToken", "userName", "userRole"].forEach((key) => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        window.location.href = "login.html";
+    }
+</script>
+<script src="/js/premium-admin-shell.js"></script>
+<script src="/js/custom-selects.js"></script>
+</body>
+</html>
