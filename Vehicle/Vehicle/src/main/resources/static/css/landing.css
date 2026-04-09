@@ -1,0 +1,162 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden; /* Prevents scrolling to keep the split-screen fixed */
+}
+
+/* Split Layout Container */
+.split-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Left Panel (Light) */
+.left-panel {
+    width: 55%;
+    background-color: #f8f9fa;
+    position: relative;
+    padding: 100px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Right Panel (Dark) */
+.right-panel {
+    width: 45%;
+    background-color: #111111;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    padding: 30px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #111;
+}
+
+.nav-actions a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 20px;
+}
+
+.login-btn { color: #111; }
+.register-btn { color: #fff; background: #111; padding: 8px 16px; border-radius: 20px; }
+
+/* Typography */
+.brand-subtitle {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.main-headline {
+    font-size: 4.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #111;
+    letter-spacing: -1.5px;
+    margin-bottom: 30px;
+    max-width: 600px;
+}
+
+.learn-more {
+    font-size: 16px;
+    color: #111;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+}
+
+.learn-more::after {
+    content: ' >';
+    margin-left: 5px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Right Panel Content - Floating Card */
+.car-image {
+    width: 120%;
+    position: absolute;
+    right: -10%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.floating-card {
+    position: absolute;
+    bottom: 15%;
+    right: 15%;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    z-index: 5;
+    width: 260px;
+}
+
+.card-title { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.card-model { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 5px; }
+.card-price { font-size: 18px; color: #111; margin-bottom: 20px; }
+
+.btn-buy {
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-buy:hover { background: #333; }
