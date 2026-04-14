@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Bookings | K.D. Auto Traders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+
+    <style>
+        :root {
+            --primary:       #3b82f6;
+            --primary-dark:  #2563eb;
+            --primary-light: #eff6ff;
+            --primary-mid:   #dbeafe;
+            --success:       #16a34a;
+            --success-light: #f0fdf4;
+            --warning:       #f59e0b;
+            --warning-light: #fffbeb;
+            --danger:        #ef4444;
+            --danger-light:  #fef2f2;
+            --text:          #1e293b;
+            --muted:         #64748b;
+            --border:        #e2e8f0;
+            --white:         #ffffff;
+            --bg:            #f5f8ff;
+            --card-shadow:   0 2px 12px rgba(59,130,246,0.08);
+            --sidebar-width: 260px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ════ SIDEBAR ════ */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            height: 100%;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 16px rgba(59,130,246,0.07);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 26px 22px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar-brand-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem; font-weight: 800;
+            color: var(--text); letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .sidebar-brand-name span { color: var(--primary); }
+
+        .sidebar-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 4px 11px;
+            border-radius: 100px;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, var(--primary-dark), #1d4ed8);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 13px 20px;
+            font-size: 0.875rem; font-weight: 500;
+            color: var(--muted);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            margin: 2px 0;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary-mid);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i { width: 16px; text-align: center; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout-sidebar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: 1px solid rgba(239, 68, 68, 0.36);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.875rem;
+            cursor: pointer; width: 100%;
+            padding: 10px;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout-sidebar:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); border-color: rgba(239, 68, 68, 0.48); }
+
+        /* ════ MAIN CONTENT ════ */
+        .main-content {
+            flex: 1;
+            padding: 36px 40px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .page-eyebrow {
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--primary); margin-bottom: 4px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.65rem; font-weight: 800;
+            letter-spacing: -0.02em; color: var(--text);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .page-sub {
+            font-size: 0.875rem; color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ════ TABLE CARD ════ */
+        .table-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .table-card-title i { color: var(--primary); }
+
+        .count-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* ════ TABLE ════ */
+        .rental-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .rental-table thead th {
+            background: #f8fafc;
+            padding: 13px 18px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .rental-table tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        .rental-table tbody tr:last-child { border-bottom: none; }
+        .rental-table tbody tr:hover { background: #f8fbff; }
+
+        .rental-table tbody td {
+            padding: 16px 18px;
+            vertical-align: middle;
+            color: var(--text);
+        }
+
+        /* Customer info */
+        .customer-email {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: var(--text);
+            display: block;
+        }
+
+        .customer-name {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        /* Vehicle media */
+        .vehicle-media-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 250px;
+        }
+
+        .vehicle-thumb {
+            width: 96px;
+            height: 64px;
+            border-radius: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%);
+            box-shadow: 0 8px 16px rgba(59,130,246,0.10);
+        }
+
+        .vehicle-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .vehicle-thumb-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.15rem;
+        }
+
+        .vehicle-meta-block {
+            display: grid;
+            gap: 4px;
+        }
+
+        .vehicle-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .vehicle-subline {
+            font-size: 0.76rem;
+            color: var(--muted);
+        }
+
+        /* Schedule */
+        .schedule-date {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .schedule-time {
+            font-size: 0.78rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .schedule-date i, .schedule-time i { color: var(--primary); font-size: 11px; }
+
+        /* Payment Area */
+        .total-fee {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--success);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* Payment slip link */
+        .slip-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-mid);
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.18s;
+        }
+
+        .slip-link:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* ════ STATUS BADGES ════ */
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .badge-pending   { background: var(--warning-light); color: #92400e; }
+        .badge-approved  { background: var(--success-light); color: var(--success); }
+        .badge-rejected  { background: var(--danger-light);  color: var(--danger); }
+        .badge-cancelled { background: #f1f5f9; color: #475569; }
+        .badge-vip       { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; font-size: 0.65rem; padding: 2px 6px; margin-left: 6px; border-radius: 4px;}
+
+        /* ════ ACTION BUTTONS ════ */
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-approve {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-approve:hover { background: var(--success); color: #fff; border-color: var(--success); }
+
+        .btn-reject {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-reject:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+        .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-delete:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        .no-action-label { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+
+        /* ════ EMPTY / LOADING STATES ════ */
+        .state-row td { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 0.9rem; }
+        .state-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            background: var(--white);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .filter-bar-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.97rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-bar-title i { color: var(--primary); }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+
+        .filter-select {
+            min-width: 190px;
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.18s;
+        }
+
+        .filter-select:focus { border-color: var(--primary); }
+
+        .filter-controls .app-select-wrap,
+        .filter-controls .filter-select {
+            width: 220px;
+            flex: 0 0 220px;
+        }
+
+        .filter-controls .app-select-trigger,
+        .filter-controls .app-select-value {
+            white-space: nowrap;
+        }
+
+        /* ════ RESPONSIVE ════ */
+        @media (max-width: 900px) { .sidebar { display: none; } .main-content { padding: 24px 16px; } }
+    </style>
+    <link rel="stylesheet" href="/css/premium-admin-pages.css">
+</head>
+<body class="admin-shell-page">
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="bi bi-car-front-fill"></i></div>
+            <div class="sidebar-brand-name">K.D. Auto <span>Traders</span></div>
+        </a>
+        <span class="sidebar-role"><i class="fas fa-shield-alt"></i> Main Admin</span>
+    </div>
+
+    <div class="sidebar-panel">
+        <h2>Admin control center</h2>
+        <p>Track core platform activity, monitor pending actions, and jump directly into the operational areas that need attention.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard overview</a>
+        <a href="manage-vehicles.html"><i class="fas fa-car"></i> Manage vehicles</a>
+        <a href="manage-inquiries.html"><i class="fas fa-envelope-open-text"></i> Customer inquiries</a>
+        <a href="manage-rentals.html" class="active"><i class="fas fa-calendar-check"></i> Rental bookings</a>
+        <a href="manage-users.html"><i class="fas fa-users"></i> Manage users</a>
+        <a href="manage-reviews.html"><i class="fas fa-star"></i> Manage reviews</a>
+        <a href="manage-refunds.html"><i class="fas fa-rotate-left"></i> Manage refunds</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <div class="top-bar">
+        <div>
+            <p class="page-eyebrow">K.D. Auto Traders</p>
+            <h2 class="page-title">
+                <i class="fas fa-calendar-check" style="color:var(--primary); font-size:1.4rem;"></i>
+                Rental Bookings
+            </h2>
+            <p class="page-sub">Verify multi-day schedules, pricing, and customer payment slips.</p>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-bar-title">
+            <i class="fas fa-filter"></i> Filter Bookings
+        </div>
+        <div class="filter-controls">
+            <select id="rentalMemberFilter" class="filter-select" onchange="applyRentalFilters()">
+                <option value="ALL">All Members</option>
+                <option value="BASIC">Basic Members</option>
+                <option value="PREMIUM">Premium Members</option>
+            </select>
+            <select id="rentalDateFilter" class="filter-select" onchange="applyRentalFilters()">
+                <option value="NEW">Date: Newest First</option>
+                <option value="OLD">Date: Oldest First</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <div class="table-card-title">
+                <i class="fas fa-list"></i> Verify Bookings &amp; Payment Slips
+                <span class="count-badge" id="rentalCountBadge">Loading...</span>
+            </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="rental-table">
+                <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Booking Period</th>
+                    <th>Total Fee & Slip</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="rentalsTableBody">
+                <tr class="state-row">
+                    <td colspan="6">
+                        <div class="state-icon"><i class="fas fa-spinner fa-spin"></i></div>
+                        <div>Loading bookings...</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/premium-feedback.js"></script>
+<script src="/js/custom-selects.js"></script>
+<script>
+    const token = sessionStorage.getItem("jwtToken");
+    let allRentals = [];
+
+    window.onload = function() {
+        if (!token || sessionStorage.getItem("userRole") !== "MAIN_ADMIN") {
+            window.location.href = "login.html";
+            return;
+        }
+        fetchRentals();
+    };
+
+    async function fetchRentals() {
+        try {
+            const res = await fetch("/api/bookings/all", { headers: { "Authorization": "Bearer " + token } });
+            if (res.ok) {
+                const rentals = await res.json();
+                allRentals = rentals;
+                applyRentalFilters();
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function applyRentalFilters() {
+        const memberFilter = (document.getElementById("rentalMemberFilter")?.value || "ALL").toUpperCase();
+        const dateFilter = (document.getElementById("rentalDateFilter")?.value || "NEW").toUpperCase();
+
+        const filtered = allRentals.filter((rental) => {
+            if (memberFilter === "PREMIUM") return rental.premiumCustomer === true;
+            if (memberFilter === "BASIC") return rental.premiumCustomer !== true;
+            return true;
+        });
+
+        filtered.sort((a, b) => compareRentalDates(a, b, dateFilter));
+        renderRentals(filtered);
+    }
+
+    function renderRentals(rentals) {
+        const tbody = document.getElementById("rentalsTableBody");
+        const countBadge = document.getElementById("rentalCountBadge");
+
+        countBadge.textContent = allRentals.length === rentals.length
+            ? rentals.length + " Bookings"
+            : `${rentals.length} of ${allRentals.length} Bookings`;
+
+        if (rentals.length === 0) {
+            tbody.innerHTML = `
+                <tr class="state-row">
+                    <td colspan="6">
+                        <div class="state-icon"><i class="fas fa-calendar-times"></i></div>
+                        <div>${allRentals.length ? "No bookings match the selected filters." : "No bookings found."}</div>
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        let html = "";
+        rentals.forEach(r => {
+            // Badges
+            let statusBadge = "";
+            if (r.status === 'Approved') {
+                statusBadge = `<span class="badge-pill badge-approved"><i class="fas fa-check-circle" style="font-size:9px;"></i> Approved</span>`;
+            } else if (r.status === 'Rejected') {
+                statusBadge = `<span class="badge-pill badge-rejected"><i class="fas fa-times-circle" style="font-size:9px;"></i> Rejected</span>`;
+            } else if (r.status === 'Cancelled') {
+                statusBadge = `<span class="badge-pill badge-cancelled"><i class="fas fa-ban" style="font-size:9px;"></i> Cancelled</span>`;
+            } else {
+                statusBadge = `<span class="badge-pill badge-pending"><i class="fas fa-clock" style="font-size:9px;"></i> Pending</span>`;
+            }
+
+            // 🔥 UPGRADED: Action Buttons now include the Hard Delete!
+            let actions = "";
+            if (r.status === 'Pending') {
+                actions = `<div class="actions-cell">
+                       <button class="btn-approve" onclick="updateStatus(${r.id}, 'Approved')"><i class="fas fa-check"></i> Approve</button>
+                       <button class="btn-reject"  onclick="updateStatus(${r.id}, 'Rejected')"><i class="fas fa-times"></i> Reject</button>
+                   </div>`;
+            } else if (r.status === 'Rejected' || r.status === 'Cancelled') {
+                actions = `<div class="actions-cell">
+                       <button class="btn-delete" onclick="hardDeleteBooking(${r.id})"><i class="fas fa-trash-alt"></i> Permanently Delete</button>
+                   </div>`;
+            } else {
+                actions = `<span class="no-action-label"><i class="fas fa-lock"></i> Locked</span>`;
+            }
+
+            let vipBadge = r.premiumCustomer ? `<span class="badge-vip" title="Premium 10% Discount Applied"><i class="fas fa-crown"></i> VIP</span>` : "";
+            let vehicleImage = r.vehicleImageUrl
+                ? `<div class="vehicle-thumb"><img src="${r.vehicleImageUrl}" alt="${r.vehicleName || "Vehicle"}"></div>`
+                : `<div class="vehicle-thumb"><div class="vehicle-thumb-fallback"><i class="fas fa-car-side"></i></div></div>`;
+            let vehicleSubline = [r.vehicleManufactureYear, r.vehicleColor, r.vehicleCondition].filter(Boolean).join(" • ");
+
+            html += `
+                <tr>
+                    <td>
+                        <span class="customer-email">${r.customerEmail} ${vipBadge}</span>
+                        <div class="customer-name">${r.customerName}</div>
+                    </td>
+                    <td>
+                        <div class="vehicle-media-cell">
+                            ${vehicleImage}
+                            <div class="vehicle-meta-block">
+                                <div class="vehicle-title">${r.vehicleName || `Vehicle #${r.vehicleId}`}</div>
+                                <div class="vehicle-subline">${vehicleSubline || `Vehicle ID #${r.vehicleId}`}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="schedule-date"><i class="fas fa-calendar-alt"></i> ${r.startDate} <span style="font-size:0.75rem; font-weight:500; color:var(--muted); margin:0 4px;">to</span> ${r.endDate}</div>
+                        <div class="schedule-time"><i class="far fa-clock"></i> ${r.startTime} - ${r.endTime}</div>
+                    </td>
+                    <td>
+                        <span class="total-fee">LKR ${r.totalFee ? r.totalFee.toLocaleString('en-US') : '0'}</span>
+                        <a href="${r.paymentSlipUrl}" target="_blank" class="slip-link">
+                            <i class="fas fa-image"></i> View Slip
+                        </a>
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td>${actions}</td>
+                </tr>`;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function compareRentalDates(a, b, sortOrder) {
+        const aTime = parseDateValue(a.startDate);
+        const bTime = parseDateValue(b.startDate);
+
+        if (aTime !== bTime) {
+            return sortOrder === "OLD" ? aTime - bTime : bTime - aTime;
+        }
+
+        return sortOrder === "OLD"
+            ? (Number(a.id) || 0) - (Number(b.id) || 0)
+            : (Number(b.id) || 0) - (Number(a.id) || 0);
+    }
+
+    function parseDateValue(value) {
+        const parsed = Date.parse(value || "");
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    async function updateStatus(id, newStatus) {
+        if (!await window.appConfirm(`Are you sure you want to mark this booking as ${newStatus}?`, {
+            title: "Update Booking Status",
+            type: "warning",
+            confirmText: "Continue",
+            cancelText: "Cancel",
+            confirmIcon: "fa-check"
+        })) return;
+        try {
+            const res = await fetch(`/api/bookings/status/${id}`, {
+                method: "PUT",
+                headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus })
+            });
+            if (res.ok) fetchRentals();
+        } catch(e) { console.error(e); }
+    }
+
+    // 🔥 NEW: Trigger the Hard Delete API (Crucial for CRUD Evaluation)
+    async function hardDeleteBooking(id) {
+        if (!await window.appConfirm("This will permanently delete this booking from the database and also remove any associated refund records. This action cannot be undone.", {
+            title: "Delete Booking Permanently",
+            type: "danger",
+            confirmText: "Delete Permanently",
+            cancelText: "Cancel",
+            danger: true,
+            confirmIcon: "fa-trash"
+        })) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/bookings/admin-delete/${id}`, {
+                method: "DELETE",
+                headers: { "Authorization": "Bearer " + token }
+            });
+
+            if (res.ok) {
+                alert("✅ Booking permanently deleted from the system.");
+                fetchRentals(); // Refresh the table automatically
+            } else {
+                const err = await res.text();
+                alert("❌ Failed to delete: " + err);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Network error.");
+        }
+    }
+
+    function logout() {
+        ["jwtToken", "userName", "userRole"].forEach((key) => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        window.location.href = "login.html";
+    }
+</script>
+<script src="/js/premium-admin-shell.js"></script>
+
+</body>
+</html>
