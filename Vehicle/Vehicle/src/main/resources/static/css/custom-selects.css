@@ -1,0 +1,156 @@
+:root {
+    --app-select-bg: linear-gradient(180deg, #fcfdff 0%, #f6faff 100%);
+    --app-select-border: rgba(191, 207, 228, 0.92);
+    --app-select-text: #152742;
+    --app-select-muted: #64748b;
+    --app-select-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    --app-select-shadow-open: 0 18px 42px rgba(15, 23, 42, 0.14);
+    --app-select-ring: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    --app-select-menu-bg: rgba(255, 255, 255, 0.98);
+    --app-select-height: 52px;
+    --app-select-radius: 18px;
+    --app-select-option-radius: 14px;
+}
+
+.app-select-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.app-select-native {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app-select-trigger {
+    width: 100%;
+    min-height: var(--app-select-height);
+    padding: 11px 42px 11px 16px;
+    border-radius: var(--app-select-radius);
+    border: 1px solid var(--app-select-border);
+    background: var(--app-select-bg);
+    color: var(--app-select-text);
+    font: inherit;
+    line-height: 1.25;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: var(--app-select-shadow);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.app-select-trigger:hover,
+.app-select-wrap.is-open .app-select-trigger {
+    border-color: rgba(37, 99, 235, 0.42);
+    box-shadow: var(--app-select-ring), var(--app-select-shadow-open);
+}
+
+.app-select-trigger:focus-visible {
+    outline: none;
+    border-color: rgba(37, 99, 235, 0.52);
+    box-shadow: var(--app-select-ring), var(--app-select-shadow-open);
+}
+
+.app-select-wrap.is-disabled .app-select-trigger {
+    opacity: 0.64;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.app-select-value {
+    display: flex;
+    align-items: center;
+    min-height: 20px;
+}
+
+.app-select-icon {
+    flex-shrink: 0;
+    font-size: 0.88rem;
+    line-height: 1;
+    color: var(--app-select-muted);
+    transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.app-select-wrap.is-open .app-select-icon {
+    transform: rotate(180deg);
+    color: #2563eb;
+}
+
+.app-select-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 10px);
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.26);
+    background: var(--app-select-menu-bg);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16);
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    z-index: 60;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.app-select-wrap.is-open .app-select-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.app-select-option {
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    border-radius: var(--app-select-option-radius);
+    background: transparent;
+    color: var(--app-select-text);
+    font: inherit;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.app-select-option:hover,
+.app-select-option:focus-visible {
+    outline: none;
+    background: rgba(37, 99, 235, 0.08);
+    color: #1d4ed8;
+}
+
+.app-select-option.is-selected {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+}
+
+.app-select-option.is-disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+}
+
+body.admin-shell-page {
+    --app-select-bg: #fbfdff;
+    --app-select-shadow: none;
+    --app-select-shadow-open: 0 16px 32px rgba(37, 99, 235, 0.10);
+}
+
+@media (max-width: 768px) {
+    .app-select-trigger {
+        min-height: 50px;
+        padding: 10px 40px 10px 15px;
+    }
+
+    .app-select-menu {
+        top: calc(100% + 8px);
+        border-radius: 18px;
+    }
+}
