@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Vehicle | K.D. Auto Traders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+
+    <style>
+        :root {
+            --primary:       #3b82f6;
+            --primary-dark:  #2563eb;
+            --primary-light: #eff6ff;
+            --primary-mid:   #dbeafe;
+            --success:       #16a34a;
+            --success-light: #f0fdf4;
+            --warning:       #f59e0b;
+            --warning-light: #fffbeb;
+            --danger:        #ef4444;
+            --danger-light:  #fef2f2;
+            --text:          #1e293b;
+            --muted:         #64748b;
+            --border:        #e2e8f0;
+            --white:         #ffffff;
+            --bg:            #f5f8ff;
+            --card-shadow:   0 2px 12px rgba(59,130,246,0.08);
+            --sidebar-width: 260px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ════ SIDEBAR ════ */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            height: 100%;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 16px rgba(59,130,246,0.07);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 26px 22px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar-brand-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem; font-weight: 800;
+            color: var(--text); letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .sidebar-brand-name span { color: var(--primary); }
+
+        .sidebar-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 4px 11px;
+            border-radius: 100px;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, var(--primary-dark), #1d4ed8);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 13px 20px;
+            font-size: 0.875rem; font-weight: 500;
+            color: var(--muted);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            margin: 2px 0;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary-mid);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i { width: 16px; text-align: center; }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout-sidebar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: 1px solid rgba(239, 68, 68, 0.36);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.875rem;
+            cursor: pointer; width: 100%;
+            padding: 10px;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout-sidebar:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); border-color: rgba(239, 68, 68, 0.48); }
+
+        /* ════ MAIN CONTENT ════ */
+        .main-content {
+            flex: 1;
+            padding: 36px 40px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .page-eyebrow {
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--primary); margin-bottom: 4px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.65rem; font-weight: 800;
+            letter-spacing: -0.02em; color: var(--text);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .page-sub {
+            font-size: 0.875rem; color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Back button */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--white);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-mid);
+        }
+
+        /* ════ FORM CARD ════ */
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .form-card-header {
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .form-card-title i { color: var(--primary); }
+
+        .form-card-body {
+            padding: 28px 28px 32px;
+        }
+
+        /* ════ NOTICE BANNER ════ */
+        .notice-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--warning-light);
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            margin-bottom: 28px;
+        }
+
+        .notice-banner i {
+            color: var(--warning);
+            font-size: 1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .notice-banner p {
+            font-size: 0.825rem;
+            color: #92400e;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* ════ SECTION LABEL ════ */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 14px;
+            margin-top: 24px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-label:first-of-type { margin-top: 0; }
+
+        /* ════ FORM ELEMENTS ════ */
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 0;
+        }
+
+        .form-row > .form-group { flex: 1; }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .form-group label .locked-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 100px;
+            background: #f1f5f9;
+            color: var(--muted);
+            margin-left: 6px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .form-group label .editable-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 100px;
+            background: var(--success-light);
+            color: var(--success);
+            margin-left: 6px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            background: var(--white);
+            transition: all 0.18s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+        }
+
+        .form-control.locked-field {
+            background: #f8fafc;
+            color: var(--muted);
+            cursor: not-allowed;
+            border-color: var(--border);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: #fafcff;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-upload-area i {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .file-upload-area p {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+        }
+
+        .file-warning {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.775rem;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        /* ════ SUBMIT BUTTON ════ */
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.45);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ════ RESPONSIVE ════ */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { padding: 24px 16px; }
+            .form-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/premium-admin-pages.css">
+</head>
+<body class="admin-shell-page admin-shell-form-page">
+
+<!-- ════ SIDEBAR ════ -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="bi bi-car-front-fill"></i></div>
+            <div class="sidebar-brand-name">K.D. Auto <span>Traders</span></div>
+        </a>
+        <span class="sidebar-role"><i class="fas fa-shield-alt"></i> Main Admin</span>
+    </div>
+
+    <div class="sidebar-panel">
+        <h2>Admin control center</h2>
+        <p>Track core platform activity, monitor pending actions, and jump directly into the operational areas that need attention.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard overview</a>
+        <a href="manage-vehicles.html" class="active"><i class="fas fa-car"></i> Manage vehicles</a>
+        <a href="manage-inquiries.html"><i class="fas fa-envelope-open-text"></i> Customer inquiries</a>
+        <a href="manage-rentals.html"><i class="fas fa-calendar-check"></i> Rental bookings</a>
+        <a href="manage-users.html"><i class="fas fa-users"></i> Manage users</a>
+        <a href="manage-reviews.html"><i class="fas fa-star"></i> Manage reviews</a>
+        <a href="manage-refunds.html"><i class="fas fa-rotate-left"></i> Manage refunds</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+</div>
+
+<!-- ════ MAIN CONTENT ════ -->
+<div class="main-content">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+        <div>
+            <p class="page-eyebrow">K.D. Auto Traders</p>
+            <h2 class="page-title">
+                <i class="fas fa-pen" style="color:var(--primary); font-size:1.3rem;"></i>
+                Edit Vehicle
+            </h2>
+            <p class="page-sub">Update editable fields for this vehicle listing.</p>
+        </div>
+        <a href="manage-vehicles.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-title">
+                <i class="fas fa-sliders-h"></i> Vehicle Listing Details
+            </div>
+        </div>
+
+        <div class="form-card-body">
+
+            <!-- Notice -->
+            <div class="notice-banner">
+                <i class="fas fa-lock"></i>
+                <p>Core vehicle details (Brand, Model, Year, Condition, Fuel, Transmission) <strong>cannot be changed</strong>. If these are incorrect, please delete the listing and create a new one.</p>
+            </div>
+
+            <form id="editVehicleForm">
+
+                <!-- Locked Info Section -->
+                <div class="section-label"><i class="fas fa-lock" style="font-size:0.7rem;"></i> Locked Information</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Listing Type <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vListing" class="form-control locked-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Condition <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vCondition" class="form-control locked-field" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Brand <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vBrand" class="form-control locked-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Model <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vModel" class="form-control locked-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Manufactured Year <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vYear" class="form-control locked-field" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fuel Type <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vFuel" class="form-control locked-field" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Transmission <span class="locked-tag"><i class="fas fa-lock"></i> Locked</span></label>
+                        <input type="text" id="vTrans" class="form-control locked-field" disabled>
+                    </div>
+                </div>
+
+                <!-- Editable Section -->
+                <div class="section-label"><i class="fas fa-pen" style="font-size:0.7rem;"></i> Editable Fields</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vehicle Category <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <select id="vCategory" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="Van">Van</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Coupe">Coupe</option>
+                            <option value="Convertible">Convertible</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Bike">Bike</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Color <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <input type="text" id="vColor" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>In Stock / Quantity <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <input type="number" id="vQuantity" class="form-control" required min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mileage (km) <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <input type="text" id="vMileage" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Engine Capacity / Cc <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <input type="number" id="vEngine" class="form-control" min="1" step="1" inputmode="numeric" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label id="priceLabel">Price (LKR) <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <input type="text" id="vPrice" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Availability Status <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                        <select id="vStatus" class="form-control" required>
+                            <option value="Available">Available</option>
+                            <option value="Coming Soon">Coming Soon</option>
+                            <option value="Sold">Sold</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span></label>
+                    <textarea id="vDesc" class="form-control" required></textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="section-label"><i class="fas fa-images" style="font-size:0.7rem;"></i> Vehicle Images</div>
+
+                <div class="form-group">
+                    <label>Upload New Images <span style="font-size:0.72rem; color:var(--muted); font-weight:400; margin-left:4px;">(Leave blank to keep existing)</span></label>
+                    <div class="file-upload-wrapper">
+                        <div class="file-upload-area">
+                            <input type="file" id="vImages" accept="image/*" multiple>
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p><strong>Click to upload</strong> or drag & drop images here</p>
+                            <p style="margin-top:4px; font-size:0.73rem;">Maximum 5 images · JPG, PNG, WEBP</p>
+                        </div>
+                    </div>
+                    <span class="file-warning" id="fileWarning"></span>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit">
+                    <i class="fas fa-save"></i> Update Vehicle
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/premium-feedback.js"></script>
+<script>
+    const token = sessionStorage.getItem("jwtToken");
+    const urlParams = new URLSearchParams(window.location.search);
+    const vehicleId = urlParams.get('id');
+
+    function normalizeEngineCapacity(value) {
+        return String(value ?? "").replace(/[^\d]/g, "");
+    }
+
+    function isNonNegativeNumber(value) {
+        return /^\d+(\.\d+)?$/.test(value);
+    }
+
+    function formatNumberInput(e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value !== "") {
+            e.target.value = parseInt(value, 10).toLocaleString('en-US');
+        } else {
+            e.target.value = "";
+        }
+    }
+    document.getElementById("vPrice").addEventListener("input", formatNumberInput);
+    document.getElementById("vMileage").addEventListener("input", formatNumberInput);
+
+    window.onload = async function() {
+        if (!vehicleId) {
+            alert("No vehicle selected!");
+            window.location.href = "manage-vehicles.html";
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/vehicles/" + vehicleId);
+            const vehicle = await response.json();
+
+            document.getElementById("vListing").value = vehicle.listingType || "Sale";
+            document.getElementById("vCondition").value = vehicle.vehicleCondition;
+            document.getElementById("vBrand").value = vehicle.brand;
+            document.getElementById("vModel").value = vehicle.model;
+            document.getElementById("vYear").value = vehicle.manufactureYear;
+            document.getElementById("vFuel").value = vehicle.fuelType;
+            document.getElementById("vTrans").value = vehicle.transmission;
+            document.getElementById("vCategory").value = vehicle.category || "";
+
+            if(vehicle.listingType === "Rent") {
+                document.getElementById("priceLabel").innerHTML = 'Price Per Day (LKR) <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span>';
+            } else {
+                document.getElementById("priceLabel").innerHTML = 'Total Price (LKR) <span class="editable-tag"><i class="fas fa-pen"></i> Editable</span>';
+            }
+
+            document.getElementById("vPrice").value = vehicle.price.toLocaleString('en-US');
+            document.getElementById("vEngine").value = normalizeEngineCapacity(vehicle.engineCapacity);
+            document.getElementById("vDesc").value = vehicle.description;
+            document.getElementById("vStatus").value = vehicle.status;
+
+            document.getElementById("vColor").value = vehicle.color || "N/A";
+            document.getElementById("vQuantity").value = vehicle.quantity || 0;
+
+            const mileageInput = document.getElementById("vMileage");
+            if (vehicle.vehicleCondition === "BrandNew" || vehicle.vehicleCondition === "Brand New") {
+                mileageInput.value = "0";
+                mileageInput.readOnly = true;
+                mileageInput.classList.add("locked-field");
+            } else {
+                mileageInput.value = vehicle.mileage.toLocaleString('en-US');
+                mileageInput.readOnly = false;
+                mileageInput.classList.remove("locked-field");
+            }
+
+        } catch (error) {
+            console.error("Error fetching vehicle:", error);
+            alert("Failed to load vehicle data.");
+        }
+    };
+
+    document.getElementById("vImages").addEventListener("change", function() {
+        if (this.files.length > 5) {
+            document.getElementById("fileWarning").innerText = "Maximum of 5 images allowed.";
+        } else {
+            document.getElementById("fileWarning").innerText = "";
+        }
+    });
+
+    document.getElementById("editVehicleForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating... Please wait';
+        submitBtn.disabled = true;
+
+        const rawPrice = document.getElementById("vPrice").value.replace(/,/g, "");
+        const rawMileage = document.getElementById("vMileage").value.replace(/,/g, "");
+        const rawQuantity = document.getElementById("vQuantity").value.trim();
+        const engineCapacity = document.getElementById("vEngine").value.trim();
+
+        if (!isNonNegativeNumber(rawMileage)) {
+            alert("Mileage cannot be a negative value.");
+            document.getElementById("vMileage").focus();
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        if (!isNonNegativeNumber(rawQuantity)) {
+            alert("Quantity cannot be a negative value.");
+            document.getElementById("vQuantity").focus();
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        if (!isNonNegativeNumber(rawPrice) || parseFloat(rawPrice) <= 0) {
+            alert("Price must be greater than 0.");
+            document.getElementById("vPrice").focus();
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        if (!/^[1-9]\d*$/.test(engineCapacity)) {
+            alert("Engine capacity must be greater than 0.");
+            document.getElementById("vEngine").focus();
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+            submitBtn.disabled = false;
+            return;
+        }
+
+        try {
+            const vehicleData = {
+                category: document.getElementById("vCategory").value,
+                mileage: parseInt(rawMileage),
+                engineCapacity: engineCapacity,
+                price: parseFloat(rawPrice),
+                description: document.getElementById("vDesc").value,
+                status: document.getElementById("vStatus").value,
+                color: document.getElementById("vColor").value,
+                quantity: parseInt(rawQuantity)
+            };
+
+            const formData = new FormData();
+            formData.append("vehicleData", JSON.stringify(vehicleData));
+
+            const files = document.getElementById("vImages").files;
+            const maxFiles = Math.min(files.length, 5);
+            for (let i = 0; i < maxFiles; i++) {
+                formData.append("images", files[i]);
+            }
+
+            const response = await fetch("/api/vehicles/update/" + vehicleId, {
+                method: "PUT",
+                headers: { "Authorization": "Bearer " + token },
+                body: formData
+            });
+
+            if(response.ok) {
+                alert("Vehicle updated successfully!");
+                window.location.href = "manage-vehicles.html";
+            } else {
+                const errorText = await response.text();
+                alert("Backend Error: " + errorText);
+            }
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            alert("Network Error: Could not connect to the server.");
+        } finally {
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+            submitBtn.disabled = false;
+        }
+    });
+
+    function logout() {
+        ["jwtToken", "userName", "userRole"].forEach((key) => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        window.location.href = "login.html";
+    }
+</script>
+<script src="/js/premium-admin-shell.js"></script>
+<script src="/js/custom-selects.js"></script>
+
+</body>
+</html>
