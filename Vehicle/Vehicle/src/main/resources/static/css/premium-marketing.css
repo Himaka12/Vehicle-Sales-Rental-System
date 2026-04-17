@@ -1,0 +1,993 @@
+:root {
+    --mk-navy: #0f172a;
+    --mk-navy-soft: #18233d;
+    --mk-surface: #ffffff;
+    --mk-surface-muted: #f8fbff;
+    --mk-border: #d9e4f5;
+    --mk-text: #122033;
+    --mk-muted: #64748b;
+    --mk-blue: #2563eb;
+    --mk-blue-bright: #3b82f6;
+    --mk-blue-soft: #dbeafe;
+    --mk-blue-pale: #eff6ff;
+    --mk-success: #16a34a;
+    --mk-warning: #f59e0b;
+    --mk-danger: #ef4444;
+    --mk-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    --mk-shadow-soft: 0 10px 26px rgba(37, 99, 235, 0.10);
+    --mk-radius-xl: 28px;
+    --mk-radius-lg: 20px;
+    --mk-radius-md: 16px;
+    --mk-radius-sm: 12px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.marketing-dashboard-page {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 20rem),
+        linear-gradient(180deg, #eef4ff 0%, #f5f8ff 36%, #eef5ff 100%);
+    color: var(--mk-text);
+}
+
+.marketing-shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.marketing-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    min-height: 100vh;
+    padding: 26px 22px;
+    background:
+        radial-gradient(circle at top, rgba(59, 130, 246, 0.20), transparent 18rem),
+        linear-gradient(180deg, #0b1426 0%, #13203a 100%);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 18px 0 45px rgba(15, 23, 42, 0.16);
+}
+
+.marketing-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.marketing-brand-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.92), rgba(37, 99, 235, 0.78));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 16px 30px rgba(37, 99, 235, 0.28);
+    font-size: 1.3rem;
+}
+
+.marketing-brand-text {
+    min-width: 0;
+}
+
+.marketing-brand-text strong {
+    display: block;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.62rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+}
+
+.marketing-brand-text strong span {
+    color: #7fb3ff;
+}
+
+.marketing-brand-text p {
+    margin: 7px 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.marketing-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(14, 165, 233, 0.18);
+    border: 1px solid rgba(125, 211, 252, 0.28);
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.marketing-sidebar-panel {
+    padding: 20px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(14px);
+}
+
+.marketing-sidebar-panel h2 {
+    margin: 0 0 8px;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.marketing-sidebar-panel p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+.marketing-sidebar-nav {
+    display: grid;
+    gap: 10px;
+}
+
+.marketing-sidebar-link {
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.78);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    text-align: left;
+    transition: 0.22s ease;
+    cursor: pointer;
+}
+
+.marketing-sidebar-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.marketing-sidebar-badge {
+    margin-left: auto;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fb7185, #ef4444);
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.24);
+}
+
+.marketing-sidebar-badge[hidden] {
+    display: none !important;
+}
+
+.marketing-sidebar-link:hover,
+.marketing-sidebar-link.active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.24), rgba(59, 130, 246, 0.10));
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+.marketing-sidebar-link i {
+    width: 18px;
+    text-align: center;
+}
+
+.marketing-sidebar-footer {
+    margin-top: auto;
+}
+
+.marketing-logout-btn {
+    width: 100%;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.96rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.marketing-logout-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+}
+
+.marketing-main {
+    min-width: 0;
+    padding: 34px 40px 46px;
+}
+
+.marketing-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--mk-radius-xl);
+    padding: 34px;
+    background:
+        radial-gradient(circle at top right, rgba(148, 197, 255, 0.26), transparent 19rem),
+        linear-gradient(135deg, #071224 0%, #12315f 54%, #2563eb 100%);
+    color: #ffffff;
+    box-shadow: var(--mk-shadow);
+}
+
+.marketing-hero::after {
+    content: "";
+    position: absolute;
+    right: -5rem;
+    bottom: -6rem;
+    width: 16rem;
+    height: 16rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.marketing-hero-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.marketing-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.marketing-hero-title {
+    margin: 18px 0 10px;
+    font-family: "Outfit", sans-serif;
+    font-size: clamp(2rem, 4vw, 3.45rem);
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+}
+
+.marketing-hero-subtitle {
+    max-width: 50rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.02rem;
+    line-height: 1.72;
+}
+
+.marketing-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.marketing-btn {
+    border: 0;
+    border-radius: 16px;
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.22s ease;
+}
+
+.marketing-btn:hover {
+    transform: translateY(-1px);
+}
+
+.marketing-btn-primary {
+    background: #ffffff;
+    color: var(--mk-navy);
+    box-shadow: 0 14px 30px rgba(8, 18, 37, 0.18);
+}
+
+.marketing-btn-secondary {
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.marketing-hero-metrics {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 26px;
+}
+
+.marketing-hero-metric {
+    padding: 18px 18px 16px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(14px);
+}
+
+.marketing-hero-metric span {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.marketing-hero-metric strong {
+    display: block;
+    margin-top: 8px;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.68rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.marketing-section {
+    display: none;
+    margin-top: 28px;
+}
+
+.marketing-section.active {
+    display: block;
+}
+
+.marketing-grid {
+    display: grid;
+    gap: 24px;
+}
+
+.marketing-grid-2 {
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+}
+
+.marketing-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(217, 228, 245, 0.85);
+    border-radius: var(--mk-radius-lg);
+    padding: 26px;
+    box-shadow: var(--mk-shadow-soft);
+}
+
+.marketing-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.marketing-card-header h2,
+.marketing-card-header h3,
+.marketing-card-title {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.38rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--mk-text);
+}
+
+.marketing-card-header p,
+.marketing-card-copy,
+.marketing-muted {
+    margin: 7px 0 0;
+    color: var(--mk-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.marketing-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.marketing-stat-card {
+    padding: 22px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid var(--mk-border);
+}
+
+.marketing-stat-card strong {
+    display: block;
+    font-family: "Outfit", sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--mk-text);
+}
+
+.marketing-stat-card span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--mk-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.marketing-live-list {
+    display: grid;
+    gap: 14px;
+}
+
+.marketing-live-item {
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid var(--mk-border);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.marketing-live-item-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: center;
+}
+
+.marketing-live-item h4 {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.06rem;
+    font-weight: 700;
+    color: var(--mk-text);
+}
+
+.marketing-live-item p {
+    margin: 6px 0 0;
+    color: var(--mk-muted);
+    font-size: 0.9rem;
+    line-height: 1.62;
+}
+
+.marketing-pill,
+.marketing-status-pill,
+.marketing-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.marketing-pill {
+    background: var(--mk-blue-pale);
+    color: var(--mk-blue);
+}
+
+.marketing-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.marketing-chip {
+    background: #edf4ff;
+    color: #355680;
+}
+
+.marketing-status-pill.active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.marketing-status-pill.scheduled {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.marketing-status-pill.disabled,
+.marketing-status-pill.expired {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.marketing-form-shell {
+    display: none;
+    margin-top: 22px;
+}
+
+.marketing-form-shell.visible {
+    display: block;
+}
+
+.marketing-form-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 250, 255, 0.96) 100%);
+    border: 1px solid var(--mk-border);
+    border-radius: var(--mk-radius-lg);
+    padding: 28px;
+    box-shadow: var(--mk-shadow-soft);
+}
+
+.marketing-form-panel + .marketing-form-panel {
+    margin-top: 18px;
+}
+
+.marketing-form-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.marketing-form-heading h3 {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.28rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.marketing-form-heading p {
+    margin: 7px 0 0;
+    color: var(--mk-muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+.marketing-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.marketing-form-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.marketing-field {
+    display: grid;
+    gap: 8px;
+}
+
+.marketing-field-full {
+    grid-column: 1 / -1;
+}
+
+.marketing-field label {
+    font-size: 0.79rem;
+    font-weight: 700;
+    color: var(--mk-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.marketing-field input,
+.marketing-field textarea,
+.marketing-field select {
+    width: 100%;
+    border: 1px solid var(--mk-border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: #ffffff;
+    color: var(--mk-text);
+    font-size: 0.96rem;
+    font-family: inherit;
+    transition: 0.2s ease;
+}
+
+.marketing-field textarea {
+    min-height: 112px;
+    resize: vertical;
+}
+
+.marketing-field input:focus,
+.marketing-field textarea:focus,
+.marketing-field select:focus {
+    outline: none;
+    border-color: #7fb3ff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.marketing-field input:disabled {
+    background: #f5f8fc;
+    color: #8da0ba;
+    cursor: not-allowed;
+}
+
+.marketing-target-box,
+.marketing-display-box {
+    margin-top: 16px;
+    padding: 20px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid var(--mk-border);
+}
+
+.marketing-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--mk-text);
+}
+
+.marketing-toggle input {
+    width: 18px;
+    height: 18px;
+}
+
+.marketing-help {
+    margin: 0 0 18px;
+    color: var(--mk-muted);
+    font-size: 0.92rem;
+    line-height: 1.7;
+}
+
+.marketing-display-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+}
+
+.marketing-display-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: var(--mk-text);
+}
+
+.marketing-display-option input {
+    width: 18px;
+    height: 18px;
+}
+
+.marketing-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.marketing-btn-accent {
+    background: linear-gradient(135deg, var(--mk-blue-bright), var(--mk-blue));
+    color: #ffffff;
+    box-shadow: 0 16px 28px rgba(37, 99, 235, 0.22);
+}
+
+.marketing-btn-ghost {
+    background: #ffffff;
+    color: var(--mk-muted);
+    border: 1px solid var(--mk-border);
+}
+
+.marketing-table-wrap {
+    margin-top: 22px;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid var(--mk-border);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--mk-shadow-soft);
+}
+
+.marketing-table-scroll {
+    overflow-x: auto;
+}
+
+.marketing-table {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: collapse;
+}
+
+.marketing-table th,
+.marketing-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #eaf0f8;
+    text-align: left;
+    vertical-align: top;
+}
+
+.marketing-table th {
+    background: #f3f8ff;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5f7593;
+    font-weight: 800;
+}
+
+.marketing-table tbody tr:hover td {
+    background: #fbfdff;
+}
+
+.marketing-banner-preview {
+    width: 124px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid var(--mk-border);
+    background: #f8fbff;
+}
+
+.marketing-banner-placeholder {
+    width: 124px;
+    height: 72px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    border: 1px dashed var(--mk-border);
+    color: var(--mk-muted);
+    font-size: 0.78rem;
+    background: #f8fbff;
+}
+
+.marketing-table-title {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--mk-text);
+}
+
+.marketing-table-copy {
+    margin: 6px 0 0;
+    color: var(--mk-muted);
+    font-size: 0.88rem;
+    line-height: 1.62;
+}
+
+.marketing-discount {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--mk-blue);
+}
+
+.marketing-label-pill {
+    margin-top: 10px;
+}
+
+.marketing-label-pill span {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: var(--mk-blue);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.marketing-target-summary {
+    color: var(--mk-text);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.marketing-subtext {
+    margin-top: 7px;
+    color: var(--mk-muted);
+    font-size: 0.84rem;
+    line-height: 1.58;
+}
+
+.marketing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.marketing-icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    border: 0;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.marketing-icon-btn:hover {
+    transform: translateY(-1px);
+}
+
+.marketing-icon-btn.edit {
+    background: #eff6ff;
+    color: var(--mk-blue);
+}
+
+.marketing-icon-btn.pause {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.marketing-icon-btn.resume {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.marketing-icon-btn.delete {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.marketing-inline-note {
+    color: var(--mk-muted);
+    font-size: 0.8rem;
+}
+
+.marketing-toast-wrap {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    z-index: 1200;
+    display: grid;
+    gap: 10px;
+}
+
+.marketing-toast {
+    min-width: 260px;
+    max-width: 360px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    color: #ffffff;
+    box-shadow: 0 20px 32px rgba(15, 23, 42, 0.18);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.marketing-toast.success {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.marketing-toast.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.marketing-toast.info {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.marketing-empty-state {
+    text-align: center;
+    padding: 28px 18px;
+    color: var(--mk-muted);
+    font-size: 0.94rem;
+}
+
+@media (max-width: 1220px) {
+    .marketing-shell {
+        grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .marketing-hero-metrics,
+    .marketing-stat-grid,
+    .marketing-form-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .marketing-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 960px) {
+    .marketing-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .marketing-sidebar {
+        position: static;
+        min-height: auto;
+        border-bottom-right-radius: 28px;
+        border-bottom-left-radius: 28px;
+    }
+
+    .marketing-main {
+        padding: 20px 18px 32px;
+    }
+
+    .marketing-hero,
+    .marketing-card,
+    .marketing-form-panel {
+        padding: 22px;
+    }
+
+    .marketing-hero-top {
+        flex-direction: column;
+    }
+
+    .marketing-hero-metrics,
+    .marketing-stat-grid,
+    .marketing-form-grid,
+    .marketing-form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .marketing-sidebar {
+        padding: 20px 16px;
+    }
+
+    .marketing-main {
+        padding: 16px 12px 24px;
+    }
+
+    .marketing-card,
+    .marketing-form-panel,
+    .marketing-hero {
+        border-radius: 22px;
+        padding: 18px;
+    }
+
+    .marketing-card-header,
+    .marketing-form-heading {
+        flex-direction: column;
+    }
+
+    .marketing-btn,
+    .marketing-btn-primary,
+    .marketing-btn-secondary,
+    .marketing-btn-accent,
+    .marketing-btn-ghost {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .marketing-form-actions,
+    .marketing-hero-actions {
+        flex-direction: column;
+    }
+}
