@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Vehicle Details | K.D. Auto Traders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/premium-details.css">
+</head>
+<body class="marketplace-body detail-theme-guest">
+    <nav class="main-nav" id="mainNav">
+        <div class="page-container">
+            <div class="nav-shell">
+                <a href="index.html" class="nav-brand">
+                    <span class="nav-mark"><i class="bi bi-car-front-fill"></i></span>
+                    <div>
+                        <div class="nav-title">K.D.<span>Auto Traders</span></div>
+                        <div class="nav-sub">Premium Vehicle Marketplace</div>
+                    </div>
+                </a>
+
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="guest-vehicle-inventory.html" class="active">Inventory</a>
+                    <a href="about-us.html">About Us</a>
+                </div>
+
+                <div class="nav-actions">
+                    <a href="login.html" class="nav-login">Login</a>
+                    <a href="register.html" class="nav-signup"><i class="bi bi-stars"></i> Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="loading-shell" id="loading-container">
+        <i class="fas fa-spinner fa-spin"></i>
+        <h2>Loading vehicle details</h2>
+        <p>The page is preparing the gallery, pricing summary, and promotion highlights.</p>
+    </div>
+
+    <section class="detail-shell" id="details-container" style="display:none;">
+        <div class="page-container">
+            <a href="guest-vehicle-inventory.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to Inventory</a>
+
+            <div class="detail-grid">
+                <div>
+                    <div class="surface gallery-panel">
+                        <div class="main-image-shell">
+                            <img id="mainImage" src="" alt="Vehicle Image">
+                        </div>
+                        <div class="thumb-row" id="thumbnail-container"></div>
+                    </div>
+
+                    <div class="surface content-panel">
+                        <div class="panel-title"><i class="bi bi-file-earmark-text-fill"></i> Vehicle Description</div>
+                        <p id="vDescription">Loading description...</p>
+                    </div>
+
+                    <div class="surface review-panel" id="reviewPanel">
+                        <div class="review-summary">
+                            <strong><i class="bi bi-star-fill" style="color:#fbbf24;"></i> Verified Reviews</strong>
+                            <div id="ratingSummary">No ratings yet</div>
+                        </div>
+
+                        <div class="review-list" id="reviewsList">
+                            <div class="review-card">
+                                <div class="review-comment">Reviews will appear here after the vehicle data loads.</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="surface review-insights-panel" id="reviewInsightsPanel">
+                        <div class="panel-title"><i class="bi bi-bar-chart-fill"></i> Review Sentiment Overview</div>
+                        <p class="review-insights-copy">A quick breakdown of how renters feel about this vehicle based on submitted reviews.</p>
+                        <div class="review-insights-chart" id="reviewSentimentChart">
+                            <div class="review-insights-empty">Sentiment insights will appear here after reviews load.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="surface details-panel">
+                    <div class="badge-row">
+                        <span class="badge-pill primary" id="vCondition">Condition</span>
+                        <span class="badge-pill primary" id="listingBadge">Guest Preview</span>
+                    </div>
+
+                    <h1 class="detail-title" id="vTitle">Vehicle Title</h1>
+                    <p class="detail-subtitle" id="detailSubtitle">Vehicle summary</p>
+
+                    <div class="price-label">Visible guest price</div>
+                    <div class="price-stack" id="priceContainer">
+                        <span class="price-current">LKR 0</span>
+                    </div>
+
+                    <div class="offer-box" id="promoInfoBox"></div>
+
+                    <div class="spec-grid">
+                        <div class="spec-card">
+                            <div class="spec-label">Year</div>
+                            <div class="spec-value"><i class="bi bi-calendar-event"></i> <span id="vYear">...</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-label">In Stock</div>
+                            <div class="spec-value"><i class="bi bi-box-seam"></i> <span id="vQuantity">...</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-label">Color</div>
+                            <div class="spec-value"><i class="bi bi-palette-fill"></i> <span id="vColor">...</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-label">Mileage</div>
+                            <div class="spec-value"><i class="bi bi-speedometer2"></i> <span id="vMileage">...</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-label">Fuel Type</div>
+                            <div class="spec-value"><i class="bi bi-fuel-pump-fill"></i> <span id="vFuel">...</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-label">Transmission</div>
+                            <div class="spec-value"><i class="bi bi-gear-wide-connected"></i> <span id="vTrans">...</span></div>
+                        </div>
+                    </div>
+
+                    <div class="action-stack" id="actionButtons">
+                        <button class="action-btn primary" id="guestActionButton" type="button" onclick="goToLogin()">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Continue
+                        </button>
+                        <a class="action-btn secondary" href="register.html">
+                            <i class="bi bi-person-plus-fill"></i> Create Account
+                        </a>
+                    </div>
+
+                    <div class="notice-box" id="outOfStock">
+                        <strong>Currently out of stock.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const vehicleCacheKeyPrefix = "vehicle-preview-";
+        let vehicleImages = [];
+        let currentImageIndex = 0;
+        let imageRotationTimer = null;
+
+        document.addEventListener("DOMContentLoaded", initGuestVehicleDetails);
+
+        function initNavScroll() {
+            const nav = document.getElementById("mainNav");
+            let lastScrollY = window.scrollY;
+            const updateScrollState = () => {
+                const currentScrollY = window.scrollY;
+                nav.classList.toggle("scrolled", currentScrollY > 18);
+
+                if (currentScrollY <= 24) {
+                    nav.classList.remove("hidden");
+                } else if (currentScrollY > lastScrollY + 4) {
+                    nav.classList.add("hidden");
+                } else if (currentScrollY < lastScrollY - 4) {
+                    nav.classList.remove("hidden");
+                }
+
+                lastScrollY = currentScrollY;
+            };
+            updateScrollState();
+            window.addEventListener("scroll", updateScrollState, { passive: true });
+        }
+
+        function goToLogin() {
+            window.location.href = "login.html";
+        }
+
+        function getVehicleCacheKey(vehicleId) {
+            return vehicleCacheKeyPrefix + vehicleId;
+        }
+
+        function getCachedVehicle(vehicleId) {
+            try {
+                const cachedData = sessionStorage.getItem(getVehicleCacheKey(vehicleId));
+                return cachedData ? JSON.parse(cachedData) : null;
+            } catch (error) {
+                console.warn("Could not read cached vehicle details:", error);
+                return null;
+            }
+        }
+
+        function cacheVehicle(vehicle) {
+            try {
+                sessionStorage.setItem(getVehicleCacheKey(vehicle.id), JSON.stringify(vehicle));
+            } catch (error) {
+                console.warn("Could not cache vehicle details:", error);
+            }
+        }
+
+        function showVehicleDetails() {
+            document.getElementById("loading-container").style.display = "none";
+            document.getElementById("details-container").style.display = "block";
+        }
+
+        function renderVehicleImages(vehicle) {
+            stopImageRotation();
+            vehicleImages = [vehicle.image1, vehicle.image2, vehicle.image3, vehicle.image4, vehicle.image5].filter(Boolean);
+            currentImageIndex = 0;
+            const thumbContainer = document.getElementById("thumbnail-container");
+            thumbContainer.innerHTML = "";
+
+            if (vehicleImages.length > 0) {
+                vehicleImages.forEach((imgUrl, index) => {
+                    const thumb = document.createElement("button");
+                    thumb.type = "button";
+                    thumb.className = "thumb" + (index === 0 ? " active" : "");
+                    thumb.onclick = () => changeImage(index);
+                    thumb.innerHTML = `<img src="${imgUrl}" alt="Vehicle image ${index + 1}">`;
+                    thumbContainer.appendChild(thumb);
+                });
+                showImageAt(0);
+                startImageRotation();
+            } else {
+                document.getElementById("mainImage").src = buildPlaceholderImage(`${vehicle.brand || "Vehicle"} ${vehicle.model || ""}`.trim());
+            }
+        }
+
+        function stopImageRotation() {
+            if (imageRotationTimer) {
+                clearInterval(imageRotationTimer);
+                imageRotationTimer = null;
+            }
+        }
+
+        function setActiveThumbnail(activeIndex) {
+            document.querySelectorAll("#thumbnail-container .thumb").forEach((thumb, index) => {
+                thumb.classList.toggle("active", index === activeIndex);
+            });
+        }
+
+        function showImageAt(index) {
+            if (!vehicleImages.length) {
+                return;
+            }
+
+            currentImageIndex = index;
+            document.getElementById("mainImage").src = vehicleImages[currentImageIndex];
+            setActiveThumbnail(currentImageIndex);
+        }
+
+        function startImageRotation() {
+            stopImageRotation();
+            if (vehicleImages.length <= 1) {
+                return;
+            }
+
+            imageRotationTimer = window.setInterval(() => {
+                const nextIndex = (currentImageIndex + 1) % vehicleImages.length;
+                showImageAt(nextIndex);
+            }, 4000);
+        }
+
+        function changeImage(index) {
+            showImageAt(index);
+            startImageRotation();
+        }
+
+        function renderGuestPromotion(vehicle) {
+            const priceContainer = document.getElementById("priceContainer");
+            const promoInfoBox = document.getElementById("promoInfoBox");
+            const appliedPromotion = vehicle.appliedPromotion;
+            const originalPrice = Number(vehicle.price || 0);
+            const effectivePrice = Number(vehicle.effectivePrice ?? vehicle.price ?? 0);
+
+            if (appliedPromotion && appliedPromotion.showOnVehicleDetails && effectivePrice < originalPrice) {
+                priceContainer.innerHTML = `
+                    <span class="price-original">${formatCurrency(originalPrice)}</span>
+                    <span class="price-current">${formatCurrency(effectivePrice)}</span>
+                    <span class="price-note">${escapeHtml(appliedPromotion.highlightLabel || appliedPromotion.title)} | ${escapeHtml(String(Math.round(Number(appliedPromotion.discountPercentage) || 0)))}% OFF</span>
+                `;
+                promoInfoBox.style.display = "block";
+                promoInfoBox.innerHTML = `
+                    ${appliedPromotion.imageUrl ? `<div class="offer-banner"><img src="${appliedPromotion.imageUrl}" alt="${escapeHtml(appliedPromotion.title || "Promotion banner")}"></div>` : ""}
+                    <div class="offer-title"><i class="bi bi-stars"></i> Promotion Applied</div>
+                    <div class="offer-meta">
+                        ${escapeHtml(appliedPromotion.title || "Special offer")} is active for ${escapeHtml(appliedPromotion.targetSummary || "selected vehicles")}.
+                        ${appliedPromotion.endDate ? `<strong>Ends:</strong> ${escapeHtml(formatPromoDeadline(appliedPromotion.endDate))}` : ""}
+                    </div>
+                `;
+                return;
+            }
+
+            priceContainer.innerHTML = `<span class="price-current">${formatCurrency(originalPrice)}</span>`;
+            promoInfoBox.style.display = "none";
+            promoInfoBox.innerHTML = "";
+        }
+
+        function renderVehicleDetails(vehicle) {
+            const title = `${vehicle.brand || ""} ${vehicle.model || ""}`.trim();
+            const listingLabel = vehicle.listingType === "Rent" ? "Rental Vehicle" : "Purchase Vehicle";
+            const actionLabel = vehicle.listingType === "Rent" ? "Login to Rent" : "Login to Buy";
+            const reviewPanel = document.getElementById("reviewPanel");
+            const reviewInsightsPanel = document.getElementById("reviewInsightsPanel");
+            const isRentalVehicle = vehicle.listingType === "Rent";
+
+            document.getElementById("vTitle").innerText = title;
+            const conditionEl = document.getElementById("vCondition");
+            const isBrandNew = vehicle.vehicleCondition === "BrandNew";
+            conditionEl.innerText = isBrandNew ? "Brand New" : (vehicle.vehicleCondition || "Condition");
+            conditionEl.classList.toggle("condition-brand-new", isBrandNew);
+            document.getElementById("listingBadge").innerText = listingLabel;
+            document.getElementById("detailSubtitle").innerText = [vehicle.category, vehicle.color, vehicle.engineCapacity].filter(Boolean).join(" | ") || "Premium vehicle preview";
+            document.getElementById("vYear").innerText = vehicle.manufactureYear || "N/A";
+            document.getElementById("vMileage").innerText = `${new Intl.NumberFormat("en-LK").format(Number(vehicle.mileage || 0))} km`;
+            document.getElementById("vColor").innerText = vehicle.color || "N/A";
+            document.getElementById("vFuel").innerText = vehicle.fuelType || "N/A";
+            document.getElementById("vTrans").innerText = vehicle.transmission || "N/A";
+            document.getElementById("vDescription").innerText = vehicle.description || "No description available.";
+
+            const quantity = Number(vehicle.quantity || 0);
+            const quantityEl = document.getElementById("vQuantity");
+            quantityEl.innerText = quantity > 0 ? `${quantity} units` : "0 units";
+            quantityEl.style.color = quantity > 0 ? "#16a34a" : "#ef4444";
+
+            const guestButton = document.getElementById("guestActionButton");
+            guestButton.innerHTML = `<i class="bi bi-box-arrow-in-right"></i> ${actionLabel}`;
+
+            document.getElementById("actionButtons").style.display = quantity > 0 ? "grid" : "none";
+            document.getElementById("outOfStock").style.display = quantity > 0 ? "none" : "block";
+            reviewPanel.style.display = isRentalVehicle ? "block" : "none";
+            if (reviewInsightsPanel) {
+                reviewInsightsPanel.style.display = isRentalVehicle ? "block" : "none";
+            }
+
+            renderGuestPromotion(vehicle);
+            renderVehicleImages(vehicle);
+        }
+
+        async function fetchVehicleReviews(vehicleId) {
+            try {
+                const res = await fetch(`/api/reviews/vehicle/${vehicleId}`);
+                if (!res.ok) {
+                    throw new Error("Failed to load reviews");
+                }
+
+                const reviews = await res.json();
+                renderGuestReviews(reviews);
+                renderReviewInsights(reviews);
+            } catch (error) {
+                console.error("Error fetching reviews", error);
+                document.getElementById("ratingSummary").innerHTML = `<span style="color:var(--muted); font-weight:500;">Reviews unavailable</span>`;
+                document.getElementById("reviewsList").innerHTML = `
+                    <div class="review-card">
+                        <p class="review-comment">We could not load reviews for this vehicle right now.</p>
+                    </div>
+                `;
+                renderReviewInsights([]);
+            }
+        }
+
+        function renderGuestReviews(reviews) {
+            const list = document.getElementById("reviewsList");
+            const summary = document.getElementById("ratingSummary");
+
+            if (!reviews.length) {
+                summary.innerHTML = `<span style="color:var(--muted); font-weight:500;">No ratings yet</span>`;
+                list.innerHTML = `
+                    <div class="review-card">
+                        <p class="review-comment">No reviews yet. Approved renters will be able to leave the first review.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const totalStars = reviews.reduce((sum, review) => sum + review.rating, 0);
+            const avgRating = (totalStars / reviews.length).toFixed(1);
+            summary.innerHTML = `<span style="color:#fbbf24; font-weight:800;"><i class="bi bi-star-fill"></i> ${avgRating} / 5</span><span style="color:var(--muted);"> (${reviews.length} verified)</span>`;
+
+            list.innerHTML = reviews.map((review) => {
+                const displayDate = review.reviewDate
+                    ? new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                    : "N/A";
+                const starsHtml = Array.from({ length: 5 }, (_, index) =>
+                    `<i class="fas fa-star" style="color:${index < review.rating ? "#fbbf24" : "#e2e8f0"}; font-size:11px;"></i>`
+                ).join("");
+                const sentiment = String(review.aiSentiment || "NEGATIVE").toUpperCase();
+                const sentimentClass = sentiment === "POSITIVE" ? "positive" : (sentiment === "CRITICAL" ? "critical" : "negative");
+                const replyLabel = review.replySource === "AdminManual" ? "Admin response" : "System reply";
+
+                return `
+                    <div class="review-card">
+                        <div class="review-head">
+                            <div>
+                                <div class="reviewer">${escapeHtml(review.customerName || "Verified Renter")} <i class="fas fa-check-circle" style="color:#16a34a; font-size:11px;"></i></div>
+                                <div style="margin-top:4px;">${starsHtml}</div>
+                                <div class="review-meta-row">
+                                    <span class="review-meta-pill ${sentimentClass}">${escapeHtml(sentiment)}</span>
+                                    ${review.businessReply ? `<span class="review-meta-pill reply">${escapeHtml(replyLabel)}</span>` : ""}
+                                </div>
+                            </div>
+                            <div class="review-date">${escapeHtml(displayDate)}</div>
+                        </div>
+                        <p class="review-comment">"${escapeHtml(review.comment || "")}"</p>
+                        ${review.requiresAdminAttention === true && review.adminAttentionStatus !== "Resolved"
+                            ? `<div class="review-response-note critical"><strong>Support follow-up in progress</strong>${escapeHtml(review.adminAttentionReason || "Our team is reviewing this feedback and will follow up manually.")}</div>`
+                            : ""}
+                        ${review.businessReply
+                            ? `<div class="review-response-note"><strong>${escapeHtml(replyLabel)}</strong>${escapeHtml(review.businessReply)}${review.businessReplyDate ? `<br><span class="review-date">${escapeHtml(review.businessReplyDate)}</span>` : ""}</div>`
+                            : ""}
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderReviewInsights(reviews) {
+            const chart = document.getElementById("reviewSentimentChart");
+            if (!chart) {
+                return;
+            }
+
+            if (!reviews.length) {
+                chart.innerHTML = `<div class="review-insights-empty">No review sentiment data yet. Once renters submit feedback, the sentiment summary will appear here.</div>`;
+                return;
+            }
+
+            const counts = {
+                positive: reviews.filter((review) => String(review.aiSentiment || "").toUpperCase() === "POSITIVE").length,
+                negative: reviews.filter((review) => String(review.aiSentiment || "").toUpperCase() === "NEGATIVE").length,
+                critical: reviews.filter((review) => String(review.aiSentiment || "").toUpperCase() === "CRITICAL").length
+            };
+
+            const total = reviews.length;
+            chart.innerHTML = [
+                buildReviewInsightRow("Positive", "positive", counts.positive, total),
+                buildReviewInsightRow("Negative", "negative", counts.negative, total),
+                buildReviewInsightRow("Critical", "critical", counts.critical, total)
+            ].join("");
+        }
+
+        function buildReviewInsightRow(label, tone, count, total) {
+            const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+            const fillWidth = count > 0 ? Math.max(percentage, 8) : 0;
+            return `
+                <div class="review-insight-row">
+                    <div class="review-insight-head">
+                        <span class="review-insight-label"><span class="review-insight-dot ${tone}"></span>${escapeHtml(label)}</span>
+                        <span class="review-insight-value">${escapeHtml(String(count))} review${count === 1 ? "" : "s"} | ${escapeHtml(String(percentage))}%</span>
+                    </div>
+                    <div class="review-insight-bar">
+                        <div class="review-insight-fill ${tone}" style="width:${fillWidth}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function initGuestVehicleDetails() {
+            initNavScroll();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const vehicleId = urlParams.get("id");
+
+            if (!vehicleId) {
+                window.location.href = "guest-vehicle-inventory.html";
+                return;
+            }
+
+            const cachedVehicle = getCachedVehicle(vehicleId);
+            if (cachedVehicle) {
+                renderVehicleDetails(cachedVehicle);
+                if (cachedVehicle.listingType === "Rent") {
+                    fetchVehicleReviews(vehicleId);
+                }
+                showVehicleDetails();
+            }
+
+            try {
+                const response = await fetch(`/api/vehicles/${vehicleId}`);
+                if (!response.ok) {
+                    throw new Error("Vehicle not found");
+                }
+
+                const vehicle = await response.json();
+                cacheVehicle(vehicle);
+                renderVehicleDetails(vehicle);
+                if (vehicle.listingType === "Rent") {
+                    fetchVehicleReviews(vehicleId);
+                }
+                showVehicleDetails();
+            } catch (error) {
+                if (!cachedVehicle) {
+                    document.getElementById("loading-container").innerHTML = `
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <h2>Could not load this vehicle</h2>
+                        <p>Please return to inventory and try again.</p>
+                    `;
+                }
+            }
+        }
+
+        function formatCurrency(value) {
+            return `LKR ${new Intl.NumberFormat("en-LK").format(Math.round(Number(value || 0)))}`;
+        }
+
+        function formatPromoDeadline(value) {
+            if (!value) {
+                return "Limited time";
+            }
+            return new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        }
+
+        function buildPlaceholderImage(label) {
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420">
+                    <defs>
+                        <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#0f2b55"/>
+                            <stop offset="100%" stop-color="#2563eb"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="640" height="420" fill="url(#g)"/>
+                    <text x="50%" y="45%" text-anchor="middle" fill="#ffffff" font-size="34" font-family="Inter, Arial, sans-serif" font-weight="700">${escapeHtml(label || "Vehicle")}</text>
+                    <text x="50%" y="58%" text-anchor="middle" fill="#dbeafe" font-size="20" font-family="Inter, Arial, sans-serif">Image coming soon</text>
+                </svg>
+            `)}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+    </script>
+    <footer class="site-mini-footer">
+        <div class="page-container">
+            <div class="site-mini-footer-shell">
+                <a href="index.html" class="nav-brand">
+                    <span class="nav-mark"><i class="bi bi-car-front-fill"></i></span>
+                    <div>
+                        <div class="nav-title">K.D.<span>Auto Traders</span></div>
+                        <div class="nav-sub">Premium Vehicle Marketplace</div>
+                    </div>
+                </a>
+                <div class="site-mini-footer-copy">&copy; 2026 K.D. Auto Traders. Designed for a cleaner sales and rental experience.</div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
