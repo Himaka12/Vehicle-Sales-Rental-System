@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Dashboard | K.D. Auto Traders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/premium-marketing.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="marketing-dashboard-page">
+<div class="marketing-toast-wrap" id="marketingToastWrap"></div>
+
+<div class="marketing-shell">
+    <aside class="marketing-sidebar">
+        <div class="marketing-brand">
+            <div class="marketing-brand-icon">
+                <i class="bi bi-car-front-fill"></i>
+            </div>
+            <div class="marketing-brand-text">
+                <strong>K.D. Auto <span>Traders</span></strong>
+                <p>Marketing workspace</p>
+            </div>
+        </div>
+
+        <span class="marketing-role-badge">
+            <i class="fas fa-bullhorn"></i>
+            Marketing Manager
+        </span>
+
+        <div class="marketing-sidebar-panel">
+            <h2>Campaign control</h2>
+            <p>Create vehicle promotions that reach guests and customers with a stronger dealership presentation.</p>
+        </div>
+
+        <nav class="marketing-sidebar-nav" aria-label="Marketing sections">
+            <button type="button" class="marketing-sidebar-link active" id="overviewNav" onclick="switchTab('overviewSection', this)">
+                <i class="fas fa-chart-pie"></i>
+                <span class="marketing-sidebar-label">Campaign overview</span>
+                <span class="marketing-sidebar-badge" id="marketingOverviewBadge" hidden>0</span>
+            </button>
+            <button type="button" class="marketing-sidebar-link" id="managePromosNav" onclick="switchTab('managePromosSection', this)">
+                <i class="fas fa-tags"></i>
+                <span class="marketing-sidebar-label">Manage promotions</span>
+                <span class="marketing-sidebar-badge" id="marketingPromosBadge" hidden>0</span>
+            </button>
+        </nav>
+
+        <div class="marketing-sidebar-footer">
+            <button type="button" class="marketing-logout-btn" onclick="logout()">
+                <i class="fas fa-right-from-bracket"></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="marketing-main">
+        <section class="marketing-hero">
+            <div class="marketing-hero-top">
+                <div>
+                    <span class="marketing-eyebrow">
+                        <i class="fas fa-bolt"></i>
+                        Promotion Management
+                    </span>
+                    <h1 class="marketing-hero-title">Launch sharper campaigns for the inventory experience.</h1>
+                    <p class="marketing-hero-subtitle" id="welcomeMessage">
+                        Marketing campaign studio
+                    </p>
+                </div>
+
+                <div class="marketing-hero-actions">
+                    <button type="button" class="marketing-btn marketing-btn-primary" onclick="switchTab('managePromosSection', document.getElementById('managePromosNav')); showAddForm();">
+                        <i class="fas fa-rocket"></i>
+                        New promotion
+                    </button>
+                    <button type="button" class="marketing-btn marketing-btn-secondary" onclick="switchTab('overviewSection', document.getElementById('overviewNav'));">
+                        <i class="fas fa-chart-line"></i>
+                        View overview
+                    </button>
+                </div>
+            </div>
+
+            <div class="marketing-hero-metrics">
+                <article class="marketing-hero-metric">
+                    <span>Active promotions</span>
+                    <strong id="heroActivePromos">0</strong>
+                </article>
+                <article class="marketing-hero-metric">
+                    <span>Targeted campaigns</span>
+                    <strong id="heroTargetedPromos">0</strong>
+                </article>
+                <article class="marketing-hero-metric">
+                    <span>Banner-ready offers</span>
+                    <strong id="heroBannerPromos">0</strong>
+                </article>
+                <article class="marketing-hero-metric">
+                    <span>Inventory vehicles</span>
+                    <strong id="heroTotalVehicles">0</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="marketing-section active" id="overviewSection">
+            <div class="marketing-grid marketing-grid-2">
+                <div class="marketing-card">
+                    <div class="marketing-card-header">
+                        <div>
+                            <h2>Marketplace performance</h2>
+                            <p>Track how promotions sit alongside total users and current inventory volume.</p>
+                        </div>
+                        <span class="marketing-pill">
+                            <i class="fas fa-chart-column"></i>
+                            Live platform metrics
+                        </span>
+                    </div>
+
+                    <div class="marketing-stat-grid">
+                        <article class="marketing-stat-card">
+                            <strong id="statTotalUsers">0</strong>
+                            <span>Total platform users</span>
+                        </article>
+                        <article class="marketing-stat-card">
+                            <strong id="statTotalPromos">0</strong>
+                            <span>Active campaigns</span>
+                        </article>
+                        <article class="marketing-stat-card">
+                            <strong id="statTotalVehicles">0</strong>
+                            <span>Inventory vehicles</span>
+                        </article>
+                    </div>
+
+                    <div class="marketing-card" style="margin-top: 20px; padding: 20px;">
+                        <div class="marketing-card-header" style="margin-bottom: 14px;">
+                            <div>
+                                <h3>Engagement snapshot</h3>
+                                <p>Quick visual comparison across users, vehicles, and active campaigns.</p>
+                            </div>
+                        </div>
+                        <div style="height: 320px;">
+                            <canvas id="marketingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="marketing-card">
+                    <div class="marketing-card-header">
+                        <div>
+                            <h2>Live campaign highlights</h2>
+                            <p>See the offers that are currently shaping the guest and customer inventory pages.</p>
+                        </div>
+                    </div>
+                    <div class="marketing-live-list" id="overviewCampaignGrid">
+                        <div class="marketing-empty-state">Loading campaigns...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="marketing-section" id="managePromosSection">
+            <div class="marketing-card">
+                <div class="marketing-card-header">
+                    <div>
+                        <h2>Create and manage promotions</h2>
+                        <p>Build global campaigns or target a full vehicle brand with an optional model selection when needed.</p>
+                    </div>
+                    <button type="button" class="marketing-btn marketing-btn-accent" onclick="showAddForm()">
+                        <i class="fas fa-plus"></i>
+                        Launch promotion
+                    </button>
+                </div>
+
+                <div class="marketing-form-shell" id="addPromoForm">
+                    <div class="marketing-form-panel">
+                        <div class="marketing-form-heading">
+                            <div>
+                                <h3><i class="fas fa-rocket" style="color: var(--mk-blue); margin-right: 8px;"></i>Launch new promotion</h3>
+                                <p>Set the campaign details, choose whether it applies to all sale or rent vehicles, and optionally narrow it to a specific brand and model.</p>
+                            </div>
+                            <span class="marketing-pill">
+                                <i class="fas fa-bolt"></i>
+                                Brand-first targeting
+                            </span>
+                        </div>
+
+                        <form id="promoForm" onsubmit="submitPromotion(event)">
+                            <div class="marketing-form-grid">
+                                <div class="marketing-field">
+                                    <label for="pTitle">Campaign title</label>
+                                    <input type="text" id="pTitle" placeholder="Toyota savings event" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="pDiscount">Discount (%)</label>
+                                    <input type="number" id="pDiscount" min="1" max="100" placeholder="15" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="pListingType">Vehicle purpose</label>
+                                    <select id="pListingType" required>
+                                        <option value="">Select purpose</option>
+                                        <option value="Sale">For Sale</option>
+                                        <option value="Rent">For Rent</option>
+                                    </select>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="pStart">Start date</label>
+                                    <input type="date" id="pStart" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="pEnd">End date</label>
+                                    <input type="date" id="pEnd" required>
+                                </div>
+                                <div class="marketing-field marketing-field-full">
+                                    <label for="pDesc">Campaign details / description</label>
+                                    <textarea id="pDesc" placeholder="Tell customers what the offer includes, what they can claim, and how the promotion is positioned." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="marketing-target-box">
+                                <label class="marketing-toggle" for="pAllVehicles">
+                                    <input type="checkbox" id="pAllVehicles">
+                                    Apply to all vehicles
+                                </label>
+                                <p class="marketing-help">
+                                    Every promotion must target either sale vehicles or rent vehicles. Leave this unchecked when the campaign should target a specific brand. Selecting a model is optional and only used when the campaign should hit one model inside that brand.
+                                </p>
+
+                                <div class="marketing-form-grid">
+                                    <div class="marketing-field">
+                                        <label for="pBrand">Vehicle brand</label>
+                                        <input type="text" id="pBrand" class="target-field-p" list="promoBrandOptions" placeholder="Toyota">
+                                    </div>
+                                    <div class="marketing-field">
+                                        <label for="pModel">Vehicle model (optional)</label>
+                                        <input type="text" id="pModel" class="target-field-p" list="promoModelOptions" placeholder="Prius">
+                                    </div>
+                                    <div class="marketing-field marketing-field-full">
+                                        <label for="pHighlightLabel">Highlight label</label>
+                                        <input type="text" id="pHighlightLabel" placeholder="Toyota Special Offer">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="marketing-display-box">
+                                <p class="marketing-help" style="margin-bottom: 14px;">Choose where the promotion should appear across the marketplace.</p>
+                                <div class="marketing-display-options">
+                                    <label class="marketing-display-option"><input type="checkbox" id="pShowBanner" checked> Inventory banner</label>
+                                    <label class="marketing-display-option"><input type="checkbox" id="pShowCard" checked> Vehicle cards</label>
+                                    <label class="marketing-display-option"><input type="checkbox" id="pShowDetails" checked> Vehicle details</label>
+                                </div>
+                            </div>
+
+                            <div class="marketing-form-grid" style="margin-top: 18px;">
+                                <div class="marketing-field marketing-field-full">
+                                    <label for="pImage">Campaign banner image</label>
+                                    <input type="file" id="pImage" accept="image/*" required>
+                                    <div class="marketing-inline-note">Use a strong banner image because guests and customers both see active promotions.</div>
+                                </div>
+                            </div>
+
+                            <div class="marketing-form-actions">
+                                <button type="submit" class="marketing-btn marketing-btn-accent" id="submitPromoBtn">
+                                    <i class="fas fa-rocket"></i>
+                                    Launch campaign
+                                </button>
+                                <button type="button" class="marketing-btn marketing-btn-ghost" onclick="closeForm('addPromoForm')">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="marketing-form-shell" id="editPromoForm">
+                    <div class="marketing-form-panel">
+                        <div class="marketing-form-heading">
+                            <div>
+                                <h3><i class="fas fa-pen" style="color: var(--mk-blue); margin-right: 8px;"></i>Edit promotion</h3>
+                                <p>Update the same sale-or-rent targeting flow without the old category, fuel-type, or priority fields.</p>
+                            </div>
+                            <span class="marketing-pill">
+                                <i class="fas fa-pen-ruler"></i>
+                                Refine campaign
+                            </span>
+                        </div>
+
+                        <form id="editPromoFormElement" onsubmit="submitPromoUpdate(event)">
+                            <input type="hidden" id="ePromoId">
+
+                            <div class="marketing-form-grid">
+                                <div class="marketing-field">
+                                    <label for="eTitle">Campaign title</label>
+                                    <input type="text" id="eTitle" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="eDiscount">Discount (%)</label>
+                                    <input type="number" id="eDiscount" min="1" max="100" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="eListingType">Vehicle purpose</label>
+                                    <select id="eListingType" required>
+                                        <option value="">Select purpose</option>
+                                        <option value="Sale">For Sale</option>
+                                        <option value="Rent">For Rent</option>
+                                    </select>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="eStart">Start date</label>
+                                    <input type="date" id="eStart" required>
+                                </div>
+                                <div class="marketing-field">
+                                    <label for="eEnd">End date</label>
+                                    <input type="date" id="eEnd" required>
+                                </div>
+                                <div class="marketing-field marketing-field-full">
+                                    <label for="eDesc">Campaign details / description</label>
+                                    <textarea id="eDesc" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="marketing-target-box">
+                                <label class="marketing-toggle" for="eAllVehicles">
+                                    <input type="checkbox" id="eAllVehicles">
+                                    Apply to all vehicles
+                                </label>
+                                <p class="marketing-help">
+                                    Every promotion must target either sale vehicles or rent vehicles. For targeted campaigns, choose the brand. Model remains optional when the offer should focus on a specific model inside that brand.
+                                </p>
+
+                                <div class="marketing-form-grid">
+                                    <div class="marketing-field">
+                                        <label for="eBrand">Vehicle brand</label>
+                                        <input type="text" id="eBrand" class="target-field-e" list="promoBrandOptions" placeholder="Toyota">
+                                    </div>
+                                    <div class="marketing-field">
+                                        <label for="eModel">Vehicle model (optional)</label>
+                                        <input type="text" id="eModel" class="target-field-e" list="promoEditModelOptions" placeholder="Prius">
+                                    </div>
+                                    <div class="marketing-field marketing-field-full">
+                                        <label for="eHighlightLabel">Highlight label</label>
+                                        <input type="text" id="eHighlightLabel" placeholder="Toyota Special Offer">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="marketing-display-box">
+                                <p class="marketing-help" style="margin-bottom: 14px;">Choose where the updated promotion should stay visible.</p>
+                                <div class="marketing-display-options">
+                                    <label class="marketing-display-option"><input type="checkbox" id="eShowBanner" checked> Inventory banner</label>
+                                    <label class="marketing-display-option"><input type="checkbox" id="eShowCard" checked> Vehicle cards</label>
+                                    <label class="marketing-display-option"><input type="checkbox" id="eShowDetails" checked> Vehicle details</label>
+                                </div>
+                            </div>
+
+                            <div class="marketing-form-grid" style="margin-top: 18px;">
+                                <div class="marketing-field marketing-field-full">
+                                    <label for="eImage">Replace banner image (optional)</label>
+                                    <input type="file" id="eImage" accept="image/*">
+                                    <div class="marketing-inline-note">Leave this empty if you want to keep the current banner.</div>
+                                </div>
+                            </div>
+
+                            <div class="marketing-form-actions">
+                                <button type="submit" class="marketing-btn marketing-btn-accent" id="submitEditPromoBtn">
+                                    <i class="fas fa-save"></i>
+                                    Save changes
+                                </button>
+                                <button type="button" class="marketing-btn marketing-btn-ghost" onclick="closeForm('editPromoForm')">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="marketing-table-wrap">
+                    <div class="marketing-table-scroll">
+                        <table class="marketing-table">
+                            <thead>
+                            <tr>
+                                <th>Banner</th>
+                                <th>Campaign</th>
+                                <th>Targeting</th>
+                                <th>Display</th>
+                                <th>Dates</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="promosTableBody">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="marketing-empty-state">Loading campaigns...</div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <datalist id="promoBrandOptions"></datalist>
+                <datalist id="promoModelOptions"></datalist>
+                <datalist id="promoEditModelOptions"></datalist>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/js/premium-feedback.js"></script>
+<script src="/js/marketing-dashboard-page.js"></script>
+<script src="/js/custom-selects.js"></script>
+</body>
+</html>
