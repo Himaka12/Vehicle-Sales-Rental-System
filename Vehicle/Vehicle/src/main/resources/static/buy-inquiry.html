@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Inquiry | K.D. Auto Traders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/premium-inquiry.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+</head>
+<body class="inquiry-body">
+<nav class="main-nav" id="mainNav">
+    <div class="container">
+        <div class="nav-shell">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-mark"><i class="bi bi-car-front-fill"></i></span>
+                <div>
+                    <div class="nav-title">K.D.<span>Auto Traders</span></div>
+                    <div class="nav-sub">Premium Vehicle Marketplace</div>
+                </div>
+            </a>
+
+            <div class="nav-links">
+                <a href="vehicle-inventory.html" class="active">Inventory</a>
+                <a href="customer-dashboard.html">Dashboard</a>
+                <a href="about-us.html">About Us</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="customer-dashboard.html" class="nav-login">My Account</a>
+                <a href="vehicle-inventory.html" class="nav-signup"><i class="bi bi-grid-1x2-fill"></i> Browse More</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section class="inquiry-hero">
+    <div>
+        <div class="inquiry-hero-top">
+            <button type="button" class="inquiry-back-button" onclick="goBackToVehicleDetails()">
+                <i class="bi bi-arrow-left"></i> Back to Vehicle
+            </button>
+        </div>
+        <h1>Send a serious purchase inquiry with a polished dealership experience.</h1>
+        <p>
+            Review the selected vehicle, confirm your contact details, and send a focused sales inquiry. Your customer profile is already linked so the team can follow up faster and more accurately.
+        </p>
+    </div>
+    <div class="inquiry-hero__meta">
+        <div class="hero-info-card">
+            <strong>Response Priority</strong>
+            <span>Customer inquiries are tied directly to your profile and routed with vehicle-specific context.</span>
+        </div>
+        <div class="hero-info-card">
+            <strong>What Happens Next</strong>
+            <span>Your inquiry is stored securely, appears in your dashboard history, and is reviewed by the sales team.</span>
+        </div>
+        <div class="hero-info-card">
+            <strong>Best Practice</strong>
+            <span>Add a short message about budget, financing, exchange, or test-drive interest for better follow-up.</span>
+        </div>
+    </div>
+</section>
+
+<div class="status-shell floating-card" id="loading-container">
+    <i class="fas fa-spinner fa-spin"></i>
+    <h2>Loading your vehicle inquiry workspace</h2>
+    <p>Preparing the selected vehicle details and your customer profile.</p>
+</div>
+
+<main class="inquiry-main" id="content-container" style="display:none;">
+    <div class="inquiry-layout">
+        <aside class="floating-card vehicle-summary">
+            <div class="vehicle-summary__media">
+                <div class="summary-badge-row">
+                    <span class="summary-badge summary-badge--sale"><i class="bi bi-tag-fill"></i> Purchase</span>
+                    <span class="summary-badge summary-badge--promo" id="promoBadge" style="display:none;"><i class="bi bi-stars"></i> Featured</span>
+                </div>
+                <img id="vImage" alt="Vehicle image">
+            </div>
+            <div class="vehicle-summary__body">
+                <div class="vehicle-summary__eyebrow">Selected Vehicle</div>
+                <h2 class="vehicle-summary__title" id="vTitle">Loading...</h2>
+                <div class="vehicle-summary__price">
+                    <strong id="vPrice">LKR 0</strong>
+                    <span>Total listed price</span>
+                </div>
+
+                <div class="vehicle-spec-grid">
+                    <div class="vehicle-spec">
+                        <small>Year</small>
+                        <strong id="vYear">...</strong>
+                    </div>
+                    <div class="vehicle-spec">
+                        <small>Mileage</small>
+                        <strong id="vMileage">...</strong>
+                    </div>
+                    <div class="vehicle-spec">
+                        <small>Fuel</small>
+                        <strong id="vFuel">...</strong>
+                    </div>
+                    <div class="vehicle-spec">
+                        <small>Color</small>
+                        <strong id="vColor">...</strong>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <section class="floating-card inquiry-form-card">
+            <span class="section-chip"><i class="bi bi-chat-left-text-fill"></i> Sales Inquiry Form</span>
+            <h2>Interested in this vehicle?</h2>
+            <p>
+                Confirm the details below and send your message. The sales team will use your saved profile identity and contact information to reach out.
+            </p>
+
+            <div class="trust-row">
+                <div class="trust-card">
+                    <i class="bi bi-person-check-fill"></i>
+                    <strong>Profile Verified</strong>
+                    <span>Your name and email come directly from your account profile.</span>
+                </div>
+                <div class="trust-card">
+                    <i class="bi bi-telephone-forward-fill"></i>
+                    <strong>Preferred Follow-up</strong>
+                    <span>Set the best time for the dealership team to contact you.</span>
+                </div>
+                <div class="trust-card">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <strong>Clean Inquiry Record</strong>
+                    <span>Your message is saved to your dashboard inquiry history after submission.</span>
+                </div>
+            </div>
+
+            <form id="inquiryForm">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="customerName">Full Name</label>
+                        <div class="input-shell">
+                            <input type="text" id="customerName" class="form-control" readonly>
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="customerEmail">Email Address</label>
+                        <div class="input-shell">
+                            <input type="email" id="customerEmail" class="form-control" readonly>
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="customerPhone">Phone Number</label>
+                        <div class="input-shell">
+                            <input type="tel" id="customerPhone" class="form-control" placeholder="+94 77 123 4567" required>
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="contactTime" id="contactTimeLabel">Preferred Contact Time</label>
+                        <div class="input-shell input-shell--dropdown">
+                            <select id="contactTime" class="form-control form-control--hidden" aria-hidden="true" tabindex="-1">
+                                <option value="Anytime">Anytime</option>
+                                <option value="Morning">Morning (8 AM - 12 PM)</option>
+                                <option value="Afternoon">Afternoon (12 PM - 5 PM)</option>
+                                <option value="Evening">Evening (5 PM - 8 PM)</option>
+                            </select>
+                            <button
+                                type="button"
+                                id="contactTimeTrigger"
+                                class="custom-select-trigger"
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-labelledby="contactTimeLabel contactTimeValue">
+                                <span class="custom-select-value" id="contactTimeValue">Anytime</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <div class="custom-select-menu" id="contactTimeMenu" role="listbox" aria-labelledby="contactTimeLabel">
+                                <button type="button" class="custom-select-option active" data-value="Anytime" role="option" aria-selected="true">Anytime</button>
+                                <button type="button" class="custom-select-option" data-value="Morning" role="option" aria-selected="false">Morning (8 AM - 12 PM)</button>
+                                <button type="button" class="custom-select-option" data-value="Afternoon" role="option" aria-selected="false">Afternoon (12 PM - 5 PM)</button>
+                                <button type="button" class="custom-select-option" data-value="Evening" role="option" aria-selected="false">Evening (5 PM - 8 PM)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-field form-field--full">
+                        <label for="customerMessage">Message / Questions</label>
+                        <div class="input-shell">
+                            <textarea id="customerMessage" class="form-control" placeholder="Example: I am interested in this vehicle and would like to discuss availability, financing, exchange options, or a viewing appointment."></textarea>
+                            <i class="bi bi-chat-square-text-fill"></i>
+                        </div>
+                        <div class="form-hint">Optional, but a short message improves the quality of the sales follow-up.</div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <p>
+                        By sending this inquiry, you allow the dealership to contact you regarding this exact vehicle using your provided phone number and saved account identity.
+                    </p>
+                    <button type="submit" id="submitBtn" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Send Inquiry
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<script src="/js/premium-feedback.js"></script>
+<script>
+    let vehicleId = null;
+    let contactTimeSelect = null;
+    let contactTimeTrigger = null;
+    let contactTimeMenu = null;
+
+    const token = sessionStorage.getItem("jwtToken");
+    const role = sessionStorage.getItem("userRole");
+    const loadingContainer = document.getElementById("loading-container");
+    const contentContainer = document.getElementById("content-container");
+
+    let lastInquiryNavScrollY = window.scrollY;
+    const syncInquiryNav = () => {
+        const nav = document.getElementById("mainNav");
+        const currentScrollY = window.scrollY;
+        nav.classList.toggle("scrolled", currentScrollY > 8);
+
+        if (currentScrollY <= 24) {
+            nav.classList.remove("hidden");
+        } else if (currentScrollY > lastInquiryNavScrollY + 4) {
+            nav.classList.add("hidden");
+        } else if (currentScrollY < lastInquiryNavScrollY - 4) {
+            nav.classList.remove("hidden");
+        }
+
+        lastInquiryNavScrollY = currentScrollY;
+    };
+    syncInquiryNav();
+    window.addEventListener("scroll", syncInquiryNav, { passive: true });
+
+    function formatCurrency(value) {
+        return "LKR " + Number(value || 0).toLocaleString("en-US");
+    }
+
+    function formatMileage(value) {
+        return Number(value || 0).toLocaleString("en-US") + " km";
+    }
+
+    function getCachedVehicle(id) {
+        try {
+            const cached = sessionStorage.getItem("selectedVehiclePreview");
+            if (!cached) return null;
+            const vehicle = JSON.parse(cached);
+            return String(vehicle.id) === String(id) ? vehicle : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function renderVehicle(vehicle) {
+        document.getElementById("vTitle").innerText = (vehicle.brand || "") + " " + (vehicle.model || "");
+        document.getElementById("vPrice").innerText = formatCurrency(vehicle.effectivePrice || vehicle.price);
+        document.getElementById("vYear").innerText = vehicle.manufactureYear || "N/A";
+        document.getElementById("vMileage").innerText = formatMileage(vehicle.mileage);
+        document.getElementById("vFuel").innerText = vehicle.fuelType || "N/A";
+        document.getElementById("vColor").innerText = vehicle.color || "N/A";
+
+        const image = vehicle.image1 || vehicle.imageUrl || "";
+        document.getElementById("vImage").src = image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='600' viewBox='0 0 960 600'%3E%3Crect width='960' height='600' fill='%23dbeafe'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%232563eb' font-family='Arial' font-size='42'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+        const promoBadge = document.getElementById("promoBadge");
+        if (vehicle.promoted || vehicle.appliedPromotion) {
+            promoBadge.style.display = "inline-flex";
+            promoBadge.innerHTML = '<i class="bi bi-stars"></i> Offer Ready';
+        } else {
+            promoBadge.style.display = "none";
+        }
+    }
+
+    function showReady() {
+        loadingContainer.style.display = "none";
+        contentContainer.style.display = "block";
+    }
+
+    function showError(message) {
+        loadingContainer.className = "status-shell floating-card status-shell--error";
+        loadingContainer.innerHTML = '<i class="fas fa-circle-exclamation"></i><h2>Unable to prepare inquiry</h2><p>' + message + '</p>';
+    }
+
+    function goBackToVehicleDetails() {
+        const referrer = document.referrer || "";
+        const detailsPages = [
+            "vehicle-details-sale.html",
+            "vehicle-details-rent.html",
+            "guest-vehicle-details.html"
+        ];
+
+        if (referrer && detailsPages.some((page) => referrer.includes(page))) {
+            window.history.back();
+            return;
+        }
+
+        if (vehicleId) {
+            window.location.href = "vehicle-details-sale.html?id=" + vehicleId;
+            return;
+        }
+
+        window.location.href = "vehicle-inventory.html";
+    }
+
+    function closeContactTimeMenu() {
+        if (!contactTimeTrigger || !contactTimeMenu) return;
+        contactTimeTrigger.setAttribute("aria-expanded", "false");
+        contactTimeMenu.classList.remove("open");
+    }
+
+    function openContactTimeMenu() {
+        if (!contactTimeTrigger || !contactTimeMenu) return;
+        contactTimeTrigger.setAttribute("aria-expanded", "true");
+        contactTimeMenu.classList.add("open");
+    }
+
+    function syncContactTimeValue(value) {
+        if (!contactTimeSelect || !contactTimeTrigger || !contactTimeMenu) return;
+
+        const selectedOption = contactTimeMenu.querySelector('[data-value="' + value + '"]');
+        const label = selectedOption ? selectedOption.textContent.trim() : value;
+
+        contactTimeSelect.value = value;
+        document.getElementById("contactTimeValue").textContent = label;
+
+        contactTimeMenu.querySelectorAll(".custom-select-option").forEach((option) => {
+            const isActive = option.dataset.value === value;
+            option.classList.toggle("active", isActive);
+            option.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+    }
+
+    function initContactTimeDropdown() {
+        contactTimeSelect = document.getElementById("contactTime");
+        contactTimeTrigger = document.getElementById("contactTimeTrigger");
+        contactTimeMenu = document.getElementById("contactTimeMenu");
+
+        if (!contactTimeSelect || !contactTimeTrigger || !contactTimeMenu) return;
+
+        syncContactTimeValue(contactTimeSelect.value || "Anytime");
+
+        contactTimeTrigger.addEventListener("click", function () {
+            const isOpen = contactTimeMenu.classList.contains("open");
+            if (isOpen) {
+                closeContactTimeMenu();
+            } else {
+                openContactTimeMenu();
+            }
+        });
+
+        contactTimeMenu.querySelectorAll(".custom-select-option").forEach((option) => {
+            option.addEventListener("click", function () {
+                syncContactTimeValue(option.dataset.value);
+                closeContactTimeMenu();
+            });
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!contactTimeMenu.contains(event.target) && !contactTimeTrigger.contains(event.target)) {
+                closeContactTimeMenu();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeContactTimeMenu();
+            }
+        });
+    }
+
+    async function initPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        vehicleId = urlParams.get("id");
+
+        if (!vehicleId) {
+            alert("No vehicle selected!");
+            window.location.href = "vehicle-inventory.html";
+            return;
+        }
+
+        if (!token || role !== "CUSTOMER") {
+            alert("Please log in with a customer account to submit a purchase inquiry.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const cachedVehicle = getCachedVehicle(vehicleId);
+        if (cachedVehicle) {
+            renderVehicle(cachedVehicle);
+            showReady();
+        }
+
+        try {
+            const [vehicleResponse, profileResponse] = await Promise.all([
+                fetch("/api/vehicles/" + vehicleId),
+                fetch("/api/customer/profile", {
+                    headers: { "Authorization": "Bearer " + token }
+                })
+            ]);
+
+            if (!vehicleResponse.ok) throw new Error("Vehicle details could not be loaded.");
+            if (!profileResponse.ok) throw new Error("Customer profile could not be loaded.");
+
+            const vehicle = await vehicleResponse.json();
+            const profile = await profileResponse.json();
+
+            renderVehicle(vehicle);
+            document.getElementById("customerName").value = profile.fullName || "";
+            document.getElementById("customerEmail").value = profile.email || "";
+            document.getElementById("customerPhone").value = profile.contactNumber || "";
+
+            showReady();
+        } catch (error) {
+            console.error(error);
+            showError("We could not load the selected vehicle or your profile. Please try again.");
+        }
+    }
+
+    document.getElementById("inquiryForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Inquiry...';
+        submitBtn.disabled = true;
+
+        const inquiryData = {
+            vehicleId: vehicleId,
+            phone: document.getElementById("customerPhone").value,
+            preferredContactTime: document.getElementById("contactTime").value,
+            message: document.getElementById("customerMessage").value
+        };
+
+        try {
+            const response = await fetch("/api/inquiries/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(inquiryData)
+            });
+
+            if (response.ok) {
+                alert("Success! Your inquiry has been sent. Our team will contact you soon.");
+                window.location.href = "vehicle-inventory.html";
+            } else {
+                const errorMsg = await response.text();
+                alert("Error sending inquiry: " + errorMsg);
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Inquiry';
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            alert("Network error. Please try again later.");
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Inquiry';
+            submitBtn.disabled = false;
+        }
+    });
+
+    initContactTimeDropdown();
+    initPage();
+</script>
+<script src="/js/custom-selects.js"></script>
+</body>
+</html>
