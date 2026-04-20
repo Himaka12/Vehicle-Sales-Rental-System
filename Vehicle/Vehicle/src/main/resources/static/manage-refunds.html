@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance & Refunds | K.D. Auto Traders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/custom-selects.css">
+
+    <style>
+        :root {
+            --primary:       #3b82f6;
+            --primary-dark:  #2563eb;
+            --primary-light: #eff6ff;
+            --primary-mid:   #dbeafe;
+            --success:       #16a34a;
+            --success-light: #f0fdf4;
+            --warning:       #f59e0b;
+            --warning-light: #fffbeb;
+            --danger:        #ef4444;
+            --danger-light:  #fef2f2;
+            --info:          #0891b2;
+            --info-light:    #ecfeff;
+            --text:          #1e293b;
+            --muted:         #64748b;
+            --border:        #e2e8f0;
+            --white:         #ffffff;
+            --bg:            #f5f8ff;
+            --card-shadow:   0 2px 12px rgba(59,130,246,0.08);
+            --sidebar-width: 260px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+        /* ════ SIDEBAR ════ */
+        .sidebar { width: var(--sidebar-width); background: var(--white); height: 100%; border-right: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: 2px 0 16px rgba(59,130,246,0.07); z-index: 10; flex-shrink: 0; }
+        .sidebar-header { padding: 26px 22px 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-brand-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; box-shadow: 0 3px 10px rgba(59,130,246,0.3); flex-shrink: 0; }
+        .sidebar-brand-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; }
+        .sidebar-brand-name span { color: var(--primary); }
+        .sidebar-badge { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 4px 11px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(135deg, var(--primary-dark), #1d4ed8); color: #fff; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
+
+        .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 11px; padding: 13px 20px; font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; border-left: 3px solid transparent; transition: all 0.2s; margin: 2px 0; }
+        .sidebar-nav a:hover { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary-mid); }
+        .sidebar-nav a.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+        .sidebar-nav a i { width: 16px; text-align: center; }
+
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
+        .btn-logout-sidebar { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: 1px solid rgba(239, 68, 68, 0.36); border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.875rem; cursor: pointer; width: 100%; padding: 10px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-logout-sidebar:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); border-color: rgba(239, 68, 68, 0.48); }
+
+        /* ════ MAIN CONTENT ════ */
+        .main-content { flex: 1; padding: 36px 40px; overflow-y: auto; min-width: 0; }
+        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+        .page-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary); margin-bottom: 4px; }
+        .page-title { font-family: 'Outfit', sans-serif; font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); display: flex; align-items: center; gap: 10px; }
+        .page-sub { font-size: 0.875rem; color: var(--muted); margin-top: 4px; }
+
+        /* ════ TABLE CARD ════ */
+        .table-card { background: var(--white); border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid var(--border); overflow: hidden; }
+        .table-card-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; border-bottom: 1px solid var(--border); }
+        .table-card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .table-card-title i { color: var(--primary); }
+
+        .rental-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .rental-table thead th { background: #f8fafc; padding: 13px 18px; text-align: left; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .rental-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+        .rental-table tbody tr:last-child { border-bottom: none; }
+        .rental-table tbody tr:hover { background: #f8fbff; }
+        .rental-table tbody td { padding: 16px 18px; vertical-align: top; color: var(--text); }
+
+        .vehicle-media-cell { display: flex; align-items: center; gap: 12px; min-width: 250px; }
+        .vehicle-thumb { width: 96px; height: 64px; border-radius: 14px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border); background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%); box-shadow: 0 8px 16px rgba(59,130,246,0.10); }
+        .vehicle-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .vehicle-thumb-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.15rem; }
+        .vehicle-meta-block { display: grid; gap: 4px; }
+        .vehicle-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+        .vehicle-subline { font-size: 0.76rem; color: var(--muted); }
+
+        /* Financial Texts */
+        .refund-amount { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--danger); display: block; margin-bottom: 4px; }
+        .bank-details-box { background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: 0.8rem; font-family: monospace; line-height: 1.5; color: var(--text); margin-top: 6px; }
+
+        /* Badges */
+        .badge-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+        .badge-pending { background: var(--warning-light); color: #92400e; }
+        .badge-processing { background: var(--info-light); color: var(--info); border: 1px solid #cffafe; }
+        .badge-completed { background: var(--success-light); color: var(--success); border: 1px solid #bbf7d0; }
+
+        /* Buttons */
+        .btn-process { padding: 8px 14px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-process:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-view { padding: 6px 12px; background: var(--white); color: var(--success); border: 1px solid var(--success); border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-view:hover { background: var(--success-light); }
+
+        /* ════ MODAL ════ */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: var(--white); width: 420px; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-box h4 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; }
+
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            background: var(--white);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .filter-bar-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.97rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-bar-title i { color: var(--primary); }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+
+        .filter-select {
+            min-width: 190px;
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.18s;
+        }
+
+        .filter-select:focus { border-color: var(--primary); }
+
+        .filter-controls .app-select-wrap,
+        .filter-controls .filter-select {
+            width: 220px;
+            flex: 0 0 220px;
+        }
+
+        .filter-controls .app-select-trigger,
+        .filter-controls .app-select-value {
+            white-space: nowrap;
+        }
+
+        .count-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-left: 8px;
+        }
+
+        .vip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.24);
+        }
+
+        @media (max-width: 900px) { .sidebar { display: none; } .main-content { padding: 24px 16px; } }
+    </style>
+    <link rel="stylesheet" href="/css/premium-admin-pages.css">
+</head>
+<body class="admin-shell-page">
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="admin-dashboard.html" class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="bi bi-car-front-fill"></i></div>
+            <div class="sidebar-brand-name">K.D. Auto <span>Traders</span></div>
+        </a>
+        <span class="sidebar-role"><i class="fas fa-shield-alt"></i> Main Admin</span>
+    </div>
+
+    <div class="sidebar-panel">
+        <h2>Admin control center</h2>
+        <p>Track core platform activity, monitor pending actions, and jump directly into the operational areas that need attention.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard overview</a>
+        <a href="manage-vehicles.html"><i class="fas fa-car"></i> Manage vehicles</a>
+        <a href="manage-inquiries.html"><i class="fas fa-envelope-open-text"></i> Customer inquiries</a>
+        <a href="manage-rentals.html"><i class="fas fa-calendar-check"></i> Rental bookings</a>
+        <a href="manage-users.html"><i class="fas fa-users"></i> Manage users</a>
+        <a href="manage-reviews.html"><i class="fas fa-star"></i> Manage reviews</a>
+        <a href="manage-refunds.html" class="active"><i class="fas fa-rotate-left"></i> Manage refunds</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="btn-logout-sidebar" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="top-bar">
+        <div>
+            <p class="page-eyebrow">Finance Department</p>
+            <h2 class="page-title"><i class="fas fa-money-check-alt" style="color:var(--primary); font-size:1.4rem;"></i> Manage Refunds</h2>
+            <p class="page-sub">Process customer refund tickets and upload transaction receipts.</p>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-bar-title">
+            <i class="fas fa-filter"></i> Filter Refunds
+        </div>
+        <div class="filter-controls">
+            <select id="refundMemberFilter" class="filter-select" onchange="applyRefundFilters()">
+                <option value="ALL">All Members</option>
+                <option value="BASIC">Basic Members</option>
+                <option value="PREMIUM">Premium Members</option>
+            </select>
+            <select id="refundDateFilter" class="filter-select" onchange="applyRefundFilters()">
+                <option value="NEW">Date: Newest First</option>
+                <option value="OLD">Date: Oldest First</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <div class="table-card-title"><i class="fas fa-list"></i> Active Refund Tickets <span class="count-badge" id="refundCountBadge">Loading...</span></div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="rental-table">
+                <thead>
+                <tr>
+                    <th>Ticket Info</th>
+                    <th>Vehicle</th>
+                    <th>Customer Info</th>
+                    <th>Financial Details</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="refundsTableBody">
+                <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="processModal" class="modal-overlay">
+    <div class="modal-box">
+        <h4><i class="fas fa-university" style="color:var(--primary);"></i> Complete Transfer</h4>
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">Please transfer the exact amount to the customer's bank account and upload the transaction receipt here to close the ticket.</p>
+
+        <form id="processForm" onsubmit="submitProcessRefund(event)">
+            <input type="hidden" id="processRefundId">
+
+            <div class="form-group">
+                <label>Upload Transaction Slip</label>
+                <input type="file" id="refundProof" class="form-control" accept="image/*" required>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-process" id="submitBtn" style="width: 100%; justify-content: center;"><i class="fas fa-check-circle"></i> Mark as Completed</button>
+                <button type="button" class="btn-process" style="width: 100%; justify-content: center; background: transparent; color: var(--muted); border: 1px solid var(--border);" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/premium-feedback.js"></script>
+<script src="/js/custom-selects.js"></script>
+<script>
+    const token = sessionStorage.getItem("jwtToken");
+    let allRefunds = [];
+
+    window.onload = function() {
+        if (!token || sessionStorage.getItem("userRole") !== "MAIN_ADMIN") {
+            window.location.href = "login.html";
+            return;
+        }
+        fetchRefunds();
+    };
+
+    async function fetchRefunds() {
+        try {
+            const res = await fetch("/api/refunds/all", { headers: { "Authorization": "Bearer " + token } });
+            if (res.ok) {
+                const refunds = await res.json();
+                allRefunds = refunds;
+                applyRefundFilters();
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function applyRefundFilters() {
+        const memberFilter = (document.getElementById("refundMemberFilter")?.value || "ALL").toUpperCase();
+        const dateFilter = (document.getElementById("refundDateFilter")?.value || "NEW").toUpperCase();
+
+        const filtered = allRefunds.filter((refund) => {
+            if (memberFilter === "PREMIUM") return refund.premiumCustomer === true;
+            if (memberFilter === "BASIC") return refund.premiumCustomer !== true;
+            return true;
+        });
+
+        filtered.sort((a, b) => {
+            if (a.status === "Processing" && b.status !== "Processing") return -1;
+            if (a.status !== "Processing" && b.status === "Processing") return 1;
+            return compareDateStrings(a.createdAt, b.createdAt, dateFilter, a.id, b.id);
+        });
+
+        renderRefunds(filtered);
+    }
+
+    function renderRefunds(refunds) {
+        const tbody = document.getElementById("refundsTableBody");
+        const countBadge = document.getElementById("refundCountBadge");
+
+        countBadge.textContent = allRefunds.length === refunds.length
+            ? `${refunds.length} Refunds`
+            : `${refunds.length} of ${allRefunds.length} Refunds`;
+
+        if (refunds.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:50px; color:var(--muted);"><i class="fas fa-check-circle" style="font-size:2rem; margin-bottom:10px; opacity:0.3; display:block;"></i>${allRefunds.length ? "No refunds match the selected filters." : "All refunds have been processed!"}</td></tr>`;
+            return;
+        }
+
+        let html = "";
+        refunds.forEach(r => {
+            let statusBadge = "";
+            let actionBtn = "";
+
+            if (r.status === "Processing") {
+                statusBadge = `<span class="badge-pill badge-processing"><i class="fas fa-spinner fa-spin"></i> Action Required</span>`;
+                actionBtn = `<button class="btn-process" onclick="openModal(${r.id})"><i class="fas fa-upload"></i> Complete Transfer</button>`;
+            } else if (r.status === "Completed") {
+                statusBadge = `<span class="badge-pill badge-completed"><i class="fas fa-check-double"></i> Completed</span><br><span style="font-size:0.7rem; color:var(--muted);">${r.processedAt.split('T')[0]}</span>`;
+                actionBtn = `<a href="${r.refundProofUrl}" target="_blank" class="btn-view"><i class="fas fa-file-invoice-dollar"></i> View Slip</a>`;
+            } else {
+                statusBadge = `<span class="badge-pill badge-pending"><i class="fas fa-clock"></i> ${r.status}</span>`;
+                actionBtn = `<span style="font-size:0.75rem; color:var(--muted);">Waiting for user</span>`;
+            }
+
+            const vehicleImage = r.vehicleImageUrl
+                ? `<div class="vehicle-thumb"><img src="${escapeHtml(r.vehicleImageUrl)}" alt="${escapeHtml(r.vehicleName || "Vehicle")}"></div>`
+                : `<div class="vehicle-thumb"><div class="vehicle-thumb-fallback"><i class="fas fa-car-side"></i></div></div>`;
+            const vehicleSubline = [r.vehicleManufactureYear, r.vehicleColor, r.vehicleCondition].filter(Boolean).join(" • ");
+
+            html += `
+                <tr>
+                    <td>
+                        <strong>REF-${r.id}</strong><br>
+                        <span style="font-size:0.75rem; color:var(--muted);">Booking #${r.bookingId}</span><br>
+                        <span style="font-size:0.7rem; color:var(--muted);">${r.createdAt.split('T')[0]}</span>
+                    </td>
+                    <td>
+                        <div class="vehicle-media-cell">
+                            ${vehicleImage}
+                            <div class="vehicle-meta-block">
+                                <div class="vehicle-title">${escapeHtml(r.vehicleName || `Vehicle #${r.vehicleId}`)}</div>
+                                <div class="vehicle-subline">${escapeHtml(vehicleSubline || `Vehicle ID #${r.vehicleId}`)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight:700;">${r.customerName}</div>
+                        ${r.premiumCustomer ? `<div class="vip-badge"><i class="fas fa-crown"></i> VIP</div>` : ""}
+                        <div style="font-size:0.8rem; color:var(--primary-dark);">${r.customerEmail}</div>
+                    </td>
+                    <td>
+                        <span class="refund-amount">LKR ${r.amount.toLocaleString('en-US')}</span>
+                        <div class="bank-details-box">
+                            BANK: ${r.bankName}<br>
+                            BRANCH: ${r.branchName}<br>
+                            A/C NO: ${r.accountNumber}<br>
+                            NAME: ${r.accountHolderName}
+                        </div>
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                </tr>`;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function compareDateStrings(aDate, bDate, sortOrder, aId, bId) {
+        const aTime = parseDateValue(aDate);
+        const bTime = parseDateValue(bDate);
+
+        if (aTime !== bTime) {
+            return sortOrder === "OLD" ? aTime - bTime : bTime - aTime;
+        }
+
+        return sortOrder === "OLD"
+            ? (Number(aId) || 0) - (Number(bId) || 0)
+            : (Number(bId) || 0) - (Number(aId) || 0);
+    }
+
+    function parseDateValue(value) {
+        const parsed = Date.parse(value || "");
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    function openModal(id) {
+        document.getElementById("processRefundId").value = id;
+        document.getElementById("refundProof").value = "";
+        document.getElementById("processModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("processModal").style.display = "none";
+    }
+
+    async function submitProcessRefund(e) {
+        e.preventDefault();
+        const id = document.getElementById("processRefundId").value;
+        const file = document.getElementById("refundProof").files[0];
+
+        if (!file) return alert("Please upload the transaction slip.");
+
+        const formData = new FormData();
+        formData.append("refundProof", file);
+
+        const btn = document.getElementById("submitBtn");
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`/api/refunds/process/${id}`, {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + token },
+                body: formData
+            });
+
+            if (res.ok) {
+                alert("Refund marked as Completed!");
+                closeModal();
+                fetchRefunds();
+            } else {
+                const err = await res.text();
+                alert("Error: " + err);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Network error.");
+        } finally {
+            btn.innerHTML = `<i class="fas fa-check-circle"></i> Mark as Completed`;
+            btn.disabled = false;
+        }
+    }
+
+    function logout() {
+        ["jwtToken", "userName", "userRole"].forEach((key) => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        window.location.href = "login.html";
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+</script>
+<script src="/js/premium-admin-shell.js"></script>
+
+</body>
+</html>
