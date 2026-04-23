@@ -20,5 +20,7 @@ public class CustomerProfileDTO {
     @Pattern(regexp = "^\\d{10}$", message = "Contact number must contain exactly 10 digits.")
     private String contactNumber;
     private boolean isPremium;
-    private String cardNumber; // We will only send the last 4 digits to the frontend for security
+    private String cardNumber;
+    private String premiumPaymentId;
+    private String premiumActivatedAt;
 }
