@@ -969,7 +969,7 @@ tr:hover td {
 }
 
 .premium-gateway__frame {
-    width: min(100%, 540px);
+    width: min(100%, 820px);
     padding: 28px 24px 18px;
     border-radius: 32px;
     background:
@@ -1240,6 +1240,22 @@ tr:hover td {
     font-size: 0.95rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.premium-gateway__brand-pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(37, 99, 235, 0.24);
+    box-shadow: 0 12px 20px rgba(15, 23, 42, 0.07);
+}
+
+.premium-gateway__brand-pill.is-active {
+    color: #1d4ed8;
+    background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+    border-color: rgba(37, 99, 235, 0.42);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.12);
 }
 
 .premium-gateway__field-grid {
@@ -1326,6 +1342,10 @@ tr:hover td {
     color: #111827;
     background: linear-gradient(135deg, #fde68a 0%, #facc15 100%);
     box-shadow: 0 18px 30px rgba(250, 204, 21, 0.26);
+}
+
+.premium-gateway__primary-btn--continue {
+    width: min(100%, 320px);
 }
 
 .premium-gateway__secondary-btn {
@@ -1452,6 +1472,51 @@ tr:hover td {
     text-align: center;
 }
 
+@media (min-width: 1040px) {
+    .premium-gateway__frame {
+        width: min(100%, 1140px);
+        display: grid;
+        grid-template-columns: minmax(340px, 0.92fr) minmax(420px, 1.08fr);
+        grid-template-areas:
+            "header header"
+            "stepbar stepbar"
+            "summary panel"
+            "note note";
+        gap: 24px;
+        align-items: start;
+        padding: 30px 30px 22px;
+    }
+
+    .premium-gateway__header {
+        grid-area: header;
+        margin-bottom: 0;
+        max-width: 720px;
+    }
+
+    .premium-gateway__stepbar {
+        grid-area: stepbar;
+        margin-bottom: 0;
+    }
+
+    .premium-gateway__summary-card {
+        grid-area: summary;
+        margin-bottom: 0;
+        min-height: 100%;
+    }
+
+    .premium-gateway__panel {
+        grid-area: panel;
+        min-height: 100%;
+    }
+
+    .premium-gateway__demo-note {
+        grid-area: note;
+        margin-top: 0;
+        text-align: left;
+        padding-left: 4px;
+    }
+}
+
 @media (max-width: 680px) {
     .premium-gateway__frame {
         padding: 22px 16px 16px;
@@ -1489,6 +1554,10 @@ tr:hover td {
     .premium-gateway__brand-pill {
         flex: 1 1 calc(50% - 12px);
         text-align: center;
+    }
+
+    .premium-gateway__primary-btn--continue {
+        width: 100%;
     }
 
     .premium-gateway__receipt-box strong {

@@ -936,6 +936,7 @@
         return {
             step: 1,
             selectedMethod: null,
+            selectedBrand: "VISA",
             form: {
                 cardholderName: cardholderName || "",
                 cardNumber: "",
@@ -1016,7 +1017,15 @@
     function getPremiumPaymentMethodHTML() {
         const isSelected = premiumCheckoutState.selectedMethod === "card";
         const brandPills = ["VISA", "Mastercard", "UnionPay"]
-            .map(brand => `<span class="premium-gateway__brand-pill">${brand}</span>`)
+            .map(brand => `
+                <button
+                    type="button"
+                    class="premium-gateway__brand-pill${premiumCheckoutState.selectedBrand === brand ? " is-active" : ""}"
+                    onclick="selectPremiumCardBrand('${brand}')"
+                >
+                    ${brand}
+                </button>
+            `)
             .join("");
 
         const bodyHtml = `
@@ -1030,7 +1039,7 @@
                 <span class="premium-gateway__method-radio">${isSelected ? '<i class="fas fa-check"></i>' : ""}</span>
             </button>
             <div class="premium-gateway__brand-pills">${brandPills}</div>
-            <button type="button" class="premium-gateway__primary-btn" onclick="goToPremiumCardStep()" ${isSelected ? "" : "disabled"}>
+            <button type="button" class="premium-gateway__primary-btn premium-gateway__primary-btn--continue" onclick="goToPremiumCardStep()" ${isSelected ? "" : "disabled"}>
                 Continue
             </button>
         `;
@@ -1175,6 +1184,14 @@
 
     function selectPremiumPaymentMethod(method) {
         premiumCheckoutState.selectedMethod = method;
+        renderPremiumSection(currentCustomerProfile || {});
+    }
+
+    function selectPremiumCardBrand(brand) {
+        premiumCheckoutState.selectedBrand = brand;
+        if (premiumCheckoutState.selectedMethod !== "card") {
+            premiumCheckoutState.selectedMethod = "card";
+        }
         renderPremiumSection(currentCustomerProfile || {});
     }
 
