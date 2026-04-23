@@ -197,6 +197,14 @@
             }
         }
 
+        function clearCachedVehicle(vehicleId) {
+            try {
+                sessionStorage.removeItem(getVehicleCacheKey(vehicleId));
+            } catch (error) {
+                console.warn("Could not clear cached vehicle details:", error);
+            }
+        }
+
         function showVehicleDetails() {
             document.getElementById("loading-container").style.display = "none";
             document.getElementById("details-container").style.display = "block";
@@ -467,9 +475,6 @@
             const cachedVehicle = getCachedVehicle(vehicleId);
             if (cachedVehicle) {
                 renderVehicleDetails(cachedVehicle);
-                if (cachedVehicle.listingType === "Rent") {
-                    fetchVehicleReviews(vehicleId);
-                }
                 showVehicleDetails();
             }
 
@@ -487,6 +492,12 @@
                 }
                 showVehicleDetails();
             } catch (error) {
+                clearCachedVehicle(vehicleId);
+                if (cachedVehicle) {
+                    alert("This listing is no longer available.");
+                    window.location.replace("guest-vehicle-inventory.html");
+                    return;
+                }
                 if (!cachedVehicle) {
                     document.getElementById("loading-container").innerHTML = `
                         <i class="bi bi-exclamation-triangle"></i>
