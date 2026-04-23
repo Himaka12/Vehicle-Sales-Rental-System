@@ -29,6 +29,12 @@ public class SalesInquiryService {
     public SalesInquiryDTO submitInquiry(String email, SalesInquiryDTO dto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        if (!vehicle.isVisible()) {
+            throw new RuntimeException("This listing is currently hidden and cannot accept new inquiries.");
+        }
 
         if (inquiryRepository.existsByUserIdAndVehicleId(user.getId(), dto.getVehicleId())
                 || inquiryRepository.existsByEmailAndVehicleId(user.getEmail(), dto.getVehicleId())) {
