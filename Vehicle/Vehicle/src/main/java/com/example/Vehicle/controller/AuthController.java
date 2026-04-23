@@ -61,7 +61,7 @@ public class AuthController {
     public ResponseEntity<String> deleteSubAdmin(@PathVariable Long id) {
         try {
             authService.deleteSubAdmin(id);
-            return new ResponseEntity<>("Sub-Admin deleted successfully!", HttpStatus.OK);
+            return new ResponseEntity<>("Sub-Admin access removed and personal data anonymized successfully.", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -78,7 +78,7 @@ public class AuthController {
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
             authService.deleteUser(id);
-            return new ResponseEntity<>("User deleted successfully!", HttpStatus.OK);
+            return new ResponseEntity<>("User access removed and personal data anonymized successfully.", HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
