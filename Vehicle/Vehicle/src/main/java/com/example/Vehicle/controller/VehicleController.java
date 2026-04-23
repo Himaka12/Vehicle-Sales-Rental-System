@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,15 +63,34 @@ public class VehicleController {
         return new ResponseEntity<>(vehicleService.getAllVehicles(), HttpStatus.OK);
     }
 
+    @GetMapping("/admin/all")
+    public ResponseEntity<?> getAdminVehicles() {
+        return new ResponseEntity<>(vehicleService.getAdminVehicles(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getVehicleById(@PathVariable Long id) {
         return new ResponseEntity<>(vehicleService.getVehicleById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<?> getAdminVehicleById(@PathVariable Long id) {
+        return new ResponseEntity<>(vehicleService.getAdminVehicleById(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteVehicle(id);
         return new ResponseEntity<>("Vehicle deleted successfully", HttpStatus.OK);
+    }
+
+    @PutMapping("/visibility/{id}")
+    public ResponseEntity<?> updateVehicleVisibility(@PathVariable Long id, @RequestBody Map<String, Boolean> payload) {
+        Boolean visible = payload.get("visible");
+        if (visible == null) {
+            return new ResponseEntity<>("Vehicle visibility is required.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(vehicleService.updateVehicleVisibility(id, visible), HttpStatus.OK);
     }
 
     private void validateVehicleData(VehicleSubmitDTO submitDTO) {
