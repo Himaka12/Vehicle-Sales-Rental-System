@@ -8,23 +8,26 @@ import com.example.Vehicle.repository.RefundRepository;
 import com.example.Vehicle.repository.RentalBookingRepository;
 import com.example.Vehicle.repository.UserRepository;
 import com.example.Vehicle.util.StatusRules;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RefundService {
-    private static final long REFUND_NOTICE_DAYS_BEFORE_START = 3;
+    private static final long REFUND_WINDOW_HOURS_AFTER_ADMIN_RESPONSE = 24;
+    private static final DateTimeFormatter REFUND_WINDOW_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final RefundRepository refundRepository;
     private final RentalBookingRepository bookingRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public RefundDTO claimRefund(Long bookingId, String email, String bankName, String branchName, String accountNumber, String accountHolderName) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
         RentalBooking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -33,8 +36,11 @@ public class RefundService {
             throw new RuntimeException("Unauthorized: You do not own this booking.");
         }
 
-        if (!StatusRules.BOOKING_CANCELLED.equals(StatusRules.normalizeBookingStatus(booking.getStatus()))) {
-            throw new RuntimeException("Booking must be cancelled before claiming a refund.");
+        String bookingStatus = StatusRules.normalizeBookingStatus(booking.getStatus());
+        if (!StatusRules.BOOKING_APPROVED.equals(bookingStatus)
+                && !StatusRules.BOOKING_REJECTED.equals(bookingStatus)
+                && !StatusRules.BOOKING_CANCELLED.equals(bookingStatus)) {
+            throw new RuntimeException("Refunds become available only after an admin approves or rejects the booking.");
         }
 
         if (refundRepository.findByBookingId(bookingId).isPresent()) {
@@ -42,7 +48,6 @@ public class RefundService {
         }
 
         validateRefundPolicyWindow(booking);
-
         validateBankDetails(bankName, branchName, accountNumber, accountHolderName);
 
         long days = java.time.temporal.ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate()) + 1;
@@ -51,6 +56,12 @@ public class RefundService {
             dailyRate = dailyRate * 0.90;
         }
         double totalAmount = days * dailyRate;
+
+        if (StatusRules.BOOKING_APPROVED.equals(bookingStatus)) {
+            // Once an approved booking is refunded, stop it from blocking future availability.
+            booking.setStatus(StatusRules.BOOKING_CANCELLED);
+            bookingRepository.save(booking);
+        }
 
         Refund refund = new Refund();
         refund.setUser(user);
@@ -131,13 +142,21 @@ public class RefundService {
     }
 
     private void validateRefundPolicyWindow(RentalBooking booking) {
-        if (booking.getStartDate() == null) {
-            throw new RuntimeException("Refund policy could not be verified because the booking start date is missing.");
+        String bookingStatus = StatusRules.normalizeBookingStatus(booking.getStatus());
+        if (!StatusRules.BOOKING_APPROVED.equals(bookingStatus)
+                && !StatusRules.BOOKING_REJECTED.equals(bookingStatus)
+                && !StatusRules.BOOKING_CANCELLED.equals(bookingStatus)) {
+            throw new RuntimeException("Refunds become available only after an admin approves or rejects the booking.");
         }
 
-        LocalDate deadline = booking.getStartDate().minusDays(REFUND_NOTICE_DAYS_BEFORE_START);
-        if (LocalDate.now().isAfter(deadline)) {
-            throw new RuntimeException("Refunds must be requested at least 3 days before the rental start date. The refund request window closed on " + deadline + ".");
+        if (booking.getAdminRespondedAt() == null) {
+            throw new RuntimeException("Refund policy could not be verified because the admin response time is missing for this booking.");
+        }
+
+        LocalDateTime deadline = booking.getAdminRespondedAt().plusHours(REFUND_WINDOW_HOURS_AFTER_ADMIN_RESPONSE);
+        if (LocalDateTime.now().isAfter(deadline)) {
+            throw new RuntimeException("Refunds must be requested within 24 hours of the admin response. The refund window closed on "
+                    + deadline.format(REFUND_WINDOW_FORMATTER) + ".");
         }
     }
 }
