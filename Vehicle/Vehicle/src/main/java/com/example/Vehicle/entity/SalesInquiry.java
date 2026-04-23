@@ -15,6 +15,9 @@ public class SalesInquiry {
     @Column(nullable = false)
     private Long vehicleId; // Links to the specific car
 
+    @Column
+    private Long userId;
+
     @Column(nullable = false)
     private String customerName;
 
