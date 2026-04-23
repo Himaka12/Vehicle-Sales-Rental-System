@@ -187,6 +187,14 @@
             }
         }
 
+        function clearCachedVehicle(vehicleId) {
+            try {
+                sessionStorage.removeItem(getVehicleCacheKey(vehicleId));
+            } catch (error) {
+                console.warn("Could not clear cached vehicle details:", error);
+            }
+        }
+
         function showVehicleDetails() {
             document.getElementById("loading-container").style.display = "none";
             document.getElementById("details-container").style.display = "block";
@@ -427,6 +435,12 @@
                 showVehicleDetails();
                 loadSaleInteractions(vehicleId);
             } catch (error) {
+                clearCachedVehicle(vehicleId);
+                if (cachedVehicle) {
+                    alert("This listing is no longer available.");
+                    window.location.replace("vehicle-inventory.html");
+                    return;
+                }
                 if (!cachedVehicle) {
                     document.getElementById("loading-container").innerHTML = `
                         <i class="bi bi-exclamation-triangle"></i>
@@ -434,10 +448,6 @@
                         <p>Please return to inventory and try again.</p>
                     `;
                 }
-            }
-
-            if (cachedVehicle) {
-                loadSaleInteractions(vehicleId);
             }
         }
 
