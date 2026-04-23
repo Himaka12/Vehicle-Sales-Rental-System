@@ -3,6 +3,7 @@ package com.example.Vehicle.util;
 public final class DeletionAnonymizationUtil {
     public static final String DELETED_USER_NAME = "Deleted User";
     public static final String DELETED_USER_ROLE = "DELETED_USER";
+    public static final String DELETED_INQUIRY_PHONE = "Removed for privacy";
 
     private DeletionAnonymizationUtil() {
     }
