@@ -21,6 +21,7 @@ public class VehicleDTO {
     private String description;
     private double price;
     private String status;
+    private boolean visible;
     private String image1;
     private String image2;
     private String image3;
