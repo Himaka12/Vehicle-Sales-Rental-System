@@ -59,6 +59,9 @@ public class Vehicle {
     @Column(nullable = false)
     private String status = "Available";
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean visible = true;
+
     private String image1;
     private String image2;
     private String image3;
