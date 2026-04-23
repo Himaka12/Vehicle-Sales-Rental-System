@@ -542,7 +542,7 @@
                 <i class="fas fa-users-cog" style="color:var(--primary); font-size:1.4rem;"></i>
                 User Management
             </h2>
-            <p class="page-sub">Manage accounts, roles and access across the platform.</p>
+            <p class="page-sub">Manage accounts, roles and access across the platform. Customer deletions retain required history, while other accounts simply lose access and identifying data.</p>
         </div>
     </div>
 
@@ -866,8 +866,8 @@
     }
 
     async function deleteUser(id, name) {
-        if (!await window.appConfirm(`Are you sure you want to permanently delete '${name}'? All their data will be lost.`, {
-            title: "Delete User Permanently",
+        if (!await window.appConfirm(`Are you sure you want to delete '${name}'? Account access will be removed, personal data anonymized, and any required customer history retained.`, {
+            title: "Delete User",
             type: "danger",
             confirmText: "Delete User",
             cancelText: "Cancel",
