@@ -151,13 +151,10 @@ public class RentalBookingService {
             throw new RuntimeException("Unauthorized: You do not own this booking.");
         }
 
-        String currentStatus = StatusRules.normalizeBookingStatus(booking.getStatus());
-        if (!StatusRules.BOOKING_PENDING.equals(currentStatus) && !StatusRules.BOOKING_APPROVED.equals(currentStatus)) {
-            throw new RuntimeException("Business Rule Violation: Only pending or approved bookings can be cancelled.");
-        }
-
-        booking.setStatus(StatusRules.BOOKING_CANCELLED);
-        bookingRepository.save(booking);
+        throw new RuntimeException(
+                "Bookings cannot be cancelled directly from the customer dashboard. "
+                        + "Refund requests become available only for 24 hours after an admin approves or rejects the booking."
+        );
     }
 
     private RentalBookingDTO mapToDTO(RentalBooking booking) {
@@ -281,7 +278,7 @@ public class RentalBookingService {
 
         if (!refundWindowStarted) {
             if (StatusRules.BOOKING_PENDING.equals(bookingStatus)) {
-                return "Refunds open only after an admin approves or rejects the booking. Once the admin responds, the customer has 24 hours to submit the refund request.";
+                return "Your booking is waiting for admin review. The refund button appears only after the admin approves or rejects the booking, and it stays available for 24 hours.";
             }
             return "Refund eligibility cannot be verified because the admin response time is unavailable for this booking.";
         }
