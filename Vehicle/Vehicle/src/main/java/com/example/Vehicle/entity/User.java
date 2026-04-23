@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -38,4 +40,5 @@ public class User {
     private boolean isPremium = false;
 
     private String cardNumber;
+    private LocalDateTime deletedAt;
 }
