@@ -447,10 +447,10 @@
         </div>
     </div>
 
-    <div id="danger" class="tab-content">
+        <div id="danger" class="tab-content">
         <div class="card danger-card">
             <div class="card-title"><i class="fas fa-exclamation-circle"></i> Delete Account</div>
-            <p class="section-intro">This action removes your customer-facing access and account data from active use. Existing history is retained where required for system integrity and finance records.</p>
+            <p class="section-intro">This action removes your customer-facing access and anonymizes personal data. Booking, refund, and inquiry history may be retained where required for system integrity, finance, and support records.</p>
             <button class="btn-danger" onclick="deleteAccount()"><i class="fas fa-trash-alt"></i> Delete My Account</button>
         </div>
     </div>
@@ -1510,7 +1510,7 @@
     function closeEditModal() { document.getElementById("editReviewModal").classList.remove("active"); }
     async function submitReviewUpdate() { const id = document.getElementById("editReviewId").value; const comment = document.getElementById("editReviewComment").value; const ratingElement = document.querySelector('input[name="rating"]:checked'); if(!ratingElement) return alert("Please select a star rating."); const rating = parseInt(ratingElement.value); const btn = document.querySelector("#editReviewModal .btn-submit"); const originalText = btn.innerHTML; btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`; btn.disabled = true; try { const res = await fetch(`/api/reviews/update/${id}`, { method: "PUT", headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify({ rating, comment }) }); if(res.ok) { closeEditModal(); fetchMyReviews(); } else { const err = await res.text(); alert("Error: " + err); } } catch(e) { console.error(e); } finally { btn.innerHTML = originalText; btn.disabled = false; } }
 
-    async function deleteAccount() { if (await window.appConfirm("This will permanently delete your account and related customer data.", { title: "Delete Account", type: "danger", confirmText: "Delete Account", cancelText: "Cancel", danger: true, confirmIcon: "fa-trash" })) { try { const res = await fetch("/api/customer/delete", { method: "DELETE", headers: { "Authorization": "Bearer " + token } }); if (res.ok) { logout(); } else { const err = await readErrorMessage(res, "Could not delete your account."); alert(err); } } catch (e) { console.error(e); alert("Network error. Could not delete your account."); } } }
+    async function deleteAccount() { if (await window.appConfirm("This will remove your account access, anonymize your personal data, cancel any still-active bookings, retain booking/refund/inquiry history where required, and remove wishlist and review data.", { title: "Delete Account", type: "danger", confirmText: "Delete Account", cancelText: "Cancel", danger: true, confirmIcon: "fa-trash" })) { try { const res = await fetch("/api/customer/delete", { method: "DELETE", headers: { "Authorization": "Bearer " + token } }); if (res.ok) { logout(); } else { const err = await readErrorMessage(res, "Could not delete your account."); alert(err); } } catch (e) { console.error(e); alert("Network error. Could not delete your account."); } } }
 
     async function readErrorMessage(res, fallback) {
         try {
