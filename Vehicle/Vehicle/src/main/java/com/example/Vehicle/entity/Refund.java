@@ -18,7 +18,7 @@ public class Refund {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Link to the specific cancelled booking
+    // Link to the specific booking tied to this refund
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private RentalBooking booking;
