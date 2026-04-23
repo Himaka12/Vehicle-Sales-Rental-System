@@ -231,6 +231,11 @@ body.admin-shell-page .top-bar {
         linear-gradient(135deg, #071428 0%, #102c58 50%, #1f4fb4 100%);
 }
 
+body.admin-shell-page .top-bar > * {
+    position: relative;
+    z-index: 1;
+}
+
 body.admin-shell-page .top-bar::after {
     content: "";
     position: absolute;
@@ -239,6 +244,7 @@ body.admin-shell-page .top-bar::after {
     height: 240px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
 }
 
 body.admin-shell-page .page-eyebrow {
