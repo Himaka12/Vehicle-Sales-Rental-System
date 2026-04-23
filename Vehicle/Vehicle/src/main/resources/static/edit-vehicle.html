@@ -709,7 +709,13 @@
         }
 
         try {
-            const response = await fetch("/api/vehicles/" + vehicleId);
+            const response = await fetch("/api/vehicles/admin/" + vehicleId, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Could not load vehicle details.");
+            }
             const vehicle = await response.json();
 
             document.getElementById("vListing").value = vehicle.listingType || "Sale";
