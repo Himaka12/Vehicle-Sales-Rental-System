@@ -34,7 +34,7 @@ public class CustomerController {
     @DeleteMapping("/remove-card")
     public ResponseEntity<String> removeCard(Authentication authentication) {
         customerService.removeCardDetails(authentication.getName());
-        return ResponseEntity.ok("Card removed and premium subscription cancelled.");
+        return ResponseEntity.ok("Premium payment details removed.");
     }
 
     @PutMapping("/update")
@@ -42,12 +42,9 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.updateCustomerProfile(authentication.getName(), dto));
     }
 
-    @PostMapping("/add-card")
-    public ResponseEntity<String> addCard(Authentication authentication, @Valid @RequestBody CardDetailsDTO cardData) {
-        String response = customerService.addCardDetails(
-                authentication.getName(), cardData.getCardNumber(), cardData.getExpiry(), cardData.getCvv()
-        );
-        return ResponseEntity.ok(response);
+    @PostMapping({"/premium/checkout", "/add-card"})
+    public ResponseEntity<CustomerProfileDTO> addCard(Authentication authentication, @Valid @RequestBody CardDetailsDTO cardData) {
+        return ResponseEntity.ok(customerService.completePremiumCheckout(authentication.getName(), cardData));
     }
 
     @DeleteMapping("/delete")

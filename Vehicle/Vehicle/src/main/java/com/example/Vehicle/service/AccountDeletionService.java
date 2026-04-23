@@ -129,6 +129,8 @@ public class AccountDeletionService {
         user.setRole(DeletionAnonymizationUtil.DELETED_USER_ROLE);
         user.setCardNumber(null);
         user.setPremium(false);
+        user.setPremiumPaymentId(null);
+        user.setPremiumActivatedAt(null);
         user.setActive(false);
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);

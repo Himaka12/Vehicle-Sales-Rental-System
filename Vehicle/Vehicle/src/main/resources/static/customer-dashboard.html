@@ -567,6 +567,14 @@
     let myRentalsData = [];
     let myReviewsData = [];
     let customerNotificationsReady = false;
+    let currentCustomerProfile = null;
+
+    const PREMIUM_AMOUNT_LABEL = "Rs. 10,000.00";
+    const PREMIUM_GATEWAY_NAME = "PayHere Demo Gateway";
+    const PREMIUM_PLAN_LABEL = "PREMIUM PROFILE UPGRADE";
+    const PREMIUM_PAYMENT_METHOD_LABEL = "Credit / Debit Card";
+
+    let premiumCheckoutState = createPremiumCheckoutState();
 
     function toggleSidebar() {
         document.getElementById("dashboardSidebar").classList.toggle("sidebar-open");
@@ -773,6 +781,7 @@
             const res = await fetch("/api/customer/profile", { headers: { "Authorization": "Bearer " + token } });
             if (res.ok) {
                 const user = await res.json();
+                currentCustomerProfile = user;
                 document.getElementById("accName").value = user.fullName || "";
                 document.getElementById("accEmail").value = user.email || "";
                 document.getElementById("accPhone").value = user.contactNumber || "";
@@ -923,57 +932,534 @@
             alert("Network error. Could not update your wishlist.");
         }
     }
-    function renderPremiumSection(user) { const container = document.getElementById("premiumStatusCard"); if (user.premium === true) { container.innerHTML = `<div class="card"><div class="card-title" style="color:var(--rent-color);"><i class="fas fa-check-circle" style="color:var(--rent-color);"></i> Premium Subscription Active</div><p style="font-size:0.9rem; color:var(--muted); margin-bottom:0;">You are enjoying priority reservations and exclusive vehicle access.</p><div class="card-display-box"><div class="card-display-icon"><i class="fas fa-credit-card"></i></div><div class="card-display-text"><p>Active Payment Method</p><h3>${user.cardNumber}</h3></div></div><div style="display:flex; gap:12px;"><button class="btn-submit" onclick="showUpdateCardForm('${user.fullName}', '${user.cardNumber}')"><i class="fas fa-edit"></i> Update Card</button><button class="btn-danger" onclick="removeCard()"><i class="fas fa-times-circle"></i> Cancel Subscription</button></div></div>`; } else { container.innerHTML = `<div class="premium-banner"><h2><i class="fas fa-crown"></i> Unlock Premium Benefits</h2><p>Gain access to priority vehicle reservations, exclusive inventory, and VIP support for only <strong>LKR 10,000 / year</strong>.</p></div>` + getPaymentFormHTML("Securely Pay LKR 10,000 &amp; Upgrade", false, user.fullName, ""); attachFormatterListeners(); } }
-    function getPaymentFormHTML(buttonText, isUpdate = false, existingName = '', existingCardPlaceholder = '') { const nameValue = existingName ? `value="${existingName}"` : ''; const cardPlace = existingCardPlaceholder ? `placeholder="Currently: ${existingCardPlaceholder}"` : 'placeholder="0000 0000 0000 0000"'; return `<div class="card" style="margin-bottom:0;"><div class="card-title"><i class="fas fa-credit-card"></i> Enter Payment Details</div><div class="form-row"><div class="form-group"><label class="field-label">Name on Card</label><input type="text" id="pCardName" ${nameValue} class="field-input" style="text-transform:uppercase;"></div><div class="form-group"><label class="field-label">Card Number</label><input type="text" id="pCardNum" ${cardPlace} class="field-input" maxlength="19"></div></div><div class="form-row"><div class="form-group"><label class="field-label">Expiry Date</label><input type="text" id="pExpiry" placeholder="MM/YY" class="field-input" maxlength="5"></div><div class="form-group"><label class="field-label">CVV / CVC</label><input type="password" id="pCvv" placeholder="***" class="field-input" maxlength="4"></div>${!isUpdate ? `<div class="form-group"><label class="field-label">Billing Amount</label><input type="text" value="LKR 10,000.00" disabled class="field-input billing-field"></div>` : ''}</div><div style="margin-top:16px; display:flex; gap:12px;"><button class="btn-premium" onclick="submitCardPayment()"><i class="fas fa-lock"></i> ${buttonText}</button>${isUpdate ? `<button class="btn-danger" onclick="loadProfileData()">Cancel</button>` : ''}</div></div>`; }
-    function attachFormatterListeners() { document.getElementById('pCardNum').addEventListener('input', e => { let val = e.target.value.replace(/\D/g, ''); e.target.value = val.match(/.{1,4}/g)?.join(' ') || val; }); document.getElementById('pExpiry').addEventListener('input', e => { let val = e.target.value.replace(/\D/g, ''); e.target.value = val.length >= 3 ? val.substring(0, 2) + '/' + val.substring(2, 4) : val; }); }
-    async function submitCardPayment() {
-        const cardData = {
-            cardNumber: document.getElementById("pCardNum").value,
-            expiry: document.getElementById("pExpiry").value,
-            cvv: document.getElementById("pCvv").value
+    function createPremiumCheckoutState(cardholderName = "") {
+        return {
+            step: 1,
+            selectedMethod: null,
+            form: {
+                cardholderName: cardholderName || "",
+                cardNumber: "",
+                cvv: "",
+                expiry: ""
+            },
+            isSubmitting: false
         };
-        if (cardData.cardNumber.length < 16 || cardData.expiry.length < 5 || !cardData.cvv) return alert("Please enter complete card details.");
-        const btn = document.querySelector('.btn-premium');
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
-        btn.disabled = true;
+    }
+
+    function renderPremiumSection(user) {
+        currentCustomerProfile = user;
+        const container = document.getElementById("premiumStatusCard");
+
+        if (!user?.premium && !premiumCheckoutState.form.cardholderName) {
+            premiumCheckoutState.form.cardholderName = user?.fullName || "";
+        }
+
+        if (user?.premium === true) {
+            premiumCheckoutState = createPremiumCheckoutState(user.fullName || "");
+            container.innerHTML = getPremiumApprovedHTML(user);
+            return;
+        }
+
+        if (premiumCheckoutState.step === 2) {
+            container.innerHTML = getPremiumCardDetailsHTML();
+            attachPremiumCardStepListeners();
+            updatePremiumCardFormUI();
+            return;
+        }
+
+        premiumCheckoutState.step = 1;
+        container.innerHTML = getPremiumPaymentMethodHTML();
+    }
+
+    function getPremiumGatewayFrame(stepNumber, stepTitle, summaryDescription, summaryLabel, bodyHtml, isApproved = false) {
+        return `
+            <div class="premium-gateway">
+                <div class="premium-gateway__frame">
+                    <div class="premium-gateway__header">
+                        <div class="premium-gateway__eyebrow"><i class="fas fa-shield-alt"></i> Secure Demo Checkout</div>
+                        <h2>Upgrade to Premium</h2>
+                        <p>Move through a real-world style checkout flow, validate the card details before payment, and hide them after approval.</p>
+                    </div>
+                    <div class="premium-gateway__stepbar">
+                        <div class="premium-gateway__stepmeta">
+                            <span class="premium-gateway__stepbadge">STEP ${stepNumber}</span>
+                            <h3 class="premium-gateway__steptitle">${escapeHtml(stepTitle)}</h3>
+                        </div>
+                        ${isApproved ? '<span class="premium-gateway__approved-pill"><i class="fas fa-check"></i></span>' : ""}
+                    </div>
+                    ${getPremiumGatewaySummary(summaryDescription, summaryLabel)}
+                    <div class="premium-gateway__panel${isApproved ? " premium-gateway__success-panel" : ""}">
+                        ${bodyHtml}
+                    </div>
+                    <p class="premium-gateway__demo-note">Demo gateway only. No real payment processing or bank verification is used in this project flow.</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function getPremiumGatewaySummary(summaryDescription, summaryLabel) {
+        return `
+            <div class="premium-gateway__summary-card">
+                <div class="premium-gateway__summary-top">
+                    <div class="premium-gateway__summary-icon"><i class="fas fa-crown"></i></div>
+                    <div class="premium-gateway__summary-text">
+                        <strong>K.D. Auto Traders</strong>
+                        <span>${escapeHtml(summaryDescription)}</span>
+                    </div>
+                </div>
+                <p class="premium-gateway__summary-amount">${PREMIUM_AMOUNT_LABEL}</p>
+                <div class="premium-gateway__summary-label">${escapeHtml(summaryLabel)}</div>
+            </div>
+        `;
+    }
+
+    function getPremiumPaymentMethodHTML() {
+        const isSelected = premiumCheckoutState.selectedMethod === "card";
+        const brandPills = ["VISA", "Mastercard", "UnionPay"]
+            .map(brand => `<span class="premium-gateway__brand-pill">${brand}</span>`)
+            .join("");
+
+        const bodyHtml = `
+            <div class="premium-gateway__section-label">Select a payment method</div>
+            <button type="button" class="premium-gateway__method${isSelected ? " is-selected" : ""}" onclick="selectPremiumPaymentMethod('card')">
+                <span class="premium-gateway__method-icon"><i class="far fa-credit-card"></i></span>
+                <span class="premium-gateway__method-copy">
+                    <strong>${PREMIUM_PAYMENT_METHOD_LABEL}</strong>
+                    <span>Demo checkout only. No real payment will be charged.</span>
+                </span>
+                <span class="premium-gateway__method-radio">${isSelected ? '<i class="fas fa-check"></i>' : ""}</span>
+            </button>
+            <div class="premium-gateway__brand-pills">${brandPills}</div>
+            <button type="button" class="premium-gateway__primary-btn" onclick="goToPremiumCardStep()" ${isSelected ? "" : "disabled"}>
+                Continue
+            </button>
+        `;
+
+        return getPremiumGatewayFrame(
+            1,
+            "Payment method",
+            `${PREMIUM_GATEWAY_NAME} secure premium payment portal`,
+            PREMIUM_PLAN_LABEL,
+            bodyHtml
+        );
+    }
+
+    function getPremiumCardDetailsHTML() {
+        const validation = getPremiumCardValidation();
+        const buttonLabel = premiumCheckoutState.isSubmitting
+            ? `<i class="fas fa-spinner fa-spin"></i> Processing...`
+            : `<i class="fas fa-lock"></i> Pay ${PREMIUM_AMOUNT_LABEL}`;
+
+        const bodyHtml = `
+            <div class="premium-gateway__section-label">${PREMIUM_PAYMENT_METHOD_LABEL}</div>
+            <div class="premium-gateway__field-grid">
+                <div class="premium-gateway__field-group premium-gateway__field-group--full">
+                    <label for="premiumCardholderName">Name on Card</label>
+                    <input
+                        type="text"
+                        id="premiumCardholderName"
+                        class="premium-gateway__field${getPremiumInvalidClass(validation.cardholderNameEntered, validation.cardholderNameValid)}"
+                        value="${escapeHtml(premiumCheckoutState.form.cardholderName)}"
+                        placeholder="Enter the cardholder name"
+                        autocomplete="cc-name"
+                    >
+                    <small id="premiumCardholderNameHint" class="premium-gateway__hint${getPremiumHintClass(validation.cardholderNameEntered, validation.cardholderNameValid)}">
+                        ${getPremiumHintText(validation.cardholderNameEntered, validation.cardholderNameValid, "Enter the cardholder name exactly as shown on the card.", "Cardholder name looks good.")}
+                    </small>
+                </div>
+
+                <div class="premium-gateway__field-group premium-gateway__field-group--full">
+                    <label for="premiumCardNumber">Card Number</label>
+                    <input
+                        type="text"
+                        id="premiumCardNumber"
+                        class="premium-gateway__field${getPremiumInvalidClass(validation.cardNumberEntered, validation.cardNumberValid)}"
+                        value="${escapeHtml(premiumCheckoutState.form.cardNumber)}"
+                        placeholder="0000 0000 0000 0000"
+                        inputmode="numeric"
+                        maxlength="19"
+                        autocomplete="cc-number"
+                    >
+                    <small id="premiumCardNumberHint" class="premium-gateway__hint${getPremiumHintClass(validation.cardNumberEntered, validation.cardNumberValid)}">
+                        ${getPremiumHintText(validation.cardNumberEntered, validation.cardNumberValid, "Card number must contain exactly 16 digits.", "Card number looks good.")}
+                    </small>
+                </div>
+
+                <div class="premium-gateway__field-group">
+                    <label for="premiumCardCvv">CVV</label>
+                    <input
+                        type="password"
+                        id="premiumCardCvv"
+                        class="premium-gateway__field${getPremiumInvalidClass(validation.cvvEntered, validation.cvvValid)}"
+                        value="${escapeHtml(premiumCheckoutState.form.cvv)}"
+                        placeholder="123"
+                        inputmode="numeric"
+                        maxlength="4"
+                        autocomplete="cc-csc"
+                    >
+                    <small id="premiumCardCvvHint" class="premium-gateway__hint${getPremiumHintClass(validation.cvvEntered, validation.cvvValid)}">
+                        ${getPremiumHintText(validation.cvvEntered, validation.cvvValid, "CVV must be 3 or 4 digits.", "CVV looks good.")}
+                    </small>
+                </div>
+
+                <div class="premium-gateway__field-group">
+                    <label for="premiumCardExpiry">Expiry MM/YY</label>
+                    <input
+                        type="text"
+                        id="premiumCardExpiry"
+                        class="premium-gateway__field${getPremiumInvalidClass(validation.expiryEntered, validation.expiryValid)}"
+                        value="${escapeHtml(premiumCheckoutState.form.expiry)}"
+                        placeholder="MM/YY"
+                        inputmode="numeric"
+                        maxlength="5"
+                        autocomplete="cc-exp"
+                    >
+                    <small id="premiumCardExpiryHint" class="premium-gateway__hint${getPremiumHintClass(validation.expiryEntered, validation.expiryValid)}">
+                        ${getPremiumHintText(validation.expiryEntered, validation.expiryValid, "Expiry must be in the current month or a future month.", "Expiry date looks good.")}
+                    </small>
+                </div>
+            </div>
+
+            <div class="premium-gateway__actions">
+                <button type="button" class="premium-gateway__secondary-btn" onclick="goBackPremiumStep()" ${premiumCheckoutState.isSubmitting ? "disabled" : ""}>Back</button>
+                <button type="button" id="premiumPayButton" class="premium-gateway__primary-btn" onclick="submitPremiumPayment()" ${validation.formValid && !premiumCheckoutState.isSubmitting ? "" : "disabled"}>
+                    ${buttonLabel}
+                </button>
+            </div>
+        `;
+
+        return getPremiumGatewayFrame(
+            2,
+            "Card details",
+            `${PREMIUM_GATEWAY_NAME} secure card payment`,
+            "ENTER YOUR CARD DETAILS",
+            bodyHtml
+        );
+    }
+
+    function getPremiumApprovedHTML(user) {
+        const approvedAt = user?.premiumActivatedAt
+            ? `<small>Approved ${escapeHtml(formatPremiumApprovedAt(user.premiumActivatedAt))}</small>`
+            : "";
+
+        const bodyHtml = `
+            <div class="premium-gateway__thankyou">Thank you!</div>
+            <div class="premium-gateway__approval-mark"><i class="fas fa-check"></i></div>
+            <h4>Premium upgrade approved</h4>
+            <p>Your K.D. Auto Traders account has been upgraded successfully.</p>
+
+            <div class="premium-gateway__receipt-box">
+                <span>Payment ID</span>
+                <strong>${escapeHtml(user?.premiumPaymentId || "KDAT-PROCESSING")}</strong>
+                <small>${PREMIUM_AMOUNT_LABEL} - Demo card payment approved</small>
+                ${approvedAt}
+            </div>
+
+            <div class="premium-gateway__privacy-note">
+                <i class="fas fa-lock"></i>
+                <span>Card details are securely handled and hidden after approval. This premium payment cannot be edited or deleted from the dashboard.</span>
+            </div>
+
+            <button type="button" class="premium-gateway__primary-btn" onclick="goToDashboardHomeTab()">Back to Home</button>
+        `;
+
+        return getPremiumGatewayFrame(
+            3,
+            "Payment approved",
+            `${PREMIUM_GATEWAY_NAME} premium upgrade completed`,
+            "PAYMENT APPROVED",
+            bodyHtml,
+            true
+        );
+    }
+
+    function selectPremiumPaymentMethod(method) {
+        premiumCheckoutState.selectedMethod = method;
+        renderPremiumSection(currentCustomerProfile || {});
+    }
+
+    function goToPremiumCardStep() {
+        if (premiumCheckoutState.selectedMethod !== "card") {
+            return;
+        }
+
+        premiumCheckoutState.step = 2;
+        premiumCheckoutState.isSubmitting = false;
+        premiumCheckoutState.form.cardholderName =
+            premiumCheckoutState.form.cardholderName || currentCustomerProfile?.fullName || "";
+        renderPremiumSection(currentCustomerProfile || {});
+        setTimeout(() => document.getElementById("premiumCardholderName")?.focus(), 0);
+    }
+
+    function goBackPremiumStep() {
+        premiumCheckoutState.step = 1;
+        premiumCheckoutState.isSubmitting = false;
+        renderPremiumSection(currentCustomerProfile || {});
+    }
+
+    function attachPremiumCardStepListeners() {
+        const nameInput = document.getElementById("premiumCardholderName");
+        const cardInput = document.getElementById("premiumCardNumber");
+        const cvvInput = document.getElementById("premiumCardCvv");
+        const expiryInput = document.getElementById("premiumCardExpiry");
+
+        if (!nameInput || !cardInput || !cvvInput || !expiryInput) {
+            return;
+        }
+
+        premiumCheckoutState.form.cardholderName = nameInput.value;
+        premiumCheckoutState.form.cardNumber = cardInput.value;
+        premiumCheckoutState.form.cvv = cvvInput.value;
+        premiumCheckoutState.form.expiry = expiryInput.value;
+
+        nameInput.addEventListener("input", () => {
+            premiumCheckoutState.form.cardholderName = nameInput.value;
+            updatePremiumCardFormUI();
+        });
+
+        cardInput.addEventListener("input", () => {
+            cardInput.value = formatPremiumCardNumber(cardInput.value);
+            premiumCheckoutState.form.cardNumber = cardInput.value;
+            updatePremiumCardFormUI();
+        });
+
+        cvvInput.addEventListener("input", () => {
+            cvvInput.value = cvvInput.value.replace(/\D/g, "").slice(0, 4);
+            premiumCheckoutState.form.cvv = cvvInput.value;
+            updatePremiumCardFormUI();
+        });
+
+        expiryInput.addEventListener("input", () => {
+            expiryInput.value = formatPremiumExpiry(expiryInput.value);
+            premiumCheckoutState.form.expiry = expiryInput.value;
+            updatePremiumCardFormUI();
+        });
+    }
+
+    function updatePremiumCardFormUI() {
+        const nameInput = document.getElementById("premiumCardholderName");
+        const cardInput = document.getElementById("premiumCardNumber");
+        const cvvInput = document.getElementById("premiumCardCvv");
+        const expiryInput = document.getElementById("premiumCardExpiry");
+
+        if (nameInput) {
+            premiumCheckoutState.form.cardholderName = nameInput.value;
+        }
+        if (cardInput) {
+            premiumCheckoutState.form.cardNumber = cardInput.value;
+        }
+        if (cvvInput) {
+            premiumCheckoutState.form.cvv = cvvInput.value;
+        }
+        if (expiryInput) {
+            premiumCheckoutState.form.expiry = expiryInput.value;
+        }
+
+        const validation = getPremiumCardValidation();
+
+        updatePremiumFieldState(
+            "premiumCardholderName",
+            "premiumCardholderNameHint",
+            validation.cardholderNameEntered,
+            validation.cardholderNameValid,
+            "Enter the cardholder name exactly as shown on the card.",
+            "Cardholder name looks good."
+        );
+        updatePremiumFieldState(
+            "premiumCardNumber",
+            "premiumCardNumberHint",
+            validation.cardNumberEntered,
+            validation.cardNumberValid,
+            "Card number must contain exactly 16 digits.",
+            "Card number looks good."
+        );
+        updatePremiumFieldState(
+            "premiumCardCvv",
+            "premiumCardCvvHint",
+            validation.cvvEntered,
+            validation.cvvValid,
+            "CVV must be 3 or 4 digits.",
+            "CVV looks good."
+        );
+        updatePremiumFieldState(
+            "premiumCardExpiry",
+            "premiumCardExpiryHint",
+            validation.expiryEntered,
+            validation.expiryValid,
+            "Expiry must be in the current month or a future month.",
+            "Expiry date looks good."
+        );
+
+        const payButton = document.getElementById("premiumPayButton");
+        if (payButton) {
+            payButton.disabled = !validation.formValid || premiumCheckoutState.isSubmitting;
+            payButton.innerHTML = premiumCheckoutState.isSubmitting
+                ? `<i class="fas fa-spinner fa-spin"></i> Processing...`
+                : `<i class="fas fa-lock"></i> Pay ${PREMIUM_AMOUNT_LABEL}`;
+        }
+    }
+
+    function updatePremiumFieldState(inputId, hintId, entered, isValid, invalidText, validText) {
+        const input = document.getElementById(inputId);
+        const hint = document.getElementById(hintId);
+
+        if (input) {
+            input.classList.toggle("is-invalid", entered && !isValid);
+        }
+
+        if (hint) {
+            hint.textContent = entered ? (isValid ? validText : invalidText) : invalidText;
+            hint.classList.toggle("is-valid", entered && isValid);
+            hint.classList.toggle("is-error", entered && !isValid);
+        }
+    }
+
+    function getPremiumCardValidation() {
+        const cardholderName = premiumCheckoutState.form.cardholderName.trim().replace(/\s+/g, " ");
+        const cardDigits = premiumCheckoutState.form.cardNumber.replace(/\D/g, "");
+        const cvvDigits = premiumCheckoutState.form.cvv.replace(/\D/g, "");
+        const expiry = premiumCheckoutState.form.expiry.trim();
+
+        const cardholderNameEntered = cardholderName.length > 0;
+        const cardNumberEntered = cardDigits.length > 0;
+        const cvvEntered = cvvDigits.length > 0;
+        const expiryEntered = expiry.length > 0;
+
+        const cardholderNameValid = cardholderName.length >= 2;
+        const cardNumberValid = /^\d{16}$/.test(cardDigits);
+        const cvvValid = /^\d{3,4}$/.test(cvvDigits);
+        const expiryValid = isPremiumExpiryValid(expiry);
+
+        return {
+            cardholderNameEntered,
+            cardNumberEntered,
+            cvvEntered,
+            expiryEntered,
+            cardholderNameValid,
+            cardNumberValid,
+            cvvValid,
+            expiryValid,
+            formValid: cardholderNameValid && cardNumberValid && cvvValid && expiryValid
+        };
+    }
+
+    function getPremiumInvalidClass(entered, isValid) {
+        return entered && !isValid ? " is-invalid" : "";
+    }
+
+    function getPremiumHintClass(entered, isValid) {
+        if (!entered) {
+            return "";
+        }
+
+        return isValid ? " is-valid" : " is-error";
+    }
+
+    function getPremiumHintText(entered, isValid, invalidText, validText) {
+        if (!entered) {
+            return invalidText;
+        }
+
+        return isValid ? validText : invalidText;
+    }
+
+    function formatPremiumCardNumber(value) {
+        const digitsOnly = value.replace(/\D/g, "").slice(0, 16);
+        return digitsOnly.match(/.{1,4}/g)?.join(" ") || digitsOnly;
+    }
+
+    function formatPremiumExpiry(value) {
+        const digitsOnly = value.replace(/\D/g, "").slice(0, 4);
+        if (digitsOnly.length <= 2) {
+            return digitsOnly;
+        }
+
+        return `${digitsOnly.slice(0, 2)}/${digitsOnly.slice(2)}`;
+    }
+
+    function isPremiumExpiryValid(value) {
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(value)) {
+            return false;
+        }
+
+        const [monthText, yearText] = value.split("/");
+        const month = Number(monthText);
+        const year = 2000 + Number(yearText);
+        const now = new Date();
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const expiryMonthEnd = new Date(year, month, 1);
+        return expiryMonthEnd > currentMonthStart;
+    }
+
+    async function submitPremiumPayment() {
+        const validation = getPremiumCardValidation();
+        if (!validation.formValid) {
+            updatePremiumCardFormUI();
+            alert("Please complete the premium payment details correctly before continuing.");
+            return;
+        }
+
+        premiumCheckoutState.isSubmitting = true;
+        updatePremiumCardFormUI();
+
+        const cardData = {
+            cardholderName: premiumCheckoutState.form.cardholderName.trim().replace(/\s+/g, " "),
+            cardNumber: premiumCheckoutState.form.cardNumber,
+            expiry: premiumCheckoutState.form.expiry,
+            cvv: premiumCheckoutState.form.cvv
+        };
 
         try {
-            const res = await fetch("/api/customer/add-card", {
+            const res = await fetch("/api/customer/premium/checkout", {
                 method: "POST",
                 headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
                 body: JSON.stringify(cardData)
             });
 
             if (res.ok) {
-                alert("Payment Successful!");
-                loadProfileData();
+                const user = await res.json();
+                currentCustomerProfile = user;
+                premiumCheckoutState = createPremiumCheckoutState(user.fullName || "");
+                updateGlobalBadge(user.premium);
+                renderPremiumSection(user);
             } else {
                 const err = await readErrorMessage(res, "Payment failed.");
+                premiumCheckoutState.isSubmitting = false;
+                updatePremiumCardFormUI();
                 alert(err);
-                btn.disabled = false;
             }
         } catch (e) {
             console.error(e);
-            alert("Network error. Could not process the payment.");
-            btn.disabled = false;
+            premiumCheckoutState.isSubmitting = false;
+            updatePremiumCardFormUI();
+            alert("Network error. Could not process the premium payment.");
         }
     }
-    function showUpdateCardForm(customerName, maskedCard) { document.getElementById("premiumStatusCard").innerHTML = `<div class="card"><div class="card-title"><i class="fas fa-edit"></i> Update Payment Details</div><div style="background:#fffbeb; border:1px solid #fde68a; border-radius:9px; padding:14px 16px; font-size:0.83rem; color:#92400e; margin-bottom:20px; display:flex; align-items:center; gap:8px;"><i class="fas fa-shield-alt"></i> For your security, your full previous card details are hidden. Please enter your complete new card details below.</div>${getPaymentFormHTML("Save New Card Details", true, customerName, maskedCard)}</div>`; attachFormatterListeners(); }
-    async function removeCard() {
-        if (await window.appConfirm("Cancel your premium subscription?", { title: "Cancel Subscription", type: "warning", confirmText: "Cancel Subscription", cancelText: "Keep Premium", confirmIcon: "fa-xmark" })) {
-            try {
-                const res = await fetch("/api/customer/remove-card", { method: "DELETE", headers: { "Authorization": "Bearer " + token } });
-                if (res.ok) {
-                    loadProfileData();
-                } else {
-                    const err = await readErrorMessage(res, "Could not cancel your premium subscription.");
-                    alert(err);
-                }
-            } catch (e) {
-                console.error(e);
-                alert("Network error. Could not cancel your premium subscription.");
-            }
+
+    function formatPremiumApprovedAt(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return "recently";
         }
+
+        return date.toLocaleString("en-LK", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        });
+    }
+
+    function goToDashboardHomeTab() {
+        const analyticsNavItem = document.querySelector('.sidebar-menu li[onclick*="analytics"]');
+        if (analyticsNavItem) {
+            switchTab("analytics", analyticsNavItem);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            return;
+        }
+
+        window.location.href = "index.html";
     }
 
     function escapeHtml(value) {
@@ -1515,7 +2001,20 @@
     async function readErrorMessage(res, fallback) {
         try {
             const text = await res.text();
-            return text && text.trim() ? text : fallback;
+            if (!text || !text.trim()) {
+                return fallback;
+            }
+
+            try {
+                const payload = JSON.parse(text);
+                if (Array.isArray(payload.errors) && payload.errors.length > 0) {
+                    return payload.errors.join("\n");
+                }
+
+                return payload.message || fallback;
+            } catch (parseError) {
+                return text;
+            }
         } catch (e) {
             return fallback;
         }
