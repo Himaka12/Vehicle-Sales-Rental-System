@@ -250,6 +250,10 @@ public class RentalBookingService {
     }
 
     private void validateVehicleCanBeRented(Vehicle vehicle) {
+        if (!vehicle.isVisible()) {
+            throw new RuntimeException("This listing is currently hidden and cannot accept new rentals.");
+        }
+
         if (!"Rent".equalsIgnoreCase(vehicle.getListingType())) {
             throw new RuntimeException("This vehicle is not listed for rental.");
         }
