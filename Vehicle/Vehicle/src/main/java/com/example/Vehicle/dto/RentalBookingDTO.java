@@ -30,12 +30,14 @@ public class RentalBookingDTO {
     private String paymentSlipUrl;
     private boolean premiumCustomer;
     private double totalFee;
+    private String adminRespondedAt;
 
-    // 🔥 NEW: Refund System Fields mapped for the Frontend
+    // Refund system fields mapped for the frontend
     private String refundStatus;
     private String customerBankDetails;
     private String refundProofUrl;
     private boolean refundEligible;
+    private boolean refundWindowStarted;
     private String refundPolicyMessage;
     private String refundClaimDeadline;
 }
