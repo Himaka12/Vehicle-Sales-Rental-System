@@ -43,7 +43,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAnyAuthority("MAIN_ADMIN", "MARKETING_MANAGER")
 
                         .requestMatchers(HttpMethod.POST, "/api/vehicles/add").hasAuthority("MAIN_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/vehicles/admin/**").hasAuthority("MAIN_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/vehicles/update/**").hasAuthority("MAIN_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/vehicles/visibility/**").hasAuthority("MAIN_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/vehicles/delete/**").hasAuthority("MAIN_ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/bookings/all").hasAuthority("MAIN_ADMIN")
