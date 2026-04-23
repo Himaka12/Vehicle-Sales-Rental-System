@@ -177,6 +177,7 @@
         .badge-refund-processing { background: #ecfeff; color: #0891b2; border: 1px solid #cffafe; }
         .badge-refund-completed { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
         .badge-refund-closed { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+        .badge-refund-unavailable { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
 
         .btn-claim-refund { padding: 6px 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(245,158,11,0.3); }
         .btn-claim-refund:hover { filter: brightness(1.1); transform: translateY(-1px); }
@@ -411,7 +412,7 @@
                 <i class="fas fa-circle-info"></i>
                 <div>
                     <strong>Refund policy</strong>
-                    <p>Refund requests are available only when a cancelled booking is reported at least 3 days before the rental start date. After that deadline, the refund action is removed automatically.</p>
+                    <p>Refund requests open only after an admin approves or rejects the booking. From that response time, the customer has 24 hours to submit the refund request. After that window expires, the refund action is removed automatically.</p>
                 </div>
             </div>
             <div class="table-shell">
@@ -755,11 +756,16 @@
         const ctxActivity = document.getElementById('activityChart');
         if (window.activityChartInstance) window.activityChartInstance.destroy();
         window.activityChartInstance = new Chart(ctxActivity.getContext('2d'), { type: 'bar', data: { labels: ['Saved Vehicles', 'Inquiries', 'Rentals'], datasets: [{ label: 'Total Count', data: [myWishlistData.length, myInquiriesData.length, myRentalsData.length], backgroundColor: ['#ef4444', '#3b82f6', '#16a34a'], borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Platform Engagement', font: { size: 15, family: 'Outfit' } } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
-        let approved = 0, pending = 0, rejected = 0;
-        myRentalsData.forEach(r => { if (r.status === 'Approved') approved++; else if (r.status === 'Rejected') rejected++; else pending++; });
+        let approved = 0, pending = 0, rejected = 0, cancelled = 0;
+        myRentalsData.forEach(r => {
+            if (r.status === 'Approved') approved++;
+            else if (r.status === 'Rejected') rejected++;
+            else if (r.status === 'Cancelled') cancelled++;
+            else pending++;
+        });
         const ctxStatus = document.getElementById('rentalStatusChart');
         if (window.statusChartInstance) window.statusChartInstance.destroy();
-        window.statusChartInstance = new Chart(ctxStatus.getContext('2d'), { type: 'doughnut', data: { labels: ['Approved', 'Pending', 'Rejected'], datasets: [{ data: [approved, pending, rejected], backgroundColor: ['#16a34a', '#f59e0b', '#ef4444'], hoverOffset: 4 }] }, options: { responsive: true, plugins: { title: { display: true, text: 'Rental Status Breakdown', font: { size: 15, family: 'Outfit' } } } } });
+        window.statusChartInstance = new Chart(ctxStatus.getContext('2d'), { type: 'doughnut', data: { labels: ['Approved', 'Pending', 'Rejected', 'Cancelled'], datasets: [{ data: [approved, pending, rejected, cancelled], backgroundColor: ['#16a34a', '#f59e0b', '#ef4444', '#94a3b8'], hoverOffset: 4 }] }, options: { responsive: true, plugins: { title: { display: true, text: 'Rental Status Breakdown', font: { size: 15, family: 'Outfit' } } } } });
     }
 
     async function loadProfileData() {
@@ -1098,7 +1104,56 @@
 
     // ── 🔥 UPGRADED: RENTALS & REFUND LOGIC ──
     function getRefundPolicyText(r) {
-        return escapeHtml(r.refundPolicyMessage || "Refunds can be requested only after cancellation and at least 3 days before the rental start date.");
+        return escapeHtml(r.refundPolicyMessage || "Refund requests open only after an admin approves or rejects the booking. Once the admin responds, the customer has 24 hours to submit the refund request.");
+    }
+
+    function getRefundDetailText(r) {
+        if (r.refundStatus === "Processing") return "Refund is processing";
+        if (r.refundStatus === "Completed") return "Refund completed";
+        if (r.refundStatus === "Pending" && r.refundEligible === true) return "Refund available to request";
+        if (r.refundStatus === "Pending" && r.refundWindowStarted === true) return "Refund window closed";
+        if (r.status === "Approved" || r.status === "Rejected" || r.status === "Cancelled") return "Refund unavailable";
+        return "No refund action yet";
+    }
+
+    function buildRefundActionBlock(r) {
+        if (r.refundStatus === "Processing") {
+            return `
+                <span class="badge-status badge-refund-processing" title="Admin is processing your transfer."><i class="fas fa-spinner fa-spin"></i> Refund Processing</span>
+                <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
+            `;
+        }
+
+        if (r.refundStatus === "Completed") {
+            return `
+                <span class="badge-status badge-refund-completed" style="margin-bottom:6px; display:inline-block;"><i class="fas fa-check-double"></i> Refunded</span><br>
+                <a href="${r.refundProofUrl}" target="_blank" class="btn-view-slip"><i class="fas fa-file-invoice-dollar"></i> View Receipt</a>
+                <div class="refund-policy-copy">This refund has been completed and the transfer receipt is ready to view.</div>
+            `;
+        }
+
+        if (r.refundEligible === true) {
+            return `
+                <button class="btn-claim-refund" onclick="openRefundModal(${r.id})"><i class="fas fa-hand-holding-usd"></i> Claim Refund</button>
+                <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
+            `;
+        }
+
+        if (r.refundWindowStarted === true) {
+            return `
+                <span class="badge-status badge-refund-closed"><i class="fas fa-clock"></i> Refund Window Closed</span>
+                <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
+            `;
+        }
+
+        if (r.status === "Approved" || r.status === "Rejected" || r.status === "Cancelled") {
+            return `
+                <span class="badge-status badge-refund-unavailable"><i class="fas fa-hourglass-half"></i> Refund Unavailable</span>
+                <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
+            `;
+        }
+
+        return "";
     }
 
     async function fetchMyRentals() {
@@ -1115,13 +1170,16 @@
 
                 let html = "";
                 myRentalsData.forEach(r => {
-                    let bg = r.status === 'Approved' ? '#16a34a' : (r.status === 'Rejected' ? '#ef4444' : '#fef3c7');
-                    let col = r.status === 'Pending' ? '#b45309' : '#fff';
+                    let bg = r.status === 'Approved'
+                        ? '#16a34a'
+                        : (r.status === 'Rejected' ? '#ef4444' : (r.status === 'Cancelled' ? '#e2e8f0' : '#fef3c7'));
+                    let col = r.status === 'Pending' ? '#b45309' : (r.status === 'Cancelled' ? '#475569' : '#fff');
 
                     // Render multi-day dates
                     let displayDate = (r.startDate && r.endDate) ? `${r.startDate} to ${r.endDate}` : "N/A";
                     let startTime = r.startTime ? r.startTime : "--:--";
                     let endTime = r.endTime ? r.endTime : "--:--";
+                    let refundHtml = buildRefundActionBlock(r);
 
                     let actionsOrStatus = `<span class="badge-status" style="background:${bg}; color:${col};">${r.status}</span>`;
 
@@ -1142,36 +1200,17 @@
                                 <div style="display:flex; gap:5px;">
                                     <button onclick="cancelBooking(${r.id})" style="padding:4px 8px; border-radius:4px; border:1px solid #fca5a5; background:#fef2f2; color:var(--danger); font-size:0.7rem; font-weight:bold; cursor:pointer;"><i class="fas fa-times"></i> Cancel</button>
                                 </div>
+                                ${refundHtml}
+                            </div>
+                        `;
+                    } else if (r.status === 'Rejected') {
+                        actionsOrStatus = `
+                            <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+                                <span class="badge-status" style="background:${bg}; color:${col};">${r.status}</span>
+                                ${refundHtml}
                             </div>
                         `;
                     } else if (r.status === 'Cancelled') {
-                        // Refund Logic checks
-                        let refundHtml = "";
-                        if (r.refundStatus === "Pending") {
-                            if (r.refundEligible === true) {
-                                refundHtml = `
-                                    <button class="btn-claim-refund" onclick="openRefundModal(${r.id})"><i class="fas fa-hand-holding-usd"></i> Claim Refund</button>
-                                    <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
-                                `;
-                            } else {
-                                refundHtml = `
-                                    <span class="badge-status badge-refund-closed"><i class="fas fa-clock"></i> Refund Window Closed</span>
-                                    <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
-                                `;
-                            }
-                        } else if (r.refundStatus === "Processing") {
-                            refundHtml = `
-                                <span class="badge-status badge-refund-processing" title="Admin is processing your transfer."><i class="fas fa-spinner fa-spin"></i> Refund Processing</span>
-                                <div class="refund-policy-copy">${getRefundPolicyText(r)}</div>
-                            `;
-                        } else if (r.refundStatus === "Completed") {
-                            refundHtml = `
-                                <span class="badge-status badge-refund-completed" style="margin-bottom:6px; display:inline-block;"><i class="fas fa-check-double"></i> Refunded</span><br>
-                                <a href="${r.refundProofUrl}" target="_blank" class="btn-view-slip"><i class="fas fa-file-invoice-dollar"></i> View Receipt</a>
-                                <div class="refund-policy-copy">This cancelled booking no longer blocks vehicle availability for other customers.</div>
-                            `;
-                        }
-
                         actionsOrStatus = `
                             <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
                                 <span class="badge-status badge-cancelled"><i class="fas fa-times-circle"></i> Cancelled</span>
@@ -1199,7 +1238,7 @@
                                 ${r.paymentSlipUrl
                                     ? `<a href="${r.paymentSlipUrl}" target="_blank" class="customer-inline-link"><i class="fas fa-file-invoice-dollar"></i> View payment slip</a>`
                                     : `<div class="customer-detail-muted">No payment slip available</div>`}
-                                ${r.refundStatus && r.refundStatus !== "None" ? `<div class="customer-detail-muted">Refund: ${escapeHtml(r.refundStatus)}</div>` : `<div class="customer-detail-muted">No refund action yet</div>`}
+                                <div class="customer-detail-muted">${escapeHtml(getRefundDetailText(r))}</div>
                             </div>
                         </td>
                         <td>${actionsOrStatus}</td>
@@ -1280,7 +1319,7 @@
 
     // Triggers the "Soft Cancel" in the backend
     async function cancelBooking(id) {
-        if(!await window.appConfirm("Are you sure you want to cancel this booking?\n\nRefund requests are only available when the cancellation is made at least 3 days before the rental start date.", { title: "Cancel Booking", type: "warning", confirmText: "Cancel Booking", cancelText: "Keep Booking", confirmIcon: "fa-calendar-xmark" })) return;
+        if(!await window.appConfirm("Are you sure you want to cancel this booking?\n\nCancelling does not extend the refund window. Refunds are only available for 24 hours after the admin approves or rejects the booking.", { title: "Cancel Booking", type: "warning", confirmText: "Cancel Booking", cancelText: "Keep Booking", confirmIcon: "fa-calendar-xmark" })) return;
 
         try {
             const res = await fetch(`/api/bookings/delete/${id}`, {
@@ -1290,7 +1329,7 @@
             if (res.ok) {
                 await fetchMyRentals();
                 generateAnalytics();
-                alert("Booking cancelled successfully. If this booking still meets the 3-day refund policy, the refund claim button will remain available in your rentals section.");
+                alert("Booking cancelled successfully. If admin already responded to this booking and the 24-hour refund window is still open, the refund claim action will remain available in your rentals section.");
             } else {
                 const err = await res.text();
                 alert("Error: " + err);
@@ -1302,7 +1341,7 @@
     function openRefundModal(id) {
         const booking = myRentalsData.find(item => Number(item.id) === Number(id));
         if (booking && booking.refundEligible !== true) {
-            alert(booking.refundPolicyMessage || "This booking is outside the 3-day refund policy window.");
+            alert(booking.refundPolicyMessage || "This booking is outside the 24-hour refund window.");
             return;
         }
 
