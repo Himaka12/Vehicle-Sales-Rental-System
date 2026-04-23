@@ -102,7 +102,7 @@ public class AccountDeletionService {
             inquiry.setUserId(user.getId());
             inquiry.setCustomerName(DeletionAnonymizationUtil.DELETED_USER_NAME);
             inquiry.setEmail(DeletionAnonymizationUtil.buildDeletedInquiryEmail(user.getId(), inquiry.getId()));
-            inquiry.setPhone(null);
+            inquiry.setPhone(DeletionAnonymizationUtil.DELETED_INQUIRY_PHONE);
         }
     }
 
