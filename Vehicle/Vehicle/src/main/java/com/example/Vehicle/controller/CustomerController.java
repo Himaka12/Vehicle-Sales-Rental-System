@@ -53,6 +53,6 @@ public class CustomerController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAccount(Authentication authentication) {
         customerService.deleteCustomerAccount(authentication.getName());
-        return ResponseEntity.ok("Account deleted successfully");
+        return ResponseEntity.ok("Account access removed and personal data anonymized successfully.");
     }
 }
