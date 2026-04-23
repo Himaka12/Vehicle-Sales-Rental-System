@@ -1066,10 +1066,14 @@
                     <input
                         type="text"
                         id="premiumCardholderName"
+                        name="premiumCustomerName"
                         class="premium-gateway__field${getPremiumInvalidClass(validation.cardholderNameEntered, validation.cardholderNameValid)}"
                         value="${escapeHtml(premiumCheckoutState.form.cardholderName)}"
                         placeholder="Enter the cardholder name"
-                        autocomplete="cc-name"
+                        autocomplete="new-password"
+                        autocapitalize="words"
+                        autocorrect="off"
+                        spellcheck="false"
                     >
                     <small id="premiumCardholderNameHint" class="premium-gateway__hint${getPremiumHintClass(validation.cardholderNameEntered, validation.cardholderNameValid)}">
                         ${getPremiumHintText(validation.cardholderNameEntered, validation.cardholderNameValid, "Enter the cardholder name exactly as shown on the card.", "Cardholder name looks good.")}
@@ -1081,12 +1085,15 @@
                     <input
                         type="text"
                         id="premiumCardNumber"
+                        name="premiumReferenceNumber"
                         class="premium-gateway__field${getPremiumInvalidClass(validation.cardNumberEntered, validation.cardNumberValid)}"
                         value="${escapeHtml(premiumCheckoutState.form.cardNumber)}"
                         placeholder="0000 0000 0000 0000"
                         inputmode="numeric"
                         maxlength="19"
-                        autocomplete="cc-number"
+                        autocomplete="new-password"
+                        autocorrect="off"
+                        spellcheck="false"
                     >
                     <small id="premiumCardNumberHint" class="premium-gateway__hint${getPremiumHintClass(validation.cardNumberEntered, validation.cardNumberValid)}">
                         ${getPremiumHintText(validation.cardNumberEntered, validation.cardNumberValid, "Card number must contain exactly 16 digits.", "Card number looks good.")}
@@ -1098,12 +1105,15 @@
                     <input
                         type="password"
                         id="premiumCardCvv"
+                        name="premiumSecurityCode"
                         class="premium-gateway__field${getPremiumInvalidClass(validation.cvvEntered, validation.cvvValid)}"
                         value="${escapeHtml(premiumCheckoutState.form.cvv)}"
                         placeholder="123"
                         inputmode="numeric"
                         maxlength="4"
-                        autocomplete="cc-csc"
+                        autocomplete="new-password"
+                        autocorrect="off"
+                        spellcheck="false"
                     >
                     <small id="premiumCardCvvHint" class="premium-gateway__hint${getPremiumHintClass(validation.cvvEntered, validation.cvvValid)}">
                         ${getPremiumHintText(validation.cvvEntered, validation.cvvValid, "CVV must be 3 or 4 digits.", "CVV looks good.")}
@@ -1115,12 +1125,15 @@
                     <input
                         type="text"
                         id="premiumCardExpiry"
+                        name="premiumExpiryCode"
                         class="premium-gateway__field${getPremiumInvalidClass(validation.expiryEntered, validation.expiryValid)}"
                         value="${escapeHtml(premiumCheckoutState.form.expiry)}"
                         placeholder="MM/YY"
                         inputmode="numeric"
                         maxlength="5"
-                        autocomplete="cc-exp"
+                        autocomplete="new-password"
+                        autocorrect="off"
+                        spellcheck="false"
                     >
                     <small id="premiumCardExpiryHint" class="premium-gateway__hint${getPremiumHintClass(validation.expiryEntered, validation.expiryValid)}">
                         ${getPremiumHintText(validation.expiryEntered, validation.expiryValid, "Expiry must be in the current month or a future month.", "Expiry date looks good.")}

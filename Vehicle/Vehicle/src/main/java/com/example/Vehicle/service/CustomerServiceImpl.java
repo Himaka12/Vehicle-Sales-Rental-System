@@ -75,11 +75,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         validateCardholderName(cardData.getCardholderName());
-        normalizeCardNumber(cardData.getCardNumber());
+        String normalizedCardNumber = normalizeCardNumber(cardData.getCardNumber());
         normalizeCvv(cardData.getCvv());
         validateFutureExpiry(cardData.getExpiry());
 
-        user.setCardNumber(null);
+        user.setCardNumber(maskCardNumber(normalizedCardNumber));
         user.setPremium(true);
         user.setPremiumPaymentId(generatePremiumPaymentId());
         user.setPremiumActivatedAt(LocalDateTime.now());
@@ -140,6 +140,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         return digitsOnly;
+    }
+
+    private String maskCardNumber(String normalizedCardNumber) {
+        String lastFour = normalizedCardNumber.substring(normalizedCardNumber.length() - 4);
+        return "**** **** **** " + lastFour;
     }
 
     private String normalizeCvv(String cvv) {
