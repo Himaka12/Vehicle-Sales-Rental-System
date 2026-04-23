@@ -33,5 +33,8 @@ public class RentalBooking {
     @Column(length = 500)
     private String paymentSlipUrl;
 
+    // Timestamp recorded when an admin approves or rejects the booking
+    private LocalDateTime adminRespondedAt;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 }
