@@ -4,11 +4,8 @@ import com.example.Vehicle.config.JwtUtil;
 import com.example.Vehicle.dto.AuthResponseDTO;
 import com.example.Vehicle.dto.LoginDTO;
 import com.example.Vehicle.dto.RegisterDTO;
-import com.example.Vehicle.entity.User;
-import com.example.Vehicle.repository.ReviewRepository;
-import com.example.Vehicle.repository.SalesInquiryRepository;
 import com.example.Vehicle.repository.UserRepository;
-import com.example.Vehicle.repository.WishlistRepository;
+import com.example.Vehicle.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,9 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final SalesInquiryRepository salesInquiryRepository;
-    private final WishlistRepository wishlistRepository;
-    private final ReviewRepository reviewRepository;
+    private final AccountDeletionService accountDeletionService;
 
     @Override
     public String registerUser(RegisterDTO dto) {
@@ -91,11 +86,11 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        if ("MAIN_ADMIN".equals(user.getRole())) {
-            throw new RuntimeException("Security Alert: You cannot delete the Main Admin account!");
+        if (!"MARKETING_MANAGER".equals(user.getRole())) {
+            throw new RuntimeException("Only Sub-Admin accounts can be deleted from this action.");
         }
 
-        deactivateUser(user);
+        accountDeletionService.deleteUserById(id);
     }
 
     @Override
@@ -133,15 +128,7 @@ public class AuthServiceImpl implements AuthService {
     // Delete ANY user safely
     @Override
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
-
-        // Safety lock: Prevent deleting the Super Admin!
-        if ("MAIN_ADMIN".equals(user.getRole())) {
-            throw new RuntimeException("Security Alert: You cannot delete the Main Admin account!");
-        }
-
-        deactivateUser(user);
+        accountDeletionService.deleteUserById(id);
     }
 
     @Override
@@ -163,25 +150,6 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(dto.getEmail());
         user.setContactNumber(dto.getContactNumber());
 
-        userRepository.save(user);
-    }
-
-    private void deactivateUser(User user) {
-        if ("CUSTOMER".equals(user.getRole())) {
-            wishlistRepository.deleteByUser(user);
-            salesInquiryRepository.deleteByEmail(user.getEmail());
-            reviewRepository.deleteByUserId(user.getId());
-        }
-
-        String deletedEmail = "deleted-user-" + user.getId() + "-" + System.currentTimeMillis() + "@removed.local";
-        user.setFullName("Deleted User");
-        user.setEmail(deletedEmail);
-        user.setContactNumber(null);
-        user.setPassword(passwordEncoder.encode("disabled-account-" + user.getId()));
-        user.setRole("DELETED_USER");
-        user.setCardNumber(null);
-        user.setPremium(false);
-        user.setActive(false);
         userRepository.save(user);
     }
 }
