@@ -40,5 +40,7 @@ public class User {
     private boolean isPremium = false;
 
     private String cardNumber;
+    private String premiumPaymentId;
+    private LocalDateTime premiumActivatedAt;
     private LocalDateTime deletedAt;
 }
