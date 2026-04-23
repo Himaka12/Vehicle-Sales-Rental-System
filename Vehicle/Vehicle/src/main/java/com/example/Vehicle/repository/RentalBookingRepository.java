@@ -24,6 +24,8 @@ public interface RentalBookingRepository extends JpaRepository<RentalBooking, Lo
     // Finds all bookings made by a specific customer
     List<RentalBooking> findByUserEmailOrderByIdDesc(String email);
 
+    List<RentalBooking> findByUserIdOrderByIdDesc(Long userId);
+
     // Check if the user has an approved rental for this specific car!
     boolean existsByVehicleIdAndUserIdAndStatus(Long vehicleId, Long userId, String status);
 
