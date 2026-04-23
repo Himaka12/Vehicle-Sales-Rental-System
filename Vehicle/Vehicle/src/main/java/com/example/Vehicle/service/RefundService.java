@@ -26,6 +26,7 @@ public class RefundService {
     private final RefundRepository refundRepository;
     private final RentalBookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final AccountDeletionService accountDeletionService;
 
     @Transactional
     public RefundDTO claimRefund(Long bookingId, String email, String bankName, String branchName, String accountNumber, String accountHolderName) {
@@ -86,6 +87,9 @@ public class RefundService {
         refund.setRefundProofUrl(slipUrl);
         refund.setStatus(StatusRules.REFUND_COMPLETED);
         refund.setProcessedAt(LocalDateTime.now());
+        if (!refund.getUser().isActive()) {
+            accountDeletionService.maskCompletedRefundPayoutDetails(refund);
+        }
         return mapToDTO(refundRepository.save(refund));
     }
 
