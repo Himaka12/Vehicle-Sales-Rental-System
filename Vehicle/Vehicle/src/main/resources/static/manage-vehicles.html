@@ -414,6 +414,8 @@
         .badge-sale    { background: var(--primary-light);  color: var(--primary-dark); }
         .badge-available { background: #ecfeff; color: #0891b2; }
         .badge-sold    { background: var(--danger-light); color: var(--danger); }
+        .badge-visible { background: var(--success-light); color: var(--success); }
+        .badge-hidden  { background: #fff7ed; color: #c2410c; }
         .badge-other   { background: #f8fafc; color: var(--muted); }
 
         /* ════ ACTION BUTTONS ════ */
@@ -460,10 +462,48 @@
             border-color: var(--danger);
         }
 
+        .btn-action-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 13px;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+            border: 1px solid transparent;
+        }
+
+        .btn-action-toggle.hide {
+            background: #fff7ed;
+            color: #c2410c;
+            border-color: #fed7aa;
+        }
+
+        .btn-action-toggle.hide:hover {
+            background: #ea580c;
+            color: #fff;
+            border-color: #ea580c;
+        }
+
+        .btn-action-toggle.show {
+            background: var(--success-light);
+            color: var(--success);
+            border-color: #bbf7d0;
+        }
+
+        .btn-action-toggle.show:hover {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+        }
+
         .actions-cell {
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         /* ════ EMPTY / LOADING STATES ════ */
@@ -533,7 +573,7 @@
                 <i class="fas fa-car" style="color:var(--primary); font-size:1.4rem;"></i>
                 Vehicle Inventory
             </h2>
-            <p class="page-sub">Manage, edit and monitor all listed vehicles.</p>
+            <p class="page-sub">Manage inventory, hide listings without deleting history, and keep hard delete for true cleanup only.</p>
         </div>
         <a href="add-vehicle.html" class="btn-add-vehicle">
             <i class="fas fa-plus"></i> Add New Vehicle
@@ -571,12 +611,13 @@
                     <th>Price (LKR)</th>
                     <th>Listed Date</th>
                     <th>Status</th>
-                    <th style="min-width:150px;">Actions</th>
+                    <th>Listing</th>
+                    <th style="min-width:230px;">Actions</th>
                 </tr>
                 </thead>
                 <tbody id="vehicleTableBody">
                 <tr class="state-row">
-                    <td colspan="8">
+                    <td colspan="9">
                         <div class="state-icon"><i class="fas fa-spinner fa-spin"></i></div>
                         <div>Loading vehicles...</div>
                     </td>
@@ -605,8 +646,15 @@
     };
 
     function fetchVehicles() {
-        fetch("/api/vehicles/all")
-            .then(res => res.json())
+        fetch("/api/vehicles/admin/all", {
+            headers: { "Authorization": "Bearer " + token }
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    throw new Error(await res.text() || "Failed to load vehicles.");
+                }
+                return res.json();
+            })
             .then(data => {
                 data.sort((a, b) => b.id - a.id);
                 allVehicles = data;
@@ -617,7 +665,7 @@
                 document.getElementById("vehicleCountBadge").textContent = "Error";
                 document.getElementById("vehicleTableBody").innerHTML = `
                     <tr class="state-row">
-                        <td colspan="8">
+                        <td colspan="9">
                             <div class="state-icon" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i></div>
                             <div style="color:var(--danger);">Failed to load vehicle data. Please try again.</div>
                         </td>
@@ -646,7 +694,7 @@
         if (vehicles.length === 0) {
             tbody.innerHTML = `
                 <tr class="state-row">
-                    <td colspan="8">
+                    <td colspan="9">
                         <div class="state-icon"><i class="fas fa-filter-circle-xmark"></i></div>
                         <div>No vehicles match the selected purpose filter.</div>
                     </td>
@@ -669,6 +717,13 @@
             let statusClass = "badge-other";
             if (v.status === "Available") statusClass = "badge-available";
             else if (v.status === "Sold") statusClass = "badge-sold";
+            const visibilityBadge = v.visible
+                ? `<span class="badge-pill badge-visible"><i class="fas fa-eye" style="font-size:9px;"></i> Visible</span>`
+                : `<span class="badge-pill badge-hidden"><i class="fas fa-eye-slash" style="font-size:9px;"></i> Hidden</span>`;
+            const vehicleName = `${v.brand || ''} ${v.model || ''}`.trim().replace(/'/g, "\\'");
+            const toggleButton = v.visible
+                ? `<button onclick="toggleVehicleVisibility(${v.id}, true, '${vehicleName}')" class="btn-action-toggle hide"><i class="fas fa-eye-slash"></i> Hide</button>`
+                : `<button onclick="toggleVehicleVisibility(${v.id}, false, '${vehicleName}')" class="btn-action-toggle show"><i class="fas fa-eye"></i> Show</button>`;
 
             const conditionText = (v.vehicleCondition === 'BrandNew' || v.vehicleCondition === 'Brand New') ? 'Brand New' : 'Used';
 
@@ -693,11 +748,13 @@
                     <td>${priceDisplay}</td>
                     <td><span class="date-cell">${v.listedDate || 'N/A'}</span></td>
                     <td><span class="badge-pill ${statusClass}">${v.status}</span></td>
+                    <td>${visibilityBadge}</td>
                     <td>
                         <div class="actions-cell">
                             <a href="edit-vehicle.html?id=${v.id}" class="btn-action-edit">
                                 <i class="fas fa-pen"></i> Edit
                             </a>
+                            ${toggleButton}
                             <button onclick="deleteVehicle(${v.id})" class="btn-action-delete">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
@@ -709,8 +766,46 @@
     }
 
     // 🔥 UPGRADED: Smart Delete Function that reads HTTP Status Codes!
+    async function toggleVehicleVisibility(id, currentlyVisible, vehicleName) {
+        const nextVisible = !currentlyVisible;
+        const actionLabel = nextVisible ? "show" : "hide";
+        const dialogTitle = nextVisible ? "Show Listing" : "Hide Listing";
+
+        if (!await window.appConfirm(`Are you sure you want to ${actionLabel} '${vehicleName}'? Hidden listings stay in the database but disappear from customer inventory, detail pages, and new customer actions.`, {
+            title: dialogTitle,
+            type: "warning",
+            confirmText: dialogTitle,
+            cancelText: "Cancel",
+            confirmIcon: nextVisible ? "fa-eye" : "fa-eye-slash"
+        })) {
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/vehicles/visibility/" + id, {
+                method: "PUT",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ visible: nextVisible })
+            });
+
+            if (res.ok) {
+                alert(`Vehicle listing ${nextVisible ? "shown" : "hidden"} successfully.`);
+                fetchVehicles();
+            } else {
+                const errorText = await res.text();
+                alert("Failed to update listing visibility: " + errorText);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            alert("Critical Error: Could not connect to the server.");
+        }
+    }
+
     async function deleteVehicle(id) {
-        if (!await window.appConfirm("Are you sure you want to completely delete Vehicle #" + id + "? All attached bookings, inquiries, wishlist records, and reviews will also be permanently deleted. Vehicles with linked refund history cannot be deleted until those refunds are completed and cleared.", {
+        if (!await window.appConfirm("Are you sure you want to completely delete Vehicle #" + id + "? Use Hide for normal listing control. Hard delete is permanent and will remove attached bookings, inquiries, wishlist records, and reviews when allowed. Vehicles with linked refund history cannot be deleted.", {
             title: "Delete Vehicle Permanently",
             type: "danger",
             confirmText: "Delete Vehicle",
