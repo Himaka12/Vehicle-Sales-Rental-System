@@ -401,6 +401,7 @@
         .badge-rejected  { background: var(--danger-light);  color: var(--danger); }
         .badge-cancelled { background: #f1f5f9; color: #475569; }
         .badge-vip       { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; font-size: 0.65rem; padding: 2px 6px; margin-left: 6px; border-radius: 4px;}
+        .status-meta     { margin-top: 6px; font-size: 0.74rem; color: var(--muted); line-height: 1.45; }
 
         /* ════ ACTION BUTTONS ════ */
         .actions-cell {
@@ -576,7 +577,7 @@
                 <i class="fas fa-calendar-check" style="color:var(--primary); font-size:1.4rem;"></i>
                 Rental Bookings
             </h2>
-            <p class="page-sub">Verify multi-day schedules, pricing, and customer payment slips.</p>
+            <p class="page-sub">Verify multi-day schedules, pricing, and customer payment slips. Approving or rejecting a booking starts the customer's 24-hour refund window.</p>
         </div>
     </div>
 
@@ -704,6 +705,8 @@
                 statusBadge = `<span class="badge-pill badge-pending"><i class="fas fa-clock" style="font-size:9px;"></i> Pending</span>`;
             }
 
+            const refundWindowMeta = getRefundWindowMeta(r);
+
             // 🔥 UPGRADED: Action Buttons now include the Hard Delete!
             let actions = "";
             if (r.status === 'Pending') {
@@ -750,12 +753,35 @@
                             <i class="fas fa-image"></i> View Slip
                         </a>
                     </td>
-                    <td>${statusBadge}</td>
+                    <td>${statusBadge}${refundWindowMeta}</td>
                     <td>${actions}</td>
                 </tr>`;
         });
 
         tbody.innerHTML = html;
+    }
+
+    function getRefundWindowMeta(r) {
+        if (!r.adminRespondedAt || !r.refundClaimDeadline) {
+            return "";
+        }
+
+        return `<div class="status-meta"><i class="far fa-clock"></i> Refund window: ${formatAdminDateTime(r.adminRespondedAt)} to ${formatAdminDateTime(r.refundClaimDeadline)}</div>`;
+    }
+
+    function formatAdminDateTime(value) {
+        const parsed = Date.parse(value || "");
+        if (Number.isNaN(parsed)) {
+            return value || "N/A";
+        }
+
+        return new Date(parsed).toLocaleString('en-GB', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 
     function compareRentalDates(a, b, sortOrder) {
