@@ -257,11 +257,18 @@ document.querySelectorAll(".btn-promo").forEach((button) => {
             const image = getVehicleImage(vehicle);
             const price = formatLkr(vehicle.effectivePrice || vehicle.price || 0);
             const title = [vehicle.brand, vehicle.model].filter(Boolean).join(" ");
-            const subtitleParts = [vehicle.color, vehicle.engineCapacity, vehicle.fuelType].filter(Boolean);
+            const stockCount = Number(vehicle.quantity || 0);
+            const stockLabel = stockCount > 0 ? `Stock: ${stockCount}` : "Out of stock";
+            const subtitleParts = [vehicle.color, vehicle.engineCapacity, vehicle.fuelType, stockLabel].filter(Boolean);
             const listingType = String(vehicle.listingType || "").toLowerCase();
             const listingLabel = listingType === "rent" ? "For Rent" : "For Sale";
             const listingBadgeClass = listingType === "rent" ? "home-badge-rent" : "home-badge-sale";
             const detailLink = `guest-vehicle-details.html?id=${Number(vehicle.id) || 0}`;
+            const hasOfferPrice = Boolean(vehicle.appliedPromotion && Number(vehicle.effectivePrice || 0) > 0 && Number(vehicle.effectivePrice || 0) < Number(vehicle.price || 0));
+            const originalPrice = hasOfferPrice ? formatLkr(vehicle.price || 0) : "";
+            const subtitleMarkup = subtitleParts.length
+                ? subtitleParts.map((part) => escapeHtml(part)).join(' <span class="featured-vehicle-sub-sep">&bull;</span> ')
+                : escapeHtml(stockLabel);
 
             return `
                 <article class="featured-vehicle-card vehicle-card reveal">
@@ -273,15 +280,11 @@ document.querySelectorAll(".btn-promo").forEach((button) => {
                                 <span class="home-badge home-badge-condition">${escapeHtml(formatCondition(vehicle.vehicleCondition))}</span>
                             </div>
                         </div>
-                        <div class="featured-vehicle-price-chip">
-                            <span>${vehicle.appliedPromotion ? "Offer Price" : "Listed Price"}</span>
-                            <strong>${price}</strong>
-                        </div>
                     </a>
                     <div class="featured-vehicle-body">
-                        <div>
+                        <div class="featured-vehicle-copy">
                             <h3>${escapeHtml(title || "Vehicle")}</h3>
-                            <p class="featured-vehicle-sub">${escapeHtml(subtitleParts.join(" • ") || "Premium inventory listing")}</p>
+                            <p class="featured-vehicle-sub">${subtitleMarkup}</p>
                         </div>
                         <div class="featured-vehicle-specs">
                             <div class="featured-vehicle-spec">
@@ -302,8 +305,11 @@ document.querySelectorAll(".btn-promo").forEach((button) => {
                             </div>
                         </div>
                         <div class="featured-vehicle-footer">
-                            <div class="featured-vehicle-stock">${escapeHtml(`${Number(vehicle.quantity || 0)} in stock`)}</div>
-                            <a class="featured-vehicle-link" href="${detailLink}"><i class="bi bi-arrow-up-right"></i> View Details</a>
+                            <div class="featured-vehicle-price-panel">
+                                <span class="featured-vehicle-price-label">${vehicle.appliedPromotion ? "Offer Price" : "Listed Price"}</span>
+                                ${hasOfferPrice ? `<div class="featured-vehicle-price-original">${escapeHtml(originalPrice)}</div>` : ""}
+                                <strong class="featured-vehicle-price-value">${price}</strong>
+                            </div>
                         </div>
                     </div>
                 </article>
