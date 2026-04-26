@@ -5,6 +5,7 @@ import com.example.Vehicle.dto.ReviewAdminResponseDTO;
 import com.example.Vehicle.dto.ReviewAiResult;
 import com.example.Vehicle.dto.ReviewDTO;
 import com.example.Vehicle.dto.ReviewModerationDTO;
+import com.example.Vehicle.entity.RentalBooking;
 import com.example.Vehicle.entity.Review;
 import com.example.Vehicle.entity.User;
 import com.example.Vehicle.entity.Vehicle;
@@ -16,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,16 +67,12 @@ public class ReviewService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         validateVisibleVehicleForCustomerInteraction(dto.getVehicleId(), "reviews");
 
-        if (!hasApprovedRentalForReview(dto.getVehicleId(), user.getId())) {
-            throw new RuntimeException("Unauthorized: You must have an approved rental booking to review this vehicle.");
-        }
-        if (reviewRepository.existsByVehicleIdAndUserId(dto.getVehicleId(), user.getId())) {
-            throw new RuntimeException("You have already reviewed this vehicle. Please edit or delete your existing review instead.");
-        }
+        RentalBooking reviewableBooking = resolveReviewableBooking(dto.getVehicleId(), user.getId(), dto.getBookingId());
 
         Review review = new Review();
         review.setVehicleId(dto.getVehicleId());
         review.setUserId(user.getId());
+        review.setBookingId(reviewableBooking.getId());
         review.setCustomerName(user.getFullName());
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
@@ -105,8 +104,7 @@ public class ReviewService {
         if (vehicleRepository.findByIdAndVisibleTrue(vehicleId).isEmpty()) {
             return false;
         }
-        return hasApprovedRentalForReview(vehicleId, user.getId())
-                && !reviewRepository.existsByVehicleIdAndUserId(vehicleId, user.getId());
+        return findNextReviewableBooking(vehicleId, user.getId()) != null;
     }
 
     public ReviewDTO updateReview(Long reviewId, String email, ReviewDTO dto) {
@@ -153,6 +151,7 @@ public class ReviewService {
                     AdminReviewDTO adminDto = new AdminReviewDTO();
                     adminDto.setId(review.getId());
                     adminDto.setVehicleId(review.getVehicleId());
+                    adminDto.setBookingId(review.getBookingId());
                     adminDto.setUserId(review.getUserId());
                     adminDto.setCustomerName(review.getCustomerName());
                     adminDto.setRating(review.getRating());
@@ -182,6 +181,7 @@ public class ReviewService {
                     AdminReviewDTO dto = new AdminReviewDTO();
                     dto.setId(review.getId());
                     dto.setVehicleId(review.getVehicleId());
+                    dto.setBookingId(review.getBookingId());
                     dto.setUserId(review.getUserId());
                     dto.setCustomerName(review.getCustomerName());
                     dto.setRating(review.getRating());
@@ -254,6 +254,7 @@ public class ReviewService {
         dto.setId(review.getId());
         dto.setVehicleId(review.getVehicleId());
         dto.setUserId(review.getUserId());
+        dto.setBookingId(review.getBookingId());
         dto.setCustomerName(review.getCustomerName());
         dto.setRating(review.getRating());
         dto.setComment(review.getComment());
@@ -394,8 +395,71 @@ public class ReviewService {
         dto.setVehicleStatus(vehicle.getStatus());
     }
 
-    private boolean hasApprovedRentalForReview(Long vehicleId, Long userId) {
-        return rentalBookingRepository.existsByVehicleIdAndUserIdAndStatus(vehicleId, userId, "Approved");
+    private RentalBooking resolveReviewableBooking(Long vehicleId, Long userId, Long requestedBookingId) {
+        List<RentalBooking> approvedBookings = rentalBookingRepository.findByVehicleIdAndUserIdAndStatusOrderByIdAsc(vehicleId, userId, "Approved");
+        if (approvedBookings.isEmpty()) {
+            throw new RuntimeException("Unauthorized: You must have an approved rental booking to review this vehicle.");
+        }
+
+        Set<Long> consumedBookingIds = buildConsumedReviewBookingIds(vehicleId, userId, approvedBookings);
+
+        if (requestedBookingId != null) {
+            RentalBooking selectedBooking = approvedBookings.stream()
+                    .filter(booking -> requestedBookingId.equals(booking.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Selected booking is not an approved rental for this vehicle."));
+
+            if (consumedBookingIds.contains(selectedBooking.getId())) {
+                throw new RuntimeException("You have already reviewed this booking. Please edit or delete the existing review instead.");
+            }
+            return selectedBooking;
+        }
+
+        RentalBooking nextBooking = approvedBookings.stream()
+                .filter(booking -> !consumedBookingIds.contains(booking.getId()))
+                .findFirst()
+                .orElse(null);
+
+        if (nextBooking == null) {
+            throw new RuntimeException("You have already reviewed all approved bookings for this vehicle.");
+        }
+        return nextBooking;
+    }
+
+    private RentalBooking findNextReviewableBooking(Long vehicleId, Long userId) {
+        List<RentalBooking> approvedBookings = rentalBookingRepository.findByVehicleIdAndUserIdAndStatusOrderByIdAsc(vehicleId, userId, "Approved");
+        if (approvedBookings.isEmpty()) {
+            return null;
+        }
+
+        Set<Long> consumedBookingIds = buildConsumedReviewBookingIds(vehicleId, userId, approvedBookings);
+        return approvedBookings.stream()
+                .filter(booking -> !consumedBookingIds.contains(booking.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Set<Long> buildConsumedReviewBookingIds(Long vehicleId, Long userId, List<RentalBooking> approvedBookings) {
+        List<Review> existingReviews = reviewRepository.findByVehicleIdAndUserIdOrderByIdAsc(vehicleId, userId);
+        Set<Long> consumedBookingIds = existingReviews.stream()
+                .map(Review::getBookingId)
+                .filter(id -> id != null)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        long legacyReviewCount = existingReviews.stream()
+                .filter(review -> review.getBookingId() == null)
+                .count();
+
+        for (RentalBooking booking : approvedBookings) {
+            if (legacyReviewCount <= 0) {
+                break;
+            }
+            if (consumedBookingIds.add(booking.getId())) {
+                legacyReviewCount--;
+            }
+        }
+
+        return consumedBookingIds;
     }
 
     private void validateVisibleVehicleForCustomerInteraction(Long vehicleId, String actionLabel) {

@@ -69,6 +69,14 @@ function cacheVehicle(vehicle) {
     }
 }
 
+function clearCachedVehicle(vehicleId) {
+    try {
+        sessionStorage.removeItem(getVehicleCacheKey(vehicleId));
+    } catch (error) {
+        console.warn("Could not clear cached vehicle details:", error);
+    }
+}
+
 function showVehicleDetails() {
     document.getElementById("loading-container").style.display = "none";
     document.getElementById("details-container").style.display = "block";
@@ -334,10 +342,6 @@ async function initRentVehicleDetails() {
         showVehicleDetails();
     }
 
-    fetchVehicleReviews(vehicleId);
-    checkReviewEligibility(vehicleId);
-    loadRentUserState(vehicleId);
-
     try {
         const response = await fetch(`/api/vehicles/${vehicleId}`);
         if (!response.ok) {
@@ -348,7 +352,16 @@ async function initRentVehicleDetails() {
         cacheVehicle(vehicle);
         renderRentVehicle(vehicle);
         showVehicleDetails();
+        fetchVehicleReviews(vehicleId);
+        checkReviewEligibility(vehicleId);
+        loadRentUserState(vehicleId);
     } catch (error) {
+        clearCachedVehicle(vehicleId);
+        if (cachedVehicle) {
+            alert("This listing is no longer available.");
+            window.location.replace("vehicle-inventory.html");
+            return;
+        }
         if (!cachedVehicle) {
             document.getElementById("loading-container").innerHTML = `
                 <i class="bi bi-exclamation-triangle"></i>
@@ -564,7 +577,15 @@ function buildReviewInsightRow(label, tone, count, total) {
 }
 
 async function checkReviewEligibility(vehicleId) {
+    const writeReviewSection = document.getElementById("writeReviewSection");
+    const cannotReviewMessage = document.getElementById("cannotReviewMessage");
+    if (!writeReviewSection || !cannotReviewMessage) {
+        return;
+    }
+
     if (!token) {
+        writeReviewSection.style.display = "none";
+        cannotReviewMessage.style.display = "flex";
         return;
     }
     try {
@@ -574,8 +595,11 @@ async function checkReviewEligibility(vehicleId) {
         if (res.ok) {
             const canReview = await res.json();
             if (canReview === true) {
-                document.getElementById("writeReviewSection").style.display = "block";
-                document.getElementById("cannotReviewMessage").style.display = "none";
+                writeReviewSection.style.display = "block";
+                cannotReviewMessage.style.display = "none";
+            } else if (!editingReviewId) {
+                writeReviewSection.style.display = "none";
+                cannotReviewMessage.style.display = "flex";
             }
         }
     } catch (error) {
@@ -650,6 +674,7 @@ async function submitReview() {
                 );
             }
             fetchVehicleReviews(vehicleId);
+            checkReviewEligibility(vehicleId);
         } else {
             const errorText = await res.text();
             alert("Error submitting review: " + errorText);
@@ -672,6 +697,8 @@ function prepareEditReview(reviewId, currentRating, currentComment) {
     editingReviewId = reviewId;
     setReviewRating(currentRating);
     document.getElementById("reviewComment").value = currentComment;
+    document.getElementById("writeReviewSection").style.display = "block";
+    document.getElementById("cannotReviewMessage").style.display = "none";
     const submitBtn = document.getElementById("submitReviewBtn");
     submitBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Update Review`;
     document.getElementById("writeReviewSection").scrollIntoView({ behavior: "smooth" });
@@ -698,6 +725,7 @@ async function deleteReview(reviewId) {
         });
         if (res.ok) {
             fetchVehicleReviews(vehicleId);
+            checkReviewEligibility(vehicleId);
         } else {
             const errorText = await res.text();
             alert("Error deleting review: " + errorText);
