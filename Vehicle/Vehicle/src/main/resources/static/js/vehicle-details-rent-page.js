@@ -579,13 +579,13 @@ function buildReviewInsightRow(label, tone, count, total) {
 async function checkReviewEligibility(vehicleId) {
     const writeReviewSection = document.getElementById("writeReviewSection");
     const cannotReviewMessage = document.getElementById("cannotReviewMessage");
-    if (!writeReviewSection || !cannotReviewMessage) {
+    if (!writeReviewSection) {
         return;
     }
 
     if (!token) {
         writeReviewSection.style.display = "none";
-        cannotReviewMessage.style.display = "flex";
+        if (cannotReviewMessage) cannotReviewMessage.style.display = "none";
         return;
     }
     try {
@@ -596,10 +596,10 @@ async function checkReviewEligibility(vehicleId) {
             const canReview = await res.json();
             if (canReview === true) {
                 writeReviewSection.style.display = "block";
-                cannotReviewMessage.style.display = "none";
+                if (cannotReviewMessage) cannotReviewMessage.style.display = "none";
             } else if (!editingReviewId) {
                 writeReviewSection.style.display = "none";
-                cannotReviewMessage.style.display = "flex";
+                if (cannotReviewMessage) cannotReviewMessage.style.display = "none";
             }
         }
     } catch (error) {
@@ -698,7 +698,8 @@ function prepareEditReview(reviewId, currentRating, currentComment) {
     setReviewRating(currentRating);
     document.getElementById("reviewComment").value = currentComment;
     document.getElementById("writeReviewSection").style.display = "block";
-    document.getElementById("cannotReviewMessage").style.display = "none";
+    const cannotReviewMessage = document.getElementById("cannotReviewMessage");
+    if (cannotReviewMessage) cannotReviewMessage.style.display = "none";
     const submitBtn = document.getElementById("submitReviewBtn");
     submitBtn.innerHTML = `<i class="bi bi-pencil-square"></i> Update Review`;
     document.getElementById("writeReviewSection").scrollIntoView({ behavior: "smooth" });
