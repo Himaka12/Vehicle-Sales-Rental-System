@@ -541,11 +541,6 @@ function renderReviewInsights(reviews) {
         return;
     }
 
-    if (!reviews.length) {
-        chart.innerHTML = `<div class="review-insights-empty">No review sentiment data yet. Once renters submit feedback, the sentiment summary will appear here.</div>`;
-        return;
-    }
-
     const counts = {
         positive: reviews.filter((review) => String(review.aiSentiment || "").toUpperCase() === "POSITIVE").length,
         negative: reviews.filter((review) => String(review.aiSentiment || "").toUpperCase() === "NEGATIVE").length,
