@@ -14,6 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Find reviews by user (Required for safe account deletion)
     List<Review> findByUserIdOrderByReviewDateDesc(Long userId);
 
+    List<Review> findByVehicleIdAndUserIdOrderByIdAsc(Long vehicleId, Long userId);
+
     boolean existsByVehicleIdAndUserId(Long vehicleId, Long userId);
 
     // Fetch EVERY review for the Admin Dashboard, newest first!
