@@ -14,6 +14,7 @@ public class Review {
 
     private Long vehicleId;
     private Long userId;
+    private Long bookingId;
 
     private String customerName; // We store this so we don't have to join tables every time we load a review
 

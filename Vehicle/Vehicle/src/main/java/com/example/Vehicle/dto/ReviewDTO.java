@@ -15,6 +15,7 @@ public class ReviewDTO {
     @NotNull(message = "Vehicle ID is required.")
     private Long vehicleId;
     private Long userId;
+    private Long bookingId;
     private String customerName;
 
     @Min(value = 1, message = "Rating must be at least 1.")

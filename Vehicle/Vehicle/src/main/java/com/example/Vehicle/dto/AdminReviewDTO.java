@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public class AdminReviewDTO {
     private Long id;
     private Long vehicleId;
+    private Long bookingId;
     private String vehicleName;
     private String vehicleBrand;
     private String vehicleModel;
