@@ -200,8 +200,6 @@ src/main/resources/static/uploads/
 
 ## 🔮 Future Improvements
 
-- [ ] User authentication (login / signup)
-- [ ] Admin dashboard
 - [ ] Payment gateway integration
 - [ ] Advanced search and filter options
 - [ ] AI-based vehicle recommendations
