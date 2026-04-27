@@ -1,86 +1,58 @@
-
-
 # 🚗 Vehicle Sales & Rental System
 
-A full-stack web application for managing vehicle sales and rentals with database integration, image handling, and AI-based sentiment analysis for user reviews. This system allows users to browse vehicles, manage listings, handle rentals and sales, and analyze customer feedback.
+A full-stack web application for managing vehicle sales and rentals with database integration and AI-based sentiment analysis for customer reviews.
 
 ---
 
-## 📁 File Structure
+## 📌 Overview
 
+The **Vehicle Sales & Rental System** is designed to simplify vehicle business operations by providing a centralized platform to:
 
-Vehicle-Sales-Rental-System/
-├── Vehicle/
-│ └── Vehicle/
-│ ├── src/
-│ │ └── main/
-│ │ ├── java/
-│ │ └── resources/
-│ │ ├── static/
-│ │ │ └── uploads/
-│ │ └── templates/
-│ ├── pom.xml
-│ └── Application.java
-│
-├── src/
-│ └── main/
-│ └── resources/
-│ └── static/
-│ └── uploads/
-│
-├── ShowProps.java
-├── README.md
-└── .idea/
-
-
----
-
-## 📌 Project Overview
-
-The **Vehicle Sales & Rental System** is a web-based platform designed to manage vehicle-related business operations such as selling, renting, and maintaining vehicle records.
-
-It provides a centralized system where users can:
-- Browse vehicles
-- Manage vehicle listings
-- Handle sales and rentals
-- Upload vehicle images
-- Analyze customer feedback using AI
+- Browse available vehicles  
+- Manage vehicle listings  
+- Handle vehicle sales and rentals  
+- Store and display vehicle images  
+- Analyze customer feedback using sentiment analysis  
 
 ---
 
 ## ✨ Features
 
-- Vehicle listing management
-- Vehicle sales system
-- Vehicle rental system
-- Image upload and storage
-- Customer review handling
-- AI-based sentiment analysis
-- MySQL database integration
-- Web-based user interface
-
----
-
-## 🧠 AI Functionality
-
-The system includes sentiment analysis for user reviews.
-
-This helps to:
-- Detect positive and negative feedback
-- Understand customer satisfaction
-- Improve business decisions
+- Vehicle listing management  
+- Vehicle sales system  
+- Vehicle rental system  
+- Image upload and storage  
+- Customer review handling  
+- AI-based sentiment analysis  
+- MySQL database integration  
+- Web-based user interface  
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Backend | Java, Spring Boot |
-| Frontend | HTML, CSS, JavaScript |
-| Database | MySQL |
-| Build Tool | Maven |
-| AI Feature | Sentiment Analysis |
+- **Backend:** Java, Spring Boot  
+- **Frontend:** HTML, CSS, JavaScript  
+- **Database:** MySQL  
+- **Build Tool:** Maven  
+
+---
+
+## 📁 Project Structure
+
+
+Vehicle-Sales-Rental-System/
+│
+├── Vehicle/Vehicle/
+│ ├── src/main/java/ # Backend source code
+│ ├── src/main/resources/ # Config, templates, static files
+│ ├── pom.xml # Maven configuration
+│ └── Application.java # Main entry point
+│
+├── src/main/resources/static/uploads/ # Uploaded images
+├── ShowProps.java
+└── README.md
+
 
 ---
 
@@ -91,18 +63,20 @@ This helps to:
 ```bash
 git clone https://github.com/Himaka12/Vehicle-Sales-Rental-System.git
 cd Vehicle-Sales-Rental-System
-2. Open Project in IDE
-Open IntelliJ IDEA
-Click Open
-Select the project folder
-Wait for indexing
+2. Open in IDE
+Open IntelliJ IDEA (recommended)
+Click Open → Select project folder
+Wait until indexing completes
 
-Important: Main project is inside Vehicle/Vehicle/
+⚠️ Main project is inside: Vehicle/Vehicle/
 
 3. Reload Maven
 Open pom.xml
 Right-click → Maven → Reload Project
 4. Set Up MySQL Database
+
+Open MySQL and run:
+
 CREATE DATABASE vehicle_sales_rental_system;
 5. Configure Database
 
@@ -119,47 +93,50 @@ spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 6. Run the Application
-Find Application.java
+Locate Application.java
 Right-click → Run
 
-OR:
+OR use terminal:
 
 mvn spring-boot:run
-7. Open in Browser
-http://localhost:8080
-🧪 System Flow
-User → Frontend → Backend → Database → Response
-📦 Modules
-Vehicle Management
-Sales Management
-Rental Management
-Customer Management
-Review & Sentiment Analysis
-🖼️ Image Uploads
+7. Access the Application
 
-Images are stored in:
+Open your browser and go to:
+
+http://localhost:8080
+🧩 System Modules
+Vehicle Management – Manage vehicle details and availability
+Sales Management – Handle vehicle purchase records
+Rental Management – Manage rental bookings
+Customer Management – Store customer data
+Review & Sentiment Analysis – Analyze user feedback
+🖼️ Image Storage
+
+Uploaded images are stored in:
 
 src/main/resources/static/uploads/
 ⚠️ Common Issues
 
-Maven not loading
-→ Reload Maven
+Maven dependencies not loading
+→ Reload Maven project
 
 Database connection error
-→ Check username/password
+→ Check username, password, and database name
 
 Port already in use
+→ Change port in application.properties:
 
 server.port=8081
 
-Images not showing
-→ Check uploads folder
+Images not displaying
+→ Ensure uploads folder exists
 
 🔮 Future Improvements
-Authentication system
+User authentication (login/signup)
 Admin dashboard
 Payment integration
-AI recommendations
+Advanced search filters
+AI-based recommendations
 Cloud deployment
 👨‍💻 Author
 
@@ -168,4 +145,4 @@ https://github.com/Himaka12
 
 ⭐ Support
 
-If you like this project, give it a star ⭐
+If you found this project useful, consider giving it a ⭐ on GitHub.
