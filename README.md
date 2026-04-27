@@ -1,148 +1,227 @@
+<div align="center">
+
 # 🚗 Vehicle Sales & Rental System
 
-A full-stack web application for managing vehicle sales and rentals with database integration and AI-based sentiment analysis for customer reviews.
+**A full-stack web application for managing vehicle sales and rentals with AI-powered sentiment analysis**
+
+[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)](https://maven.apache.org)
+
+</div>
 
 ---
 
 ## 📌 Overview
 
-The **Vehicle Sales & Rental System** is designed to simplify vehicle business operations by providing a centralized platform to:
-
-- Browse available vehicles  
-- Manage vehicle listings  
-- Handle vehicle sales and rentals  
-- Store and display vehicle images  
-- Analyze customer feedback using sentiment analysis  
+The **Vehicle Sales & Rental System** is a centralized platform designed to streamline vehicle business operations. It enables users to browse vehicle listings, manage sales and rentals, store vehicle images, and analyze customer feedback using AI-driven sentiment analysis.
 
 ---
 
 ## ✨ Features
 
-- Vehicle listing management  
-- Vehicle sales system  
-- Vehicle rental system  
-- Image upload and storage  
-- Customer review handling  
-- AI-based sentiment analysis  
-- MySQL database integration  
-- Web-based user interface  
+| Feature | Description |
+|---|---|
+| 🚘 **Vehicle Management** | Add, update, and manage vehicle listings |
+| 💰 **Sales System** | Handle vehicle purchase transactions |
+| 📅 **Rental System** | Manage rental bookings and availability |
+| 🖼️ **Image Storage** | Upload and serve vehicle images |
+| 💬 **Customer Reviews** | Collect and display user feedback |
+| 🤖 **Sentiment Analysis** | AI-powered analysis of customer reviews |
+| 🗄️ **Database Integration** | Full MySQL persistence layer |
+| 🌐 **Web Interface** | Intuitive browser-based UI |
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Java, Spring Boot  
-- **Frontend:** HTML, CSS, JavaScript  
-- **Database:** MySQL  
-- **Build Tool:** Maven  
+| Layer | Technology |
+|---|---|
+| **Backend** | Java, Spring Boot |
+| **Frontend** | HTML, CSS, JavaScript |
+| **Database** | MySQL |
+| **Build Tool** | Maven |
 
 ---
 
 ## 📁 Project Structure
 
-
+```
 Vehicle-Sales-Rental-System/
 │
-├── Vehicle/Vehicle/
-│ ├── src/main/java/ # Backend source code
-│ ├── src/main/resources/ # Config, templates, static files
-│ ├── pom.xml # Maven configuration
-│ └── Application.java # Main entry point
+├── Vehicle/Vehicle/                     # ⚠️ Main project lives here
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/                    # Backend source code
+│   │       └── resources/
+│   │           ├── static/
+│   │           │   └── uploads/         # Uploaded vehicle images
+│   │           ├── templates/           # HTML templates
+│   │           └── application.properties
+│   ├── pom.xml                          # Maven configuration
+│   └── Application.java                # Main entry point
 │
-├── src/main/resources/static/uploads/ # Uploaded images
 ├── ShowProps.java
 └── README.md
-
+```
 
 ---
 
 ## 🚀 Getting Started
+
+### Prerequisites
+
+- Java 17+
+- Maven 3.8+
+- MySQL 8.0+
+- IntelliJ IDEA (recommended)
+
+---
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Himaka12/Vehicle-Sales-Rental-System.git
 cd Vehicle-Sales-Rental-System
-2. Open in IDE
-Open IntelliJ IDEA (recommended)
-Click Open → Select project folder
-Wait until indexing completes
+```
 
-⚠️ Main project is inside: Vehicle/Vehicle/
+### 2. Open in IDE
 
-3. Reload Maven
-Open pom.xml
-Right-click → Maven → Reload Project
-4. Set Up MySQL Database
+1. Open **IntelliJ IDEA**
+2. Click **Open** → select the project folder
+3. Wait for indexing to complete
 
-Open MySQL and run:
+> ⚠️ **Note:** The main project is located inside `Vehicle/Vehicle/`
 
+---
+
+### 3. Reload Maven Dependencies
+
+1. Open `pom.xml`
+2. Right-click → **Maven** → **Reload Project**
+
+---
+
+### 4. Set Up the MySQL Database
+
+Connect to your MySQL instance and run:
+
+```sql
 CREATE DATABASE vehicle_sales_rental_system;
-5. Configure Database
+```
 
-Open:
+---
 
-src/main/resources/application.properties
+### 5. Configure Database Connection
 
-Update:
+Open `src/main/resources/application.properties` and update:
 
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/vehicle_sales_rental_system
 spring.datasource.username=root
 spring.datasource.password=your_password
-
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
-6. Run the Application
-Locate Application.java
-Right-click → Run
+```
 
-OR use terminal:
+---
 
+### 6. Run the Application
+
+**Option A — Via IDE:**
+1. Locate `Application.java`
+2. Right-click → **Run**
+
+**Option B — Via Terminal:**
+```bash
 mvn spring-boot:run
-7. Access the Application
+```
 
-Open your browser and go to:
+---
 
+### 7. Access the Application
+
+Open your browser and navigate to:
+
+```
 http://localhost:8080
-🧩 System Modules
-Vehicle Management – Manage vehicle details and availability
-Sales Management – Handle vehicle purchase records
-Rental Management – Manage rental bookings
-Customer Management – Store customer data
-Review & Sentiment Analysis – Analyze user feedback
-🖼️ Image Storage
+```
 
-Uploaded images are stored in:
+---
 
+## 🧩 System Modules
+
+```
+┌─────────────────────────────────────────────────┐
+│              Vehicle Sales & Rental              │
+├──────────────┬───────────────┬───────────────────┤
+│  🚘 Vehicle  │ 💰 Sales       │ 📅 Rental          │
+│  Management  │ Management    │ Management        │
+├──────────────┴───────────────┴───────────────────┤
+│  👤 Customer Management                          │
+├──────────────────────────────────────────────────┤
+│  💬 Review & 🤖 Sentiment Analysis               │
+└──────────────────────────────────────────────────┘
+```
+
+| Module | Description |
+|---|---|
+| **Vehicle Management** | Manage vehicle details and availability status |
+| **Sales Management** | Handle and track vehicle purchase records |
+| **Rental Management** | Manage bookings, duration, and returns |
+| **Customer Management** | Store and manage customer data |
+| **Review & Sentiment Analysis** | Collect reviews and run AI-based feedback analysis |
+
+---
+
+## 🖼️ Image Storage
+
+Uploaded vehicle images are stored in:
+
+```
 src/main/resources/static/uploads/
-⚠️ Common Issues
+```
 
-Maven dependencies not loading
-→ Reload Maven project
+> Ensure this directory exists before uploading images.
 
-Database connection error
-→ Check username, password, and database name
+---
 
-Port already in use
-→ Change port in application.properties:
+## ⚠️ Common Issues & Fixes
 
-server.port=8081
+| Issue | Fix |
+|---|---|
+| Maven dependencies not loading | Right-click `pom.xml` → Maven → Reload Project |
+| Database connection error | Verify username, password, and DB name in `application.properties` |
+| Port already in use | Add `server.port=8081` to `application.properties` |
+| Images not displaying | Confirm the `uploads/` directory exists in `static/` |
 
-Images not displaying
-→ Ensure uploads folder exists
+---
 
-🔮 Future Improvements
-User authentication (login/signup)
-Admin dashboard
-Payment integration
-Advanced search filters
-AI-based recommendations
-Cloud deployment
-👨‍💻 Author
+## 🔮 Future Improvements
 
-Himaka Uthpala
-https://github.com/Himaka12
+- [ ] User authentication (login / signup)
+- [ ] Admin dashboard
+- [ ] Payment gateway integration
+- [ ] Advanced search and filter options
+- [ ] AI-based vehicle recommendations
+- [ ] Cloud deployment (AWS / GCP / Azure)
 
-⭐ Support
+---
 
-If you found this project useful, consider giving it a ⭐ on GitHub.
+## 👨‍💻 Author
+
+**Himaka Uthpala**
+- GitHub: [@Himaka12](https://github.com/Himaka12)
+
+---
+
+## ⭐ Support
+
+If you found this project helpful, consider giving it a ⭐ on [GitHub](https://github.com/Himaka12/Vehicle-Sales-Rental-System) — it means a lot!
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ using Spring Boot & MySQL</sub>
+</div>
