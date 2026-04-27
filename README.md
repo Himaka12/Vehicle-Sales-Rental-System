@@ -1,6 +1,3 @@
-Got it — you want **exactly like that HeartIQ style** (), but for your project, and **ONE clean copy-paste block** with **no extra explanation**.
-
-Here it is 👇
 
 ---
 
