@@ -701,20 +701,24 @@
     document.getElementById("vPrice").addEventListener("input", formatNumberInput);
     document.getElementById("vMileage").addEventListener("input", formatNumberInput);
 
-    function syncSoldStatusQuantity() {
+    function syncStatusQuantity() {
         const statusInput = document.getElementById("vStatus");
         const quantityInput = document.getElementById("vQuantity");
-        const isSold = statusInput.value === "Sold";
+        const isAvailable = statusInput.value === "Available";
 
-        if (isSold) {
+        if (isAvailable) {
+            if (!quantityInput.value || Number(quantityInput.value) < 1) {
+                quantityInput.value = "1";
+            }
+        } else {
             quantityInput.value = "0";
         }
 
-        quantityInput.readOnly = isSold;
-        quantityInput.classList.toggle("locked-field", isSold);
+        quantityInput.readOnly = !isAvailable;
+        quantityInput.classList.toggle("locked-field", !isAvailable);
     }
 
-    document.getElementById("vStatus").addEventListener("change", syncSoldStatusQuantity);
+    document.getElementById("vStatus").addEventListener("change", syncStatusQuantity);
 
     window.onload = async function() {
         if (!vehicleId) {
@@ -755,7 +759,7 @@
 
             document.getElementById("vColor").value = vehicle.color || "N/A";
             document.getElementById("vQuantity").value = vehicle.quantity || 0;
-            syncSoldStatusQuantity();
+            syncStatusQuantity();
 
             const mileageInput = document.getElementById("vMileage");
             if (vehicle.vehicleCondition === "BrandNew" || vehicle.vehicleCondition === "Brand New") {
@@ -791,9 +795,9 @@
 
         const rawPrice = document.getElementById("vPrice").value.replace(/,/g, "");
         const rawMileage = document.getElementById("vMileage").value.replace(/,/g, "");
-        const rawQuantity = document.getElementById("vStatus").value === "Sold"
-            ? "0"
-            : document.getElementById("vQuantity").value.trim();
+        const rawQuantity = document.getElementById("vStatus").value === "Available"
+            ? document.getElementById("vQuantity").value.trim()
+            : "0";
         const engineCapacity = document.getElementById("vEngine").value.trim();
 
         if (!isNonNegativeNumber(rawMileage)) {
