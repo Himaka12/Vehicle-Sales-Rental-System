@@ -627,6 +627,19 @@
     document.getElementById("vPrice").addEventListener("input", formatNumberInput);
     document.getElementById("vMileage").addEventListener("input", formatNumberInput);
 
+    function syncStatusQuantity() {
+        const statusInput = document.getElementById("vStatus");
+        const quantityInput = document.getElementById("vQuantity");
+        const isAvailable = statusInput.value === "Available";
+
+        quantityInput.value = isAvailable ? "1" : "0";
+        quantityInput.readOnly = !isAvailable;
+        quantityInput.classList.toggle("locked-field", !isAvailable);
+    }
+
+    document.getElementById("vStatus").addEventListener("change", syncStatusQuantity);
+    syncStatusQuantity();
+
     function getNormalizedEngineCapacity() {
         return document.getElementById("vEngine").value.trim();
     }
@@ -659,7 +672,9 @@
 
         const rawPrice = document.getElementById("vPrice").value.replace(/,/g, "");
         const rawMileage = document.getElementById("vMileage").value.replace(/,/g, "");
-        const rawQuantity = document.getElementById("vQuantity").value.trim();
+        const rawQuantity = document.getElementById("vStatus").value === "Available"
+            ? document.getElementById("vQuantity").value.trim()
+            : "0";
         const rawYear = document.getElementById("vYear").value.trim();
         const engineCapacity = getNormalizedEngineCapacity();
 
