@@ -108,6 +108,12 @@ public class VehicleServiceImpl implements VehicleService {
         if ("Available".equalsIgnoreCase(dto.getStatus()) && dto.getQuantity() < 1) {
             throw new RuntimeException("Available vehicles must have at least one unit in stock.");
         }
+        if ("Coming Soon".equalsIgnoreCase(dto.getStatus()) && dto.getQuantity() != 0) {
+            throw new RuntimeException("Coming Soon vehicles must have 0 units in stock.");
+        }
+        if ("Sold".equalsIgnoreCase(dto.getStatus()) && dto.getQuantity() != 0) {
+            throw new RuntimeException("Sold vehicles must have 0 units in stock.");
+        }
         if ("Sold".equalsIgnoreCase(dto.getStatus()) && "Rent".equalsIgnoreCase(dto.getListingType())) {
             throw new RuntimeException("Rental vehicles cannot use the Sold status.");
         }
