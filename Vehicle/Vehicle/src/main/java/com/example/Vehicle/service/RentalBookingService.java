@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,8 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RentalBookingService {
-    private static final long REFUND_WINDOW_HOURS_AFTER_ADMIN_RESPONSE = 24;
-    private static final DateTimeFormatter REFUND_WINDOW_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final long REFUND_NOTICE_DAYS_BEFORE_START = 3;
 
     private final RentalBookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -104,15 +102,9 @@ public class RentalBookingService {
 
     public RentalBookingDTO updateBookingStatus(Long id, String status) {
         RentalBooking booking = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
-        String currentStatus = StatusRules.normalizeBookingStatus(booking.getStatus());
         String normalizedStatus = StatusRules.normalizeBookingStatus(status);
-        StatusRules.validateBookingAdminTransition(currentStatus, normalizedStatus);
-
-        if (!currentStatus.equals(normalizedStatus)) {
-            booking.setStatus(normalizedStatus);
-            booking.setAdminRespondedAt(LocalDateTime.now());
-        }
-
+        StatusRules.validateBookingAdminTransition(booking.getStatus(), normalizedStatus);
+        booking.setStatus(normalizedStatus);
         return mapToDTO(bookingRepository.save(booking));
     }
 
@@ -151,10 +143,13 @@ public class RentalBookingService {
             throw new RuntimeException("Unauthorized: You do not own this booking.");
         }
 
-        throw new RuntimeException(
-                "Bookings cannot be cancelled directly from the customer dashboard. "
-                        + "Refund requests become available only for 24 hours after an admin approves or rejects the booking."
-        );
+        String currentStatus = StatusRules.normalizeBookingStatus(booking.getStatus());
+        if (!StatusRules.BOOKING_PENDING.equals(currentStatus) && !StatusRules.BOOKING_APPROVED.equals(currentStatus)) {
+            throw new RuntimeException("Business Rule Violation: Only pending or approved bookings can be cancelled.");
+        }
+
+        booking.setStatus(StatusRules.BOOKING_CANCELLED);
+        bookingRepository.save(booking);
     }
 
     private RentalBookingDTO mapToDTO(RentalBooking booking) {
@@ -182,30 +177,24 @@ public class RentalBookingService {
         dto.setStatus(StatusRules.normalizeBookingStatus(booking.getStatus()));
         dto.setPaymentSlipUrl(booking.getPaymentSlipUrl());
         dto.setPremiumCustomer(booking.getUser().isPremium());
-        dto.setAdminRespondedAt(booking.getAdminRespondedAt() != null ? booking.getAdminRespondedAt().toString() : null);
 
         Optional<Refund> refund = refundRepository.findByBookingId(booking.getId());
-        LocalDateTime refundWindowStart = booking.getAdminRespondedAt();
-        LocalDateTime refundDeadline = refundWindowStart != null
-                ? refundWindowStart.plusHours(REFUND_WINDOW_HOURS_AFTER_ADMIN_RESPONSE)
+        LocalDate refundDeadline = booking.getStartDate() != null
+                ? booking.getStartDate().minusDays(REFUND_NOTICE_DAYS_BEFORE_START)
                 : null;
-        boolean refundWindowStarted = hasRefundWindowStarted(dto.getStatus(), refundWindowStart);
         boolean refundEligible = false;
-
         if (refund.isPresent()) {
             dto.setRefundStatus(StatusRules.normalizeRefundStatus(refund.get().getStatus()));
             dto.setRefundProofUrl(refund.get().getRefundProofUrl());
-        } else if (refundWindowStarted) {
+        } else if (StatusRules.BOOKING_CANCELLED.equals(dto.getStatus())) {
             dto.setRefundStatus(StatusRules.REFUND_PENDING);
-            refundEligible = !LocalDateTime.now().isAfter(refundDeadline);
+            refundEligible = refundDeadline != null && !LocalDate.now().isAfter(refundDeadline);
         } else {
             dto.setRefundStatus("None");
         }
-
         dto.setRefundEligible(refundEligible);
-        dto.setRefundWindowStarted(refundWindowStarted);
         dto.setRefundClaimDeadline(refundDeadline != null ? refundDeadline.toString() : null);
-        dto.setRefundPolicyMessage(buildRefundPolicyMessage(dto.getStatus(), dto.getRefundStatus(), refundWindowStart, refundDeadline, refundEligible, refundWindowStarted));
+        dto.setRefundPolicyMessage(buildRefundPolicyMessage(dto.getStatus(), dto.getRefundStatus(), refundDeadline, refundEligible));
 
         if (booking.getStartDate() != null && booking.getEndDate() != null) {
             long days = java.time.temporal.ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate()) + 1;
@@ -247,10 +236,6 @@ public class RentalBookingService {
     }
 
     private void validateVehicleCanBeRented(Vehicle vehicle) {
-        if (!vehicle.isVisible()) {
-            throw new RuntimeException("This listing is currently hidden and cannot accept new rentals.");
-        }
-
         if (!"Rent".equalsIgnoreCase(vehicle.getListingType())) {
             throw new RuntimeException("This vehicle is not listed for rental.");
         }
@@ -264,46 +249,23 @@ public class RentalBookingService {
         }
     }
 
-    private boolean hasRefundWindowStarted(String bookingStatus, LocalDateTime adminRespondedAt) {
-        return adminRespondedAt != null
-                && (StatusRules.BOOKING_APPROVED.equals(bookingStatus)
-                || StatusRules.BOOKING_REJECTED.equals(bookingStatus)
-                || StatusRules.BOOKING_CANCELLED.equals(bookingStatus));
-    }
+    private String buildRefundPolicyMessage(String bookingStatus, String refundStatus, LocalDate refundDeadline, boolean refundEligible) {
+        if (!StatusRules.BOOKING_CANCELLED.equals(bookingStatus)) {
+            return "Refunds can be requested only after cancellation and at least 3 days before the rental start date.";
+        }
 
-    private String buildRefundPolicyMessage(String bookingStatus, String refundStatus, LocalDateTime refundWindowStart, LocalDateTime refundDeadline, boolean refundEligible, boolean refundWindowStarted) {
-        if (!StatusRules.REFUND_PENDING.equals(refundStatus) && !"None".equals(refundStatus)) {
+        if (!StatusRules.REFUND_PENDING.equals(refundStatus)) {
             return "Your refund request is already in progress or completed.";
         }
 
-        if (!refundWindowStarted) {
-            if (StatusRules.BOOKING_PENDING.equals(bookingStatus)) {
-                return "Your booking is waiting for admin review. The refund button appears only after the admin approves or rejects the booking, and it stays available for 24 hours.";
-            }
-            return "Refund eligibility cannot be verified because the admin response time is unavailable for this booking.";
+        if (refundDeadline == null) {
+            return "Refund eligibility cannot be calculated because the rental start date is unavailable.";
         }
 
-        String responseLabel = describeAdminResponse(bookingStatus);
         if (refundEligible) {
-            return "Admin " + responseLabel + " this booking on " + formatRefundDateTime(refundWindowStart)
-                    + ". Refund requests stay open until " + formatRefundDateTime(refundDeadline) + ".";
+            return "Refund requests are accepted until " + refundDeadline + " for this booking.";
         }
 
-        return "The 24-hour refund window started when admin " + responseLabel + " this booking on "
-                + formatRefundDateTime(refundWindowStart) + " and closed on " + formatRefundDateTime(refundDeadline) + ".";
-    }
-
-    private String describeAdminResponse(String bookingStatus) {
-        if (StatusRules.BOOKING_APPROVED.equals(bookingStatus)) {
-            return "approved";
-        }
-        if (StatusRules.BOOKING_REJECTED.equals(bookingStatus)) {
-            return "rejected";
-        }
-        return "responded to";
-    }
-
-    private String formatRefundDateTime(LocalDateTime value) {
-        return value != null ? value.format(REFUND_WINDOW_FORMATTER) : "N/A";
+        return "The 3-day refund request window for this booking closed on " + refundDeadline + ".";
     }
 }
