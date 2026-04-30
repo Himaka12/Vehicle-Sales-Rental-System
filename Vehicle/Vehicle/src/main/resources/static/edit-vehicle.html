@@ -701,6 +701,21 @@
     document.getElementById("vPrice").addEventListener("input", formatNumberInput);
     document.getElementById("vMileage").addEventListener("input", formatNumberInput);
 
+    function syncSoldStatusQuantity() {
+        const statusInput = document.getElementById("vStatus");
+        const quantityInput = document.getElementById("vQuantity");
+        const isSold = statusInput.value === "Sold";
+
+        if (isSold) {
+            quantityInput.value = "0";
+        }
+
+        quantityInput.readOnly = isSold;
+        quantityInput.classList.toggle("locked-field", isSold);
+    }
+
+    document.getElementById("vStatus").addEventListener("change", syncSoldStatusQuantity);
+
     window.onload = async function() {
         if (!vehicleId) {
             alert("No vehicle selected!");
@@ -740,6 +755,7 @@
 
             document.getElementById("vColor").value = vehicle.color || "N/A";
             document.getElementById("vQuantity").value = vehicle.quantity || 0;
+            syncSoldStatusQuantity();
 
             const mileageInput = document.getElementById("vMileage");
             if (vehicle.vehicleCondition === "BrandNew" || vehicle.vehicleCondition === "Brand New") {
@@ -775,7 +791,9 @@
 
         const rawPrice = document.getElementById("vPrice").value.replace(/,/g, "");
         const rawMileage = document.getElementById("vMileage").value.replace(/,/g, "");
-        const rawQuantity = document.getElementById("vQuantity").value.trim();
+        const rawQuantity = document.getElementById("vStatus").value === "Sold"
+            ? "0"
+            : document.getElementById("vQuantity").value.trim();
         const engineCapacity = document.getElementById("vEngine").value.trim();
 
         if (!isNonNegativeNumber(rawMileage)) {
