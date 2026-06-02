@@ -15,7 +15,7 @@
 
 ## 📌 Overview
 
-The **Vehicle Sales & Rental System** is a centralized platform designed to streamline vehicle business operations. It enables users to browse vehicle listings, manage sales and rentals, store vehicle images, and analyze customer feedback using AI-driven sentiment analysis.
+The **Vehicle Sale & Rental System** is a centralized platform designed to streamline vehicle business operations. It enables users to browse vehicle listings, manage sales and rentals, store vehicle images, and analyze customer feedback using AI-driven sentiment analysis.
 
 ---
 
