@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚗 Vehicle Sales & Rental System
+# 🚗 Vehicle Sale & Rental System
 
 **A Full Stack web application for managing vehicle sales and rentals with AI-powered sentiment analysis**
 
