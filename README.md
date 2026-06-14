@@ -2,7 +2,7 @@
 
 # 🚗 Vehicle Sale & Rental System
 
-**A Full Stack web application for managing vehicle sales and rentals with AI-powered sentiment analysis**
+**A Full Stack Web application for managing vehicle sales and rentals with AI-powered sentiment analysis**
 
 [![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
